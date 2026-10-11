@@ -26,6 +26,7 @@
   --accent:#6f9ef2; --accent-soft:#1a2941; --ball:#d8c824; --ball-ink:#1d1a00; --good:#4cc485; --warn:#e9a25f; color-scheme:dark}
 
 *{box-sizing:border-box}
+[hidden]{display:none!important}
 html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
 body{margin:0;overflow-wrap:break-word;background:var(--bg);color:var(--fg);font-family:var(--body);font-size:15px;line-height:1.55}
 .wrap{max-width:760px;margin:0 auto;padding-inline:max(16px,env(safe-area-inset-left)) max(16px,env(safe-area-inset-right));padding-block:28px 64px;display:flex;flex-direction:column;gap:36px}
@@ -95,6 +96,8 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 .mbody ol li::marker{font-family:var(--mono);color:var(--accent);font-weight:600}
 .tip{font-size:13px;color:var(--muted);border-top:1px solid var(--line);padding-top:10px}
 @media (max-width:560px){.cols{grid-template-columns:1fr}}
+@media (prefers-reduced-motion:no-preference){.meal.open .mbody{animation:mopen .22s ease-out}}
+@keyframes mopen{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
 @media (prefers-reduced-motion:reduce){.meal,.chev{transition:none}}
 
 .card{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:12px}
