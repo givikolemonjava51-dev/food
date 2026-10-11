@@ -1,0 +1,538 @@
+<title>ოქტომბრის კვების გეგმა</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+Georgian:wght@400;500;600;700&family=Noto+Serif+Georgian:wght@600;800&family=IBM+Plex+Mono:wght@500;600&display=swap">
+<style>
+/* Layout: one narrow column like a training log — goal strip, week + day switcher, the day as a timeline, then prep, shopping, rules. Padel-court blue accent, ball-yellow only for "today". */
+:root{
+  --bg:#f2f5f9; --surface:#ffffff; --fg:#13202e; --muted:#5a6879; --line:#dbe2ea;
+  --accent:#1c5bc9; --accent-soft:#e3ecfa; --ball:#e6d62a; --ball-ink:#2a2600; --good:#1f8a52; --warn:#b5651d;
+  --display:"Noto Serif Georgian", Georgia, serif;
+  --body:"Noto Sans Georgian", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono:"IBM Plex Mono", ui-monospace, Menlo, monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0d131b; --surface:#151d28; --fg:#e6ecf3; --muted:#93a1b2; --line:#243041;
+  --accent:#6f9ef2; --accent-soft:#1a2941; --ball:#d8c824; --ball-ink:#1d1a00; --good:#4cc485; --warn:#e9a25f; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0d131b; --surface:#151d28; --fg:#e6ecf3; --muted:#93a1b2; --line:#243041;
+  --accent:#6f9ef2; --accent-soft:#1a2941; --ball:#d8c824; --ball-ink:#1d1a00; --good:#4cc485; --warn:#e9a25f; color-scheme:dark}
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font-family:var(--body);font-size:15px;line-height:1.55}
+.wrap{max-width:760px;margin:0 auto;padding-inline:16px;padding-block:28px 64px;display:flex;flex-direction:column;gap:36px}
+h1,h2{font-family:var(--display);text-wrap:balance;margin:0;line-height:1.2}
+h1{font-size:clamp(26px,6vw,36px);font-weight:800}
+h2{font-size:21px;font-weight:600}
+h3{margin:0;font-size:16px;font-weight:600}
+.num{font-family:var(--mono);font-variant-numeric:tabular-nums}
+.muted{color:var(--muted)}
+p{margin:0}
+
+header{display:flex;flex-direction:column;gap:14px}
+.goal{display:flex;flex-wrap:wrap;gap:8px 18px;font-size:14px;color:var(--muted)}
+.goal b{color:var(--fg);font-weight:600}
+nav{display:flex;flex-wrap:wrap;gap:6px}
+nav a{color:var(--accent);text-decoration:none;font-size:14px;padding:4px 10px;border:1px solid var(--line);border-radius:999px;background:var(--surface)}
+nav a:hover,nav a:focus-visible{border-color:var(--accent);outline:none}
+
+.changes{font-size:14px;background:var(--accent-soft);border-radius:10px;padding:12px 14px;display:flex;flex-direction:column;gap:4px}
+
+section{display:flex;flex-direction:column;gap:14px;scroll-margin-top:16px}
+.weeks,.days{display:flex;gap:6px;flex-wrap:wrap}
+.weeks button,.days button{font:inherit;cursor:pointer;border:1px solid var(--line);background:var(--surface);color:var(--fg);border-radius:8px}
+.weeks button{padding:6px 12px;font-size:14px}
+.days{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
+.days button{padding:8px 2px;display:flex;flex-direction:column;align-items:center;gap:2px;position:relative}
+.days button .d{font-size:12px;color:var(--muted)}
+.days button .n{font-family:var(--mono);font-weight:600;font-size:16px}
+.weeks button[aria-pressed="true"],.days button[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:#fff}
+.days button[aria-pressed="true"] .d{color:#fff;opacity:.85}
+.days button.today::after{content:"";position:absolute;top:5px;right:5px;width:7px;height:7px;border-radius:50%;background:var(--ball);box-shadow:0 0 0 1px var(--ball-ink)}
+.days button.out{opacity:.45}
+button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+.totals{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.meter{display:flex;flex-direction:column;gap:6px;min-width:0}
+.meter .top{display:flex;justify-content:space-between;font-size:13px;color:var(--muted)}
+.meter .top b{color:var(--fg);font-family:var(--mono);font-weight:600}
+.bar{height:6px;background:var(--line);border-radius:3px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--accent);border-radius:3px}
+.bar.p i{background:var(--good)}
+
+.timeline{list-style:none;margin:0;padding:0;display:flex;flex-direction:column}
+.timeline{gap:10px}
+.timeline > li{display:grid;grid-template-columns:52px 1fr;gap:12px;align-items:start}
+.time{font-family:var(--mono);font-weight:600;font-size:14px;color:var(--accent);padding-top:15px}
+.meal{min-width:0;background:var(--surface);border:1px solid var(--line);border-radius:12px;transition:box-shadow .2s ease,border-color .2s ease}
+.meal.small{background:transparent;border-style:dashed}
+.meal.open{border-color:var(--accent);box-shadow:0 6px 24px -10px color-mix(in srgb,var(--accent) 55%,transparent)}
+.mhead{all:unset;box-sizing:border-box;width:100%;display:flex;justify-content:space-between;align-items:center;gap:10px;padding:12px 14px;cursor:pointer;border-radius:12px}
+.mhead:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.mt{display:flex;flex-direction:column;gap:2px;min-width:0}
+.slot{font-size:12px;letter-spacing:.04em;color:var(--muted)}
+.mn{font-weight:600;font-size:16px}
+.meal.small .mn{font-weight:500;font-size:15px}
+.meal.open .mn{font-family:var(--display);font-size:20px}
+.mr{display:flex;align-items:center;gap:10px;flex-shrink:0}
+.kc{font-family:var(--mono);font-size:13px;color:var(--muted);white-space:nowrap}
+.chev{width:9px;height:9px;border-right:2px solid var(--muted);border-bottom:2px solid var(--muted);transform:rotate(45deg) translateY(-3px);transition:transform .2s ease}
+.meal.open .chev{transform:rotate(-135deg) translate(-2px,-2px);border-color:var(--accent)}
+.mbody{padding:0 14px 16px;display:flex;flex-direction:column;gap:14px}
+.meta{display:flex;flex-wrap:wrap;gap:6px}
+.meta span{font-family:var(--mono);font-size:12px;background:var(--accent-soft);color:var(--fg);padding:3px 8px;border-radius:999px}
+.cols{display:grid;grid-template-columns:minmax(0,2fr) minmax(0,3fr);gap:18px}
+.lbl{font-size:12px;letter-spacing:.05em;color:var(--accent);font-weight:600;margin-bottom:6px}
+.mbody ul,.mbody ol{margin:0;padding-left:20px;font-size:14px;display:flex;flex-direction:column;gap:6px}
+.mbody ol li::marker{font-family:var(--mono);color:var(--accent);font-weight:600}
+.tip{font-size:13px;color:var(--muted);border-top:1px solid var(--line);padding-top:10px}
+@media (max-width:560px){.cols{grid-template-columns:1fr}}
+@media (prefers-reduced-motion:reduce){.meal,.chev{transition:none}}
+
+.card{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:12px}
+.checks{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:2px}
+.checks label{display:grid;grid-template-columns:22px 1fr auto;gap:10px;align-items:start;padding:7px 4px;border-radius:6px;cursor:pointer;font-size:14px}
+.checks label:hover{background:var(--accent-soft)}
+.checks input{margin:3px 0 0;width:16px;height:16px;accent-color:var(--accent)}
+.checks input:checked ~ span{color:var(--muted);text-decoration:line-through}
+.checks .q{font-family:var(--mono);font-size:13px;color:var(--muted);white-space:nowrap}
+.group{font-size:12px;letter-spacing:.05em;color:var(--muted);padding:10px 4px 2px}
+.group:first-child{padding-top:0}
+.row{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.reset{font:inherit;font-size:13px;color:var(--accent);background:none;border:0;cursor:pointer;padding:4px}
+
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px}
+
+.wform{display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end}
+.wform label{display:flex;flex-direction:column;gap:4px;font-size:13px;color:var(--muted);flex:1 1 140px;min-width:0}
+.wform input{font:inherit;font-family:var(--mono);font-size:16px;color:var(--fg);background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:9px 10px;width:100%}
+.wform input:focus-visible{outline:2px solid var(--accent);outline-offset:1px;border-color:var(--accent)}
+.wform button{font:inherit;font-weight:600;background:var(--accent);color:#fff;border:0;border-radius:8px;padding:11px 18px;cursor:pointer;flex:0 0 auto}
+.wform button:focus-visible{outline:2px solid var(--fg);outline-offset:2px}
+.stats{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.st{background:var(--surface);padding:12px 14px;display:flex;flex-direction:column;gap:2px;min-width:0}
+.sl{font-size:12px;color:var(--muted)}
+.sv{font-size:20px;font-weight:600}
+.ss{font-size:12px;color:var(--muted)}
+.st.good .sv{color:var(--good)}
+.st.warn .sv{color:var(--warn)}
+.stats .empty{grid-column:1/-1;background:var(--surface);padding:12px 14px;margin:0}
+.prog{grid-column:1/-1;height:6px;background:var(--surface);position:relative}
+.prog i{position:absolute;left:0;top:0;bottom:0;background:var(--good)}
+.chartbox{display:flex;flex-direction:column;gap:8px}
+.legend{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:13px;color:var(--muted)}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.lg{display:inline-block}
+.lg.dot{width:9px;height:9px;border-radius:50%;background:var(--muted)}
+.lg.line{width:18px;height:2px;background:var(--accent)}
+.lg.goal{width:18px;border-top:2px dashed var(--good)}
+.chartwrap{position:relative;overflow-x:auto}
+#wchart{display:block;max-width:100%;height:auto}
+#wchart .grid{stroke:var(--line);stroke-width:1}
+#wchart .ax{fill:var(--muted);font-family:var(--mono);font-size:11px}
+#wchart .goalline{stroke:var(--good);stroke-width:2;stroke-dasharray:5 5}
+#wchart .avgline{fill:none;stroke:var(--accent);stroke-width:2;stroke-linejoin:round;stroke-linecap:round}
+#wchart .wpt{fill:var(--muted);stroke:var(--bg);stroke-width:2}
+#wchart .startpt{fill:var(--bg);stroke:var(--muted);stroke-width:2}
+#wchart .hit{fill:transparent;cursor:pointer}
+#wchart .endlbl{fill:var(--fg);font-family:var(--mono);font-size:12px;font-weight:600}
+.ctip{position:absolute;pointer-events:none;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:6px 10px;font-size:13px;display:flex;flex-direction:column;box-shadow:0 4px 14px -6px rgba(0,0,0,.3);min-width:110px}
+.ctip span{font-family:var(--mono)}
+.log summary{cursor:pointer;font-weight:600}
+.tablewrap{overflow-x:auto}
+#wtable{width:100%;border-collapse:collapse;font-size:14px}
+#wtable th{text-align:left;font-weight:500;font-size:12px;color:var(--muted);padding:6px 8px;border-bottom:1px solid var(--line)}
+#wtable td{padding:7px 8px;border-bottom:1px solid var(--line)}
+#wtable .down{color:var(--good)} #wtable .up{color:var(--warn)}
+.del{font:inherit;font-size:12px;color:var(--muted);background:none;border:1px solid var(--line);border-radius:6px;padding:3px 8px;cursor:pointer}
+.del[data-confirm="1"]{color:var(--warn);border-color:var(--warn)}
+.shoptotal{display:flex;align-items:baseline;gap:6px 12px;flex-wrap:wrap}
+.shoptotal b{font-size:26px}
+.note{font-size:13px;color:var(--muted)}
+@media (max-width:420px){.days button .d{font-size:11px}.timeline > li{grid-template-columns:44px 1fr;gap:8px}.kc{font-size:12px}}
+@media (prefers-reduced-motion:no-preference){.bar i{transition:width .3s ease}}
+</style>
+
+<div class="wrap">
+  <header>
+    <h1>ოქტომბრის კვების გეგმა</h1>
+    <div class="goal">
+      <span>მიზანი <b class="num">110 → 98 კგ</b></span>
+      <span>დღეში <b class="num">≤ 2000 კკალ</b></span>
+      <span>ცილა <b class="num">~180 გ</b></span>
+      <span><b class="num">12–31</b> ოქტომბერი</span>
+    </div>
+    <nav>
+      <a href="#day">დღის მენიუ</a>
+      <a href="#weight">წონა</a>
+      <a href="#prep">მომზადება</a>
+      <a href="#shop">საყიდლები</a>
+    </nav>
+  </header>
+
+  <section id="day">
+    <h2>დღის მენიუ</h2>
+    <div class="weeks" id="weeks"></div>
+    <div class="days" id="days"></div>
+    <div class="totals">
+      <div class="meter"><div class="top"><span>კალორია</span><b id="tk"></b></div><div class="bar"><i id="bk"></i></div></div>
+      <div class="meter"><div class="top"><span>ცილა</span><b id="tp"></b></div><div class="bar p"><i id="bp"></i></div></div>
+    </div>
+    <ol class="timeline" id="timeline"></ol>
+    <p class="note">დააჭირე კერძს, რომ ნახო ინგრედიენტები და მომზადება ნაბიჯ-ნაბიჯ. ყველა წონა უმი პროდუქტისაა (ხორცი, ბრინჯი, წიწიბურა, მაკარონი), სხვაგვარად თუ არ წერია. ზეთი კოვზით გაზომე.</p>
+  </section>
+
+  <section id="weight">
+    <h2>წონის კონტროლი</h2>
+    <form id="wform" class="wform" novalidate>
+      <label for="wdate"><span>თარიღი</span><input type="date" id="wdate" required></label>
+      <label for="wkg"><span>წონა, კგ</span><input type="number" id="wkg" inputmode="decimal" step="0.1" min="40" max="250" placeholder="109.4" required></label>
+      <button type="submit" id="wsave">შენახვა</button>
+    </form>
+    <p class="note" id="wstatus">აიწონე დილით, ტუალეტის შემდეგ და ჭამამდე. იმავე დღის ახალი ჩანაწერი ძველს ჩაანაცვლებს.</p>
+    <div class="stats" id="wstats"></div>
+    <div class="chartbox">
+      <div class="legend"><span><i class="lg dot"></i>დღიური წონა</span><span><i class="lg line"></i>7-დღიანი საშუალო</span><span><i class="lg goal"></i>მიზანი 98 კგ</span></div>
+      <div class="chartwrap" id="chartwrap"><svg id="wchart" role="img" aria-label="წონის დინამიკა"></svg><div class="ctip" id="ctip" hidden></div></div>
+    </div>
+    <details class="card log"><summary>ყველა ჩანაწერი</summary><div class="tablewrap"><table id="wtable"></table></div></details>
+  </section>
+
+  <section id="prep">
+    <h2>მომზადება: კვირაში ორჯერ</h2>
+    <p class="muted">მზა საჭმელი მაცივარში 3–4 დღე ძლებს. შაბათ-კვირის პორციები საყინულეში შედე და წინა საღამოს გადმოიტანე. ორაგული ყოველთვის ახალი მოამზადე, 15 წუთი ღუმელში.</p>
+    <div class="grid2" id="preps"></div>
+    <p class="note"><b>პირველი კვირა (12 ოქტომბერი):</b> prep ჯერ არ გაქვს. ორშაბათს დილით იყიდე ყველაფერი, სადილისთვის ქათამი და ბრინჯი მოამზადე სამსახურამდე, დანარჩენი კი ორშაბათ ღამით ან სამშაბათ დილით.</p>
+  </section>
+
+  <section id="shop">
+    <div class="row"><h2>საყიდლები: ერთი კვირა</h2><button class="reset" id="shopReset" type="button">მონიშვნების გასუფთავება</button></div>
+    <div class="shoptotal"><span class="muted">კვირის ბიუჯეტი</span><b class="num" id="shopTotal"></b><span class="note num" id="shopRange"></span></div>
+    <div class="card"><ul class="checks" id="shoplist"></ul></div>
+    <p class="note">ფასები მიახლოებითია, თბილისის სუპერმარკეტების 2026 წლის მონაცემებით (ქათმის ფილე ~18 ₾/კგ, საქონელი ~26–35 ₾/კგ, კვერცხი ~7 ₾/10 ცალი). ორაგულის, ხაჭოს და მაწონის ფასი ჩემი შეფასებაა, მაღაზიის მიხედვით განსხვავდება. პირველ კვირას ერთჯერადად +25–30 ₾: ზეთის ბოთლი, თაფლი, სანელებლები, მარცვლეულის სრული პაკეტები. პროტეინი არ ითვლება (გაქვს). მონიშვნები ამ ბრაუზერში ინახება.</p>
+  </section>
+
+</div>
+
+<script>
+const M = {
+  PRE:{slot:"ვარჯიშამდე",name:"ბანანი და წყალი",k:105,p:1,items:["1 ბანანი","1–2 ჭიქა წყალი, კრეატინი"]},
+  SHAKE:{slot:"სნექი",name:"პროტეინის შეიკი",k:260,p:34,items:["30 გ პროტეინი (1 სკუპი)","300 მლ რძე 1.5%"]},
+  B1:{slot:"საუზმე",name:"ომლეტი ხაჭოთი",k:540,p:53,items:["3 კვერცხი + 3 კვერცხის ცილა","100 გ ისპანახი ან სოკო ომლეტში","100 გ ხაჭო გვერდზე","2 ნაჭერი მთლიანმარცვლოვანი პური (60 გ)","პომიდორი, კიტრი; ტაფაზე ზეთის სპრეი"]},
+  B2:{slot:"საუზმე",name:"ხაჭოს თასი",k:560,p:49,items:["250 გ ხაჭო (2–5%)","150 გ მაწონი","1 ბანანი","15 გ ნიგოზი","1 ჩ/კ თაფლი"]},
+  B3:{slot:"საუზმე",name:"ლავაშის რულეტი ქათმით",k:560,p:58,items:["60 გ ლავაში","2 კვერცხი + 2 ცილა, ერბოკვერცხად","100 გ მოხარშული ქათმის მკერდი (prep-დან)","50 გ მაწონი ნივრით, სოუსად","მწვანილი, პომიდორი"]},
+  L1:{slot:"სადილი",name:"ქათამი ბრინჯით",k:600,p:51,items:["200 გ ქათმის მკერდი","70 გ ბრინჯი","200 გ სალათი","10 გ ზეითუნის ზეთი"]},
+  L2:{slot:"სადილი",name:"საქონლის ჩაშუშული წიწიბურით",k:575,p:47,items:["170 გ უცხიმო საქონელი (ფილე/ლაფანი)","70 გ წიწიბურა","250 გ პომიდორი, წიწაკა, ხახვი","5 გ ზეთი"]},
+  L3:{slot:"სადილი",name:"საქონლის ბოლონეზე",k:560,p:46,items:["170 გ უცხიმო საქონლის ფარში (≤5%)","70 გ მაკარონი","150 გ პომიდვრის პასატა","ხახვი, ნიორი, რეჰანი","5 გ ზეთი"]},
+  L4:{slot:"სადილი",name:"ქათმის ბარკალი კარტოფილით",k:555,p:45,items:["200 გ ქათმის ბარკალი, ტყავის გარეშე","300 გ კარტოფილი, ღუმელში","200 გ სალათი","5 გ ზეთი"]},
+  D1:{slot:"ვახშამი",name:"ორაგული ბოსტნეულით",k:475,p:35,items:["150 გ ორაგული, ღუმელში ლიმონით","150 გ კარტოფილი","250 გ ბროკოლი ან მწვანე ლობიო"]},
+  D2:{slot:"ვახშამი",name:"ქათმის ჩაშუშული",k:460,p:52,items:["200 გ ქათმის მკერდი","250 გ პომიდორი, ხახვი, წიწაკა, მწვანილი","5 გ ზეთი","1 ნაჭერი პური","100 გ მაწონი"]},
+  D3:{slot:"ვახშამი",name:"ხაჭო და კვერცხი",k:460,p:46,items:["200 გ ხაჭო","2 მოხარშული კვერცხი","250 გ კიტრი-პომიდვრის სალათი, ზეთის გარეშე","1 ნაჭერი პური"]},
+  D4:{slot:"ვახშამი",name:"ლობიო ქათმით",k:475,p:54,items:["150 გ ქათმის მკერდი, გრილზე","150 გ მოხარშული ლობიო, მინიმალური ზეთით","200 გ სალათი","150 გ მაწონი"]}
+};
+const HOW = {
+  PRE:["5 წთ",["შეჭამე გაღვიძებიდან 15–30 წუთში, დარბაზამდე დაახლოებით 30 წუთით ადრე.","1–2 ჭიქა წყალში გახსენი 3–5 გ კრეატინი და დალიე.","თუ ვარჯიში ძალიან ინტენსიურია, წყალს ელექტროლიტებიც დაამატე."],"ბანანი სწრაფ ენერგიას იძლევა და კუჭს არ ამძიმებს."],
+  SHAKE:["2 წთ",["შეიკერში ჯერ ჩაასხი 300 მლ რძე, მერე ჩაყარე 1 სკუპი პროტეინი. ასე გუნდებად არ შეიკვრება.","დახურე და 20–30 წამი შეანჯღრიე.","სამსახურში: ფხვნილი წაიღე მშრალ შეიკერში, რძე ადგილზე დაამატე."],"ეს ჭამა სადილსა და ვახშამს შორის შიმშილს გიჭერს."],
+  B1:["15 წთ",["ისპანახი ან სოკო დაჭერი. ტაფა ზეთის სპრეით გააცხელე და ბოსტნეული 3–4 წუთი შეწვი, სანამ წყალი არ აორთქლდება.","თასში ათქვიფე 3 მთლიანი კვერცხი და 3 ცილა. მარილი და პილპილი მოაყარე.","კვერცხი ბოსტნეულზე ჩაასხი. საშუალო ცეცხლზე, თავდახურული, 4–5 წუთი აცხე, სანამ ზედაპირი არ გამაგრდება.","პურის 2 ნაჭერი ტოსტერში ან მშრალ ტაფაზე გამოაცხვე.","ხაჭო თეფშზე დადე. თუ გინდა, მწვანილი და ცოტა მარილი მოაყარე. გვერდით დაჭრილი პომიდორი და კიტრი."],"3 ცილის შემდეგ დარჩენილი გულები ამ გეგმაში არ ითვლება, ამიტომ ნუ შეჭამ. მოსახერხებელია მზა კვერცხის ცილის ყიდვაც."],
+  B2:["5 წთ",["250 გ ხაჭო თასში ჩადე და 150 გ მაწონი გადაასხი.","კოვზით კარგად აურიე, სანამ კრემისებური არ გახდება.","ბანანი რგოლებად დაჭერი და ზემოდან დააწყვე.","15 გ ნიგოზი ხელით დაამტვრიე და მოაყარე.","ბოლოს 1 ჩაის კოვზი თაფლი ზემოდან."],"ხაჭო 9%-იანი არ აიღო: ერთი პორცია 100 კკალ-ით მეტი იქნება."],
+  B3:["10 წთ",["prep-დან 100 გ მოხარშული ქათამი ბოჭკოებად დაგლიჯე და მშრალ ტაფაზე 2 წუთი გააცხელე.","2 კვერცხი და 2 ცილა ათქვიფე, მარილი მოაყარე. სპრეით წასმულ ტაფაზე ერბოკვერცხი 2–3 წუთი, მუდმივად ურიე.","სოუსი: 50 გ მაწონს გაურიე 1 კბილი გახეხილი ნიორი და მარილი.","ლავაში გაშალე, შუაზე სოუსი წაუსვი, ზემოდან კვერცხი, ქათამი, დაჭრილი პომიდორი და მწვანილი.","გვერდები შეკეცე და დაახვიე. მშრალ ტაფაზე ორივე მხრიდან 1 წუთი შეაბრაწე."],"სამსახურში წასაღებად ფოლგაში გაახვიე."],
+  L1:["40 წთ (prep)",["ღუმელი 200°C-ზე გააცხელე.","ქათმის მკერდი მოასხურე სპრეით, მოაყარე მარილი, პილპილი, წითელი პაპრიკა და ნივრის ფხვნილი.","ფურცელზე 20–25 წუთი. მზადაა, როცა შიგნით ვარდისფერი აღარ არის (74°C). 5 წუთი დაასვენე, მერე დაჭერი.","ბრინჯი 2–3-ჯერ გარეცხე. ქვაბში 1 წილ ბრინჯს 2 წილი წყალი და მარილი. ადუღების შემდეგ ყველაზე დაბალ ცეცხლზე, თავდახურული, 12–15 წუთი. 5 წუთი დაასვენე.","სალათი ცალკე კონტეინერში. 10 გ ზეთი და ლიმონი ჭამის წინ დაასხი.","ქათამი და ბრინჯი სამსახურში მიკროტალღურში 2 წუთი გააცხელე."],"ქათამი 2 დღეზე მეტით რომ არ გაშრეს, ბრინჯზე 1–2 კოვზი წყალი დაასხი გაცხელების წინ."],
+  L2:["70 წთ (prep)",["საქონლის ხორცი 2–3 სმ კუბიკებად დაჭერი.","ქვაბში 5 გ ზეთი გააცხელე და ხორცი მაღალ ცეცხლზე 4–5 წუთი შეწვი, სანამ ყველა მხრიდან არ შეიბრაწება.","დაჭრილი ხახვი და ბულგარული წიწაკა დაუმატე, 5 წუთი.","გაფცქვნილი და დაჭრილი პომიდორი, 2 კბილი ნიორი, მარილი, უცხო სუნელი და ხმელი ქინძი. თუ მშრალია, ცოტა წყალი.","თავდახურული, დაბალ ცეცხლზე 50–60 წუთი, სანამ ხორცი არ დარბილდება. ბოლოს ახალი ქინძი.","წიწიბურა გარეცხე, 1 წილს 2 წილი წყალი და მარილი. ადუღების შემდეგ დაბალ ცეცხლზე 15–18 წუთი."],"ჩაშუშული მეორე დღეს უფრო გემრიელია, ამიტომ prep-ისთვის იდეალურია."],
+  L3:["35 წთ (prep)",["ხახვი და 2 კბილი ნიორი წვრილად დაჭერი. ტაფაზე 5 გ ზეთში 3 წუთი, სანამ არ დარბილდება.","170 გ ფარში დაუმატე. მაღალ ცეცხლზე, კოვზით დაშალე და 6–8 წუთი შეწვი, სანამ არ შეიბრაწება.","150 გ პასატა, მარილი, პილპილი, რეჰანი ან ორეგანო. დაბალ ცეცხლზე 15 წუთი.","მაკარონი ადუღებულ მარილიან წყალში მოხარშე პაკეტზე მითითებულზე 1 წუთით ნაკლები, რომ გაცხელებისას არ დარბილდეს.","გადაწურე და სოუსს აურიე, ან კონტეინერში ცალ-ცალკე ჩადე."],"ფარში ≤5% ცხიმიანი აიღე. 15%-იანი ერთ პორციაზე ~80 კკალ-ს დაამატებს."],
+  L4:["45 წთ (prep)",["ღუმელი 210°C-ზე გააცხელე.","300 გ კარტოფილი ნაჭრებად დაჭერი (კანის გაფცქვნა არ არის აუცილებელი). აურიე 5 გ ზეთს, მარილს, პაპრიკას და ნივრის ფხვნილს.","კარტოფილი ფურცელზე 35–40 წუთი, შუაში გადააბრუნე.","ქათმის ბარკალს ტყავი მოაცილე. მოაყარე მარილი, პილპილი და პაპრიკა, ან წაუსვი 1 ჩ/კ აჯიკა.","ბარკალი კარტოფილის გვერდით ბოლო 25 წუთზე ჩადე. მზადაა 75°C-ზე, როცა ძვალთან წვენი გამჭვირვალეა.","სალათი ცალკე კონტეინერში."],"ბარკალი მკერდზე წვნიანია და გაცხელების შემდეგაც არ შრება."],
+  D1:["30 წთ",["ღუმელი 200°C-ზე გააცხელე.","150 გ კარტოფილი ნაჭრებად, სპრეი და მარილი, ფურცელზე 15 წუთი.","ორაგული ფურცელზე დადე, მარილი, პილპილი, ლიმნის რგოლები და კამა.","ბროკოლი ან მწვანე ლობიო გვერდით დააწყვე, სპრეი და მარილი.","ყველაფერი ერთად კიდევ 12–15 წუთი. ორაგული მზადაა, როცა ჩანგლით ადვილად იშლება."],"გაყინული ბროკოლი პირდაპირ ღუმელში ჩადე, გალღობა არ სჭირდება."],
+  D2:["35 წთ (prep)",["ქათმის მკერდი 3 სმ ნაჭრებად დაჭერი.","ქვაბში 5 გ ზეთი გააცხელე და ქათამი 5 წუთი შეწვი.","დაჭრილი ხახვი და წიწაკა, კიდევ 5 წუთი.","პომიდორი, 2 კბილი ნიორი, მარილი, უცხო სუნელი, წითელი წიწაკა. თავდახურული, დაბალ ცეცხლზე 15–20 წუთი.","ბოლოს ბევრი ახალი ქინძი და რეჰანი.","თეფშზე 100 გ მაწონი გვერდზე და 1 ნაჭერი პური."],"ესაა ჩახოხბილის მსუბუქი ვერსია, ცხიმიანი ხორცის და ბევრი ზეთის გარეშე."],
+  D3:["12 წთ",["2 კვერცხი ცივ წყალში ჩადე. ადუღებიდან 9 წუთი ხარშე, მერე ცივ წყალში გააციე და გაფცქვენი.","სალათი: კიტრი, პომიდორი, ცოტა ხახვი, მწვანილი, მარილი და ლიმონი. ზეთის გარეშე.","200 გ ხაჭოს მარილი და დაჭრილი მწვანილი გაურიე, ან ცარიელი შეჭამე.","გვერდით 1 ნაჭერი პური."],"ყველაზე სწრაფი ვახშამია: დაღლილ დღეს გამოიყენე."],
+  D4:["~2 სთ ლობიო (prep) + 15 წთ",["ლობიო: 75 გ მშრალი ლობიო წინა ღამით ცივ წყალში დაალბე.","გარეცხე, ახალი წყალი დაასხი და 1–1.5 საათი ხარშე, სანამ არ დარბილდება. მარილი მხოლოდ ბოლოს.","წყლის ნაწილი გადაწურე. დაუმატე დაჭრილი ხახვი, ნიორი, ქინძი, უცხო სუნელი და წითელი წიწაკა. ნახევარი ლობიო ოდნავ დანაყე.","ქათამი: 150 გ მკერდი გაანახევრე სისქეში, მარილი და პაპრიკა. გრილ-ტაფაზე, სპრეით, 5–6 წუთი თითო მხარეს.","თეფშზე 150 გ ლობიო, ქათამი, სალათი და 150 გ მაწონი."],"ლობიო 2 ვახშმისთვის ერთად მოხარშე: ნახევარი საყინულეში 2–3 თვე ძლებს."]
+};
+for (const k in HOW) { M[k].time = HOW[k][0]; M[k].steps = HOW[k][1]; M[k].tip = HOW[k][2]; }
+const open = new Set();
+
+const WEEK = [["B1","L1","D2"],["B2","L2","D1"],["B3","L3","D4"],["B1","L4","D3"],["B2","L1","D1"],["B3","L2","D2"],["B1","L3","D4"]];
+const DAYN = ["ორშაბათი","სამშაბათი","ოთხშაბათი","ხუთშაბათი","პარასკევი","შაბათი","კვირა"];
+const DAYS = ["ორშ","სამ","ოთხ","ხუთ","პარ","შაბ","კვ"];
+const WEEKS = [{label:"12–18 ოქტ",start:12},{label:"19–25 ოქტ",start:19},{label:"26–31 ოქტ",start:26}];
+
+const store = {
+  get(k){try{return JSON.parse(localStorage.getItem(k))}catch(e){return null}},
+  set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
+};
+
+const now = new Date();
+let w = 0, d = 0, todayW = -1, todayD = -1;
+if (now.getFullYear()===2026 && (now.getMonth()===9 && now.getDate()>=12 || now.getMonth()===10 && now.getDate()===1)) {
+  const day = now.getMonth()===10 ? 32 : now.getDate();
+  todayW = Math.min(2, Math.floor((day-12)/7)); todayD = (day-12) - todayW*7;
+  w = todayW; d = todayD;
+}
+
+function dateOf(wi, di){ const n = WEEKS[wi].start + di; return n>31 ? {n:n-31,out:true} : {n,out:false}; }
+
+function renderWeeks(){
+  const el = document.getElementById("weeks"); el.innerHTML="";
+  WEEKS.forEach((x,i)=>{ const b=document.createElement("button"); b.type="button"; b.id="wk"+i;
+    b.textContent="კვირა "+(i+1)+" · "+x.label; b.setAttribute("aria-pressed", i===w);
+    b.onclick=()=>{w=i; if(w===2&&d===6) d=5; render();}; el.appendChild(b); });
+}
+function renderDays(){
+  const el = document.getElementById("days"); el.innerHTML="";
+  DAYS.forEach((x,i)=>{ const dt=dateOf(w,i); const b=document.createElement("button"); b.type="button"; b.id="dy"+i;
+    b.innerHTML='<span class="d">'+x+'</span><span class="n">'+dt.n+'</span>';
+    b.setAttribute("aria-pressed", i===d); b.setAttribute("aria-label", DAYN[i]+" "+dt.n+(dt.out?" ნოემბერი":" ოქტომბერი"));
+    if(dt.out) b.classList.add("out");
+    if(w===todayW && i===todayD) b.classList.add("today");
+    b.onclick=()=>{d=i; render();}; el.appendChild(b); });
+}
+function mealHTML(m, cls, i){
+  const isOpen = open.has(i);
+  return '<div class="meal '+(cls||"")+(isOpen?" open":"")+'">'+
+    '<button type="button" class="mhead" id="meal'+i+'" data-i="'+i+'" aria-expanded="'+isOpen+'" aria-controls="mb'+i+'">'+
+      '<span class="mt"><span class="slot">'+m.slot+'</span><span class="mn">'+m.name+'</span></span>'+
+      '<span class="mr"><span class="kc">'+m.k+' კკალ · '+m.p+' გ</span><span class="chev" aria-hidden="true"></span></span>'+
+    '</button>'+
+    '<div class="mbody" id="mb'+i+'"'+(isOpen?"":" hidden")+'>'+
+      '<div class="meta"><span>⏱ '+m.time+'</span><span>'+m.k+' კკალ</span><span>'+m.p+' გ ცილა</span></div>'+
+      '<div class="cols"><div><div class="lbl">ინგრედიენტები</div><ul>'+m.items.map(x=>'<li>'+x+'</li>').join("")+'</ul></div>'+
+      '<div><div class="lbl">მომზადება</div><ol>'+m.steps.map(x=>'<li>'+x+'</li>').join("")+'</ol></div></div>'+
+      '<p class="tip">'+m.tip+'</p>'+
+    '</div></div>';
+}
+function renderDay(){
+  const [b,l,dn] = WEEK[d];
+  const seq = [["10:00",M.PRE,"small"],["12:15",M[b]],["16:00",M[l]],["19:00",M.SHAKE,"small"],["22:30",M[dn]]];
+  document.getElementById("timeline").innerHTML = seq.map(([t,m,c],i)=>'<li><span class="time">'+t+'</span>'+mealHTML(m,c,i)+'</li>').join("");
+  const k = seq.reduce((s,x)=>s+x[1].k,0), p = seq.reduce((s,x)=>s+x[1].p,0);
+  document.getElementById("tk").textContent = k+" / 2000";
+  document.getElementById("tp").textContent = p+" / 180 გ";
+  document.getElementById("bk").style.width = Math.min(100,k/20)+"%";
+  document.getElementById("bp").style.width = Math.min(100,p/1.8)+"%";
+}
+
+const PREPS = [
+  {id:"sun",title:"კვირა · ~2 საათი",sub:"ორშაბათი–ოთხშაბათისთვის",items:[
+    "ქათმის მკერდი ~700 გ ღუმელში (200°C, 20–25 წთ): ორშაბათის სადილი 200 გ, ჩაშუშული 200 გ, ოთხშაბათის ვახშამი 150 გ, რულეტისთვის ~135 გ",
+    "ბრინჯი, წიწიბურა, მაკარონი — 70 გ თითო",
+    "საქონლის ჩაშუშული (170 გ) პომიდვრით, წიწაკით, ხახვით",
+    "საქონლის ბოლონეზე (170 გ ფარში + პასატა)",
+    "ლობიო: 75 გ მშრალი, ღამით დაალბე და მოხარშე",
+    "ქათმის ჩაშუშული ერთ ქვაბში",
+    "დაყავი კონტეინერებში, დააწერე დღე"]},
+  {id:"wed",title:"ოთხშაბათი · ~1.5 საათი",sub:"ხუთშაბათი–კვირისთვის",items:[
+    "ქათმის ბარკალი 200 გ + კარტოფილი 300 გ ღუმელში, ხუთშაბათისთვის",
+    "ქათმის მკერდი ~700 გ: პარასკევის სადილი 200 გ, შაბათის ჩაშუშული 200 გ, კვირის ვახშამი 150 გ, რულეტისთვის ~135 გ",
+    "ბრინჯი, წიწიბურა, მაკარონი — 70 გ თითო",
+    "საქონლის ჩაშუშული და ბოლონეზე შაბათ-კვირისთვის, საყინულეში",
+    "ლობიო: 75 გ მშრალი, კვირის ვახშმისთვის"]}
+];
+const SHOP = [
+  ["ხორცი და თევზი",[["ქათმის მკერდი","1.4 კგ",25],["ქათმის ბარკალი, ტყავის გარეშე","200 გ",3],["უცხიმო საქონლის ხორცი","350 გ",12],["უცხიმო საქონლის ფარში (≤5%)","350 გ",9],["ორაგული","300 გ",18]]],
+  ["კვერცხი და რძის ნაწარმი",[["კვერცხი","30 ცალი",17],["ხაჭო 2–5%","1 კგ",16],["მაწონი","1 კგ",8],["რძე 1.5%","2.5 ლ",13]]],
+  ["მარცვლეული და ცომეული",[["ბრინჯი","150 გ",1],["წიწიბურა","150 გ",1],["მაკარონი","150 გ",1],["კარტოფილი","700 გ",1.5],["მთლიანმარცვლოვანი პური","1 ცალი",3.5],["ლავაში","2 ცალი",3],["მშრალი წითელი ლობიო","150 გ",1.5]]],
+  ["ხილი და ბოსტნეული",[["ბანანი","10 ცალი",8],["პომიდორი","1.5 კგ",10],["კიტრი","1 კგ",5],["ბულგარული წიწაკა","4 ცალი",4],["ხახვი","4 ცალი",1],["ბროკოლი ან მწვანე ლობიო","500 გ",6],["ისპანახი ან სოკო","300 გ",4],["მწვანილი, ნიორი, ლიმონი","",5]]],
+  ["სხვა",[["პომიდვრის პასატა","300 გ",4],["ნიგოზი","30 გ",1.5],["ზეთი, სპრეი, თაფლი, სანელებლები (კვირის წილი)","",3]]]
+];
+const SHOP_TOTAL = SHOP.reduce((s,[,items])=>s+items.reduce((a,x)=>a+x[2],0),0);
+const fmtL = n => "~"+(Math.round(n*2)/2)+" ₾";
+
+function checks(key, list, grouped){
+  const st = store.get(key) || {};
+  const ul = document.createElement("ul"); ul.className="checks";
+  const add=(txt,q,id,price)=>{ const li=document.createElement("li"); const lab=document.createElement("label");
+    const cb=document.createElement("input"); cb.type="checkbox"; cb.id=key+"_"+id; cb.checked=!!st[id];
+    cb.onchange=()=>{ st[id]=cb.checked; store.set(key,st); };
+    const s=document.createElement("span"); s.textContent=txt; lab.append(cb,s);
+    const qq=document.createElement("span"); qq.className="q"; qq.textContent=(q||"")+(price!=null?(q?" · ":"")+fmtL(price):""); lab.append(qq);
+    li.append(lab); ul.append(li); };
+  if(grouped){ let n=0; list.forEach(([g,items])=>{ const h=document.createElement("li"); h.className="group"; h.textContent=g; ul.append(h); items.forEach(([t,q,pr])=>add(t,q,n++,pr)); }); }
+  else list.forEach((t,i)=>add(t,"",i));
+  return ul;
+}
+function renderPreps(){
+  const el=document.getElementById("preps"); el.innerHTML="";
+  PREPS.forEach(p=>{ const c=document.createElement("div"); c.className="card";
+    c.innerHTML='<div><h3>'+p.title+'</h3><p class="note">'+p.sub+'</p></div>';
+    c.append(checks("prep_w"+w+"_"+p.id, p.items)); el.append(c); });
+}
+function renderShop(){
+  const old=document.getElementById("shoplist"); const nu=checks("shop_w"+w, SHOP, true); nu.id="shoplist"; old.replaceWith(nu);
+  document.querySelector("#shop h2").textContent = "საყიდლები: კვირა "+(w+1);
+  const t = w===2 ? SHOP_TOTAL*6/7 : SHOP_TOTAL;
+  document.getElementById("shopTotal").textContent = "~"+(Math.round(t/5)*5)+" ₾";
+  document.getElementById("shopRange").textContent = (Math.round(t*0.9/5)*5)+"–"+(Math.round(t*1.1/5)*5)+" ₾"+(w===2?" · 6 დღე (26–31)":" · 7 დღე");
+}
+document.getElementById("shopReset").onclick=()=>{ store.set("shop_w"+w,{}); renderShop(); };
+
+document.getElementById("timeline").addEventListener("click", e=>{
+  const btn = e.target.closest(".mhead"); if(!btn) return;
+  const i = +btn.dataset.i; const card = btn.parentElement; const body = card.querySelector(".mbody");
+  const nowOpen = !open.has(i);
+  if(nowOpen) open.add(i); else open.delete(i);
+  btn.setAttribute("aria-expanded", nowOpen); body.hidden = !nowOpen; card.classList.toggle("open", nowOpen);
+});
+function render(){ renderWeeks(); renderDays(); renderDay(); renderPreps(); renderShop(); }
+render();
+
+/* ---------- წონის კონტროლი ---------- */
+const START = 110, GOAL = 98, HEIGHT = 1.85, START_DATE = "2026-10-11";
+let entries = [];          // [{date:"YYYY-MM-DD", kg:Number}], sorted asc
+let wdb = null;
+const iso = dt => dt.getFullYear()+"-"+String(dt.getMonth()+1).padStart(2,"0")+"-"+String(dt.getDate()).padStart(2,"0");
+const parseD = s => { const [y,m,dd]=s.split("-").map(Number); return new Date(y,m-1,dd); };
+const dayDiff = (a,b) => Math.round((parseD(b)-parseD(a))/864e5);
+const MON = ["იან","თებ","მარ","აპრ","მაი","ივნ","ივლ","აგვ","სექ","ოქტ","ნოე","დეკ"];
+const fmtD = s => { const d=parseD(s); return d.getDate()+" "+MON[d.getMonth()]; };
+const f1 = n => (Math.round(n*10)/10).toFixed(1);
+const sign = n => (n>0?"+":n<0?"−":"±")+f1(Math.abs(n));
+
+document.getElementById("wdate").value = iso(new Date());
+
+function setEntries(list){
+  const map = new Map();
+  list.forEach(e=>{ if(e && /^\d{4}-\d{2}-\d{2}$/.test(e.date) && isFinite(e.kg) && e.kg>30 && e.kg<300) map.set(e.date, +e.kg); });
+  entries = [...map].map(([date,kg])=>({date,kg})).sort((a,b)=>a.date<b.date?-1:1);
+  renderWeights();
+}
+function avgWindow(endDate, days){
+  const xs = entries.filter(e=>{ const k=dayDiff(e.date,endDate); return k>=0 && k<days; });
+  return xs.length ? xs.reduce((s,e)=>s+e.kg,0)/xs.length : null;
+}
+function slopePerWeek(){
+  if(entries.length<2) return null;
+  const last = entries[entries.length-1].date;
+  const xs = entries.filter(e=>dayDiff(e.date,last)<14);
+  const pts = (xs.length>=2?xs:entries).map(e=>[dayDiff(START_DATE,e.date), e.kg]);
+  if(pts.length<2) return null;
+  const n=pts.length, mx=pts.reduce((s,p)=>s+p[0],0)/n, my=pts.reduce((s,p)=>s+p[1],0)/n;
+  const den=pts.reduce((s,p)=>s+(p[0]-mx)**2,0); if(!den) return null;
+  return pts.reduce((s,p)=>s+(p[0]-mx)*(p[1]-my),0)/den*7;
+}
+function stat(label, value, sub, cls){ return '<div class="st'+(cls?" "+cls:"")+'"><span class="sl">'+label+'</span><b class="sv num">'+value+'</b>'+(sub?'<span class="ss">'+sub+'</span>':'')+'</div>'; }
+
+function renderWeights(){
+  const S = document.getElementById("wstats");
+  if(!entries.length){
+    S.innerHTML = stat("საწყისი", f1(START)+" კგ", "11 ოქტომბერი") + stat("მიზანი", GOAL+" კგ", "დარჩა "+f1(START-GOAL)+" კგ") + stat("BMI", f1(START/HEIGHT**2), "185 სმ");
+    S.insertAdjacentHTML("beforeend",'<p class="note empty">პირველი ჩანაწერის მერე აქ გამოჩნდება დაკლებული კილოგრამები, კვირის საშუალო, ტემპი და პროგნოზი.</p>');
+  } else {
+    const last = entries[entries.length-1], cur = last.kg;
+    const lost = START-cur, left = cur-GOAL;
+    const pct = Math.max(0,Math.min(100,(START-cur)/(START-GOAL)*100));
+    const a7 = avgWindow(last.date,7), prevEnd = iso(new Date(parseD(last.date).getTime()-7*864e5)), a7p = avgWindow(prevEnd,7);
+    const rate = slopePerWeek();
+    let eta = "საჭიროა 2+ ჩანაწერი", etaSub = "";
+    if(rate!=null){
+      if(left<=0){ eta="მიღწეულია"; }
+      else if(rate<-0.05){ const days=Math.ceil(left/(-rate)*7); const d=new Date(parseD(last.date).getTime()+days*864e5); eta=d.getDate()+" "+MON[d.getMonth()]; etaSub=(d.getFullYear()!==2026?d.getFullYear()+" · ":"")+"ახლანდელი ტემპით"; }
+      else { eta="—"; etaSub="წონა არ იკლებს"; }
+    }
+    const rateCls = rate==null?"":rate<=-1.3?"warn":rate<=-0.5?"good":"warn";
+    const rateSub = rate==null?"საჭიროა 2+ ჩანაწერი":rate<=-1.3?"ძალიან სწრაფია, კუნთს ზიანდება":rate<=-0.5?"ნორმაშია (0.5–1.2)":"ნელია: შეამოწმე ზეთი და პორციები";
+    S.innerHTML =
+      stat("ახლანდელი", f1(cur)+" კგ", fmtD(last.date)) +
+      stat("სულ დაკლებული", sign(-lost).replace("+","+")+" კგ", Math.round(pct)+"% მიზნამდე", lost>0?"good":"") +
+      stat("დარჩა მიზნამდე", left>0?f1(left)+" კგ":"0", "მიზანი "+GOAL+" კგ") +
+      stat("7-დღიანი საშუალო", a7!=null?f1(a7)+" კგ":"—", a7!=null&&a7p!=null?sign(a7-a7p)+" წინა კვირასთან":"წინა კვირა ჯერ არ არის") +
+      stat("კვირის ტემპი", rate!=null?sign(rate)+" კგ":"—", rateSub, rateCls) +
+      stat("პროგნოზი 98 კგ", eta, etaSub) +
+      stat("BMI", f1(cur/HEIGHT**2), "საწყისი "+f1(START/HEIGHT**2)) +
+      stat("ჩანაწერები", String(entries.length), "პირველი "+fmtD(entries[0].date));
+    S.insertAdjacentHTML("beforeend",'<div class="prog" aria-hidden="true"><i style="width:'+pct+'%"></i></div>');
+  }
+  renderChart(); renderTable();
+}
+
+function renderTable(){
+  const T = document.getElementById("wtable");
+  if(!entries.length){ T.innerHTML='<tr><td class="note">ჩანაწერები ჯერ არ არის.</td></tr>'; return; }
+  const rows = entries.slice().reverse().map((e,i,arr)=>{
+    const prev = arr[i+1]; const ch = prev? e.kg-prev.kg : e.kg-START;
+    return '<tr><td>'+fmtD(e.date)+'</td><td class="num">'+f1(e.kg)+'</td><td class="num '+(ch<0?"down":ch>0?"up":"")+'">'+sign(ch)+'</td><td><button type="button" class="del" data-date="'+e.date+'" aria-label="წაშლა '+fmtD(e.date)+'">წაშლა</button></td></tr>';
+  }).join("");
+  T.innerHTML='<thead><tr><th>თარიღი</th><th>კგ</th><th>ცვლილება</th><th></th></tr></thead><tbody>'+rows+'</tbody>';
+}
+
+function renderChart(){
+  const svg = document.getElementById("wchart"), box = document.getElementById("chartwrap");
+  const W = Math.max(300, box.clientWidth||600), H = 240, m = {l:40,r:14,t:12,b:26};
+  svg.setAttribute("viewBox","0 0 "+W+" "+H); svg.setAttribute("width",W); svg.setAttribute("height",H);
+  const end = entries.length ? (entries[entries.length-1].date > "2026-10-31" ? entries[entries.length-1].date : "2026-10-31") : "2026-10-31";
+  const span = Math.max(7, dayDiff(START_DATE,end));
+  const vals = entries.map(e=>e.kg).concat([START,GOAL]);
+  let lo = Math.floor(Math.min(...vals)-1), hi = Math.ceil(Math.max(...vals)+1);
+  const x = d => m.l + dayDiff(START_DATE,d)/span*(W-m.l-m.r);
+  const y = v => m.t + (hi-v)/(hi-lo)*(H-m.t-m.b);
+  let g = "";
+  const step = (hi-lo)>12?4:2;
+  for(let v=Math.ceil(lo/step)*step; v<=hi; v+=step){ g+='<line class="grid" x1="'+m.l+'" x2="'+(W-m.r)+'" y1="'+y(v)+'" y2="'+y(v)+'"/><text class="ax" x="'+(m.l-6)+'" y="'+(y(v)+4)+'" text-anchor="end">'+v+'</text>'; }
+  const tickEvery = span>40?14:7;
+  for(let k=0;k<=span;k+=tickEvery){ const d=iso(new Date(parseD(START_DATE).getTime()+k*864e5)); g+='<text class="ax" x="'+x(d)+'" y="'+(H-8)+'" text-anchor="middle">'+fmtD(d)+'</text>'; }
+  g+='<line class="goalline" x1="'+m.l+'" x2="'+(W-m.r)+'" y1="'+y(GOAL)+'" y2="'+y(GOAL)+'"/>';
+  // start marker
+  g+='<circle class="startpt" cx="'+x(START_DATE)+'" cy="'+y(START)+'" r="4"/>';
+  // 7-day rolling average
+  if(entries.length>=2){
+    const pts = entries.map(e=>{ const a=avgWindow(e.date,7); return x(e.date).toFixed(1)+","+y(a).toFixed(1); });
+    g+='<polyline class="avgline" points="'+pts.join(" ")+'"/>';
+  }
+  entries.forEach((e,i)=>{ g+='<circle class="wpt" cx="'+x(e.date)+'" cy="'+y(e.kg)+'" r="4.5"/><circle class="hit" data-i="'+i+'" cx="'+x(e.date)+'" cy="'+y(e.kg)+'" r="14"/>'; });
+  if(!entries.length) g+='<text class="ax" x="'+(W/2)+'" y="'+(H/2)+'" text-anchor="middle">შეიყვანე პირველი წონა</text>';
+  else { const l=entries[entries.length-1]; g+='<text class="endlbl" x="'+Math.min(x(l.date)+8,W-m.r-30)+'" y="'+(y(l.kg)-10)+'">'+f1(l.kg)+'</text>'; }
+  svg.innerHTML = g;
+}
+(function(){
+  const box=document.getElementById("chartwrap"), tip=document.getElementById("ctip");
+  box.addEventListener("pointerover", e=>{ const c=e.target.closest(".hit"); if(!c) return; const en=entries[+c.dataset.i]; if(!en) return;
+    const a=avgWindow(en.date,7);
+    tip.innerHTML='<b>'+fmtD(en.date)+'</b><span>'+f1(en.kg)+' კგ</span><span class="muted">საშუალო '+f1(a)+'</span>';
+    tip.hidden=false; const r=box.getBoundingClientRect(), cr=c.getBoundingClientRect();
+    tip.style.left=Math.min(r.width-130, Math.max(0, cr.left-r.left-50))+"px"; tip.style.top=Math.max(0, cr.top-r.top-62)+"px"; });
+  box.addEventListener("pointerleave", ()=>{ tip.hidden=true; });
+  let rt; window.addEventListener("resize", ()=>{ clearTimeout(rt); rt=setTimeout(renderChart,150); });
+})();
+
+function localLoad(){ setEntries(store.get("weights")||[]); }
+function localSave(){ store.set("weights", entries); }
+function status(t){ document.getElementById("wstatus").textContent=t; }
+
+document.getElementById("wform").addEventListener("submit", async e=>{
+  e.preventDefault();
+  const date=document.getElementById("wdate").value, kg=parseFloat(String(document.getElementById("wkg").value).replace(",","."));
+  if(!date){ status("აირჩიე თარიღი."); return; }
+  if(!isFinite(kg)||kg<40||kg>250){ status("შეიყვანე წონა 40-დან 250 კგ-მდე, მაგალითად 109.4."); return; }
+  const v = Math.round(kg*10)/10;
+  if(wdb){
+    try{ await wdb.doc("weights/"+date).set({date, kg:v, at:Date.now()}); status("შენახულია: "+fmtD(date)+", "+f1(v)+" კგ."); document.getElementById("wkg").value=""; return; }
+    catch(err){ status("სერვერზე ვერ შევინახე ("+(err&&err.code||"შეცდომა")+"), ამიტომ ამ ბრაუზერში შევინახე."); }
+  }
+  setEntries(entries.filter(x=>x.date!==date).concat([{date,kg:v}])); localSave();
+  if(!wdb) status("შენახულია ამ ბრაუზერში: "+fmtD(date)+", "+f1(v)+" კგ.");
+  document.getElementById("wkg").value="";
+});
+document.getElementById("wtable").addEventListener("click", async e=>{
+  const b=e.target.closest(".del"); if(!b) return;
+  if(b.dataset.confirm!=="1"){ b.dataset.confirm="1"; b.textContent="დაადასტურე"; setTimeout(()=>{ if(b.isConnected){ b.dataset.confirm=""; b.textContent="წაშლა"; } },3000); return; }
+  const date=b.dataset.date;
+  if(wdb){ try{ await wdb.doc("weights/"+date).delete(); return; }catch(err){ status("წაშლა ვერ მოხერხდა."); return; } }
+  setEntries(entries.filter(x=>x.date!==date)); localSave();
+});
+
+localLoad();
+(async ()=>{
+  try{
+    if(!window.claude || !window.claude.use) return;
+    const db = await window.claude.use("db"); if(!db) return;
+    wdb = db;
+    const local = (store.get("weights")||[]).slice();
+    let migrated = false;
+    db.collection("weights").onSnapshot(snap=>{
+      const list = snap.docs.map(d=>d.data()).filter(Boolean);
+      if(!migrated){ migrated=true;
+        const have=new Set(list.map(x=>x.date));
+        local.filter(x=>!have.has(x.date)).forEach(x=>{ db.doc("weights/"+x.date).set({date:x.date,kg:x.kg,at:Date.now()}).catch(()=>{}); });
+      }
+      setEntries(list.length?list:local);
+      status("ჩანაწერები ინახება შენს ანგარიშზე და ყველა მოწყობილობაზე ჩანს.");
+    }, err=>{ status("ონლაინ შენახვა მიუწვდომელია, ჩანაწერები ამ ბრაუზერში ინახება."); wdb=null; });
+  }catch(e){}
+})();
+</script>
