@@ -1,3 +1,10 @@
+<!doctype html>
+<html lang="ka">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#f2f5f9" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0d131b" media="(prefers-color-scheme: dark)">
 <title>ოქტომბრის კვების გეგმა</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -19,8 +26,9 @@
   --accent:#6f9ef2; --accent-soft:#1a2941; --ball:#d8c824; --ball-ink:#1d1a00; --good:#4cc485; --warn:#e9a25f; color-scheme:dark}
 
 *{box-sizing:border-box}
-body{background:var(--bg);color:var(--fg);font-family:var(--body);font-size:15px;line-height:1.55}
-.wrap{max-width:760px;margin:0 auto;padding-inline:16px;padding-block:28px 64px;display:flex;flex-direction:column;gap:36px}
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+body{margin:0;overflow-wrap:break-word;background:var(--bg);color:var(--fg);font-family:var(--body);font-size:15px;line-height:1.55}
+.wrap{max-width:760px;margin:0 auto;padding-inline:max(16px,env(safe-area-inset-left)) max(16px,env(safe-area-inset-right));padding-block:28px 64px;display:flex;flex-direction:column;gap:36px}
 h1,h2{font-family:var(--display);text-wrap:balance;margin:0;line-height:1.2}
 h1{font-size:clamp(26px,6vw,36px);font-weight:800}
 h2{font-size:21px;font-weight:600}
@@ -91,7 +99,7 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 
 .card{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:12px}
 .checks{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:2px}
-.checks label{display:grid;grid-template-columns:22px 1fr auto;gap:10px;align-items:start;padding:7px 4px;border-radius:6px;cursor:pointer;font-size:14px}
+.checks label{display:grid;grid-template-columns:22px minmax(0,1fr) auto;gap:10px;align-items:start;padding:7px 4px;border-radius:6px;cursor:pointer;font-size:14px}
 .checks label:hover{background:var(--accent-soft)}
 .checks input{margin:3px 0 0;width:16px;height:16px;accent-color:var(--accent)}
 .checks input:checked ~ span{color:var(--muted);text-decoration:line-through}
@@ -149,9 +157,11 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 .shoptotal{display:flex;align-items:baseline;gap:6px 12px;flex-wrap:wrap}
 .shoptotal b{font-size:26px}
 .note{font-size:13px;color:var(--muted)}
-@media (max-width:420px){.days button .d{font-size:11px}.timeline > li{grid-template-columns:44px 1fr;gap:8px}.kc{font-size:12px}}
+@media (max-width:420px){.days button .d{font-size:11px}.checks .q{white-space:normal;text-align:right;max-width:9em}.timeline > li{grid-template-columns:44px 1fr;gap:8px}.kc{font-size:12px}}
 @media (prefers-reduced-motion:no-preference){.bar i{transition:width .3s ease}}
 </style>
+</head>
+<body>
 
 <div class="wrap">
   <header>
@@ -453,7 +463,7 @@ function renderTable(){
 
 function renderChart(){
   const svg = document.getElementById("wchart"), box = document.getElementById("chartwrap");
-  const W = Math.max(300, box.clientWidth||600), H = 240, m = {l:40,r:14,t:12,b:26};
+  const W = Math.max(260, box.clientWidth||600), H = 240, m = {l:40,r:14,t:12,b:26};
   svg.setAttribute("viewBox","0 0 "+W+" "+H); svg.setAttribute("width",W); svg.setAttribute("height",H);
   const end = entries.length ? (entries[entries.length-1].date > "2026-10-31" ? entries[entries.length-1].date : "2026-10-31") : "2026-10-31";
   const span = Math.max(7, dayDiff(START_DATE,end));
@@ -536,3 +546,5 @@ localLoad();
   }catch(e){}
 })();
 </script>
+</body>
+</html>
