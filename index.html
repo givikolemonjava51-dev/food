@@ -308,7 +308,7 @@ dialog.sheet::backdrop{background:rgba(8,12,18,.55)}
     <p class="note" id="wstatus">აიწონე დილით, ტუალეტის შემდეგ და ჭამამდე. იმავე დღის ახალი ჩანაწერი ძველს ჩაანაცვლებს.</p>
     <div class="stats" id="wstats"></div>
     <div class="chartbox">
-      <div class="legend"><span><i class="lg dot"></i>დღიური წონა</span><span><i class="lg line"></i>7-დღიანი საშუალო</span><span><i class="lg goal"></i>მიზანი 98 კგ</span></div>
+      <div class="legend"><span><i class="lg dot"></i>დღიური წონა</span><span><i class="lg line"></i>7-დღიანი საშუალო</span><span><i class="lg goal"></i>მიზანი 106 კგ</span></div>
       <div class="chartwrap" id="chartwrap"><svg id="wchart" role="img" aria-label="წონის დინამიკა"></svg><div class="ctip" id="ctip" hidden></div></div>
     </div>
     <details class="card log"><summary>ყველა ჩანაწერი</summary><div class="tablewrap"><table id="wtable"></table></div></details>
@@ -318,7 +318,7 @@ dialog.sheet::backdrop{background:rgba(8,12,18,.55)}
     <h2>მომზადება: კვირაში ორჯერ</h2>
     <p class="muted">მზა საჭმელი მაცივარში 3–4 დღე ძლებს. შაბათ-კვირის პორციები საყინულეში შედე და წინა საღამოს გადმოიტანე. ორაგული ყოველთვის ახალი მოამზადე, 15 წუთი ღუმელში.</p>
     <div class="grid2" id="preps"></div>
-    <p class="note"><b>პირველი კვირა (12 ოქტომბერი):</b> prep ჯერ არ გაქვს. ორშაბათს დილით იყიდე ყველაფერი, სადილისთვის ქათამი და ბრინჯი მოამზადე სამსახურამდე, დანარჩენი კი ორშაბათ ღამით ან სამშაბათ დილით.</p>
+    <p class="note"><b>პირველი დღე (1 ნოემბერი):</b> კვირაა, ამიტომ დღეს იყიდე პირველი კვირის საყიდლები და საღამოს კვირის prep გააკეთე ორშაბათი–ოთხშაბათისთვის.</p>
   </section>
 
   <section id="shop">
@@ -369,7 +369,7 @@ const open = new Set();
 const WEEK = [["B1","L1","D2"],["B2","L2","D1"],["B3","L3","D4"],["B1","L4","D3"],["B2","L1","D1"],["B3","L2","D2"],["B1","L3","D4"]];
 const DAYN = ["ორშაბათი","სამშაბათი","ოთხშაბათი","ხუთშაბათი","პარასკევი","შაბათი","კვირა"];
 const DAYS = ["ორშ","სამ","ოთხ","ხუთ","პარ","შაბ","კვ"];
-const WEEKS = [{label:"12–18 ოქტ",start:12},{label:"19–25 ოქტ",start:19},{label:"26–31 ოქტ",start:26}];
+const WEEKS = [{label:"1–8 ნოე",start:1,n:8},{label:"9–15 ნოე",start:9,n:7},{label:"16–22 ნოე",start:16,n:7},{label:"23–30 ნოე",start:23,n:8}];
 
 const store = {
   get(k){try{return JSON.parse(localStorage.getItem(k))}catch(e){return null}},
@@ -378,25 +378,27 @@ const store = {
 
 const now = new Date();
 let w = 0, d = 0, todayW = -1, todayD = -1;
-if (now.getFullYear()===2026 && (now.getMonth()===9 && now.getDate()>=12 || now.getMonth()===10 && now.getDate()===1)) {
-  const day = now.getMonth()===10 ? 32 : now.getDate();
-  todayW = Math.min(2, Math.floor((day-12)/7)); todayD = (day-12) - todayW*7;
+if (now.getFullYear()===2026 && now.getMonth()===10) {
+  const day = now.getDate();
+  WEEKS.forEach((x,i)=>{ if(day>=x.start && day<x.start+x.n){ todayW = i; todayD = day-x.start; } });
   w = todayW; d = todayD;
-}
+} else if (now > new Date(2026,10,30)) { w = WEEKS.length-1; d = WEEKS[w].n-1; }
 
-function dateOf(wi, di){ const n = WEEKS[wi].start + di; return n>31 ? {n:n-31,out:true} : {n,out:false}; }
+function dateOf(wi, di){ return {n: WEEKS[wi].start + di, out:false}; }
+function wdOf(wi, di){ return (new Date(2026, 10, WEEKS[wi].start + di).getDay()+6)%7; }
 
 function renderWeeks(){
   const el = document.getElementById("weeks"); el.innerHTML="";
   WEEKS.forEach((x,i)=>{ const b=document.createElement("button"); b.type="button"; b.id="wk"+i;
     b.textContent="კვირა "+(i+1)+" · "+x.label; b.setAttribute("aria-pressed", i===w);
-    b.onclick=()=>{w=i; if(w===2&&d===6) d=5; render();}; el.appendChild(b); });
+    b.onclick=()=>{w=i; if(d>=WEEKS[w].n) d=WEEKS[w].n-1; render();}; el.appendChild(b); });
 }
 function renderDays(){
   const el = document.getElementById("days"); el.innerHTML="";
-  DAYS.forEach((x,i)=>{ const dt=dateOf(w,i); const b=document.createElement("button"); b.type="button"; b.id="dy"+i;
+  el.style.gridTemplateColumns = "repeat("+WEEKS[w].n+",1fr)";
+  Array.from({length:WEEKS[w].n},(_,i)=>{ const x=DAYS[wdOf(w,i)], dt=dateOf(w,i); const b=document.createElement("button"); b.type="button"; b.id="dy"+i;
     b.innerHTML='<span class="d">'+x+'</span><span class="n">'+dt.n+'</span>';
-    b.setAttribute("aria-pressed", i===d); b.setAttribute("aria-label", DAYN[i]+" "+dt.n+(dt.out?" ნოემბერი":" ოქტომბერი"));
+    b.setAttribute("aria-pressed", i===d); b.setAttribute("aria-label", DAYN[wdOf(w,i)]+" "+dt.n+" ნოემბერი");
     if(dt.out) b.classList.add("out");
     if(w===todayW && i===todayD) b.classList.add("today");
     b.onclick=()=>{d=i; render();}; el.appendChild(b); });
@@ -453,7 +455,7 @@ function swapForm(i, m){
 const ADD = 99, EX = 100;
 function nowHM(){ const n = new Date(); return String(n.getHours()).padStart(2,"0")+":"+String(n.getMinutes()).padStart(2,"0"); }
 function renderDay(){
-  const [b,l,dn] = WEEK[d];
+  const [b,l,dn] = WEEK[wdOf(w,d)];
   const sw = store.get("swaps")||{}, dk = dayKey(), ex = (store.get("extras")||{})[dk]||[];
   if(editDay!==dk){ editing = null; swapState = {}; editDay = dk; }
   const seq = [["10:00",M.PRE,"small"],["12:15",M[b]],["16:00",M[l]],["19:00",M.SHAKE,"small"],["22:30",M[dn]]]
@@ -517,20 +519,20 @@ function renderPreps(){
   const el=document.getElementById("preps"); el.innerHTML="";
   PREPS.forEach(p=>{ const c=document.createElement("div"); c.className="card";
     c.innerHTML='<div><h3>'+p.title+'</h3><p class="note">'+p.sub+'</p></div>';
-    c.append(checks("prep_w"+w+"_"+p.id, p.items)); el.append(c); });
+    c.append(checks("prep_nov"+w+"_"+p.id, p.items)); el.append(c); });
 }
 function renderShop(){
-  const old=document.getElementById("shoplist"); const nu=checks("shop_w"+w, SHOP, true); nu.id="shoplist"; old.replaceWith(nu);
+  const old=document.getElementById("shoplist"); const nu=checks("shop_nov"+w, SHOP, true); nu.id="shoplist"; old.replaceWith(nu);
   document.querySelector("#shop h2").textContent = "საყიდლები: კვირა "+(w+1);
-  const t = w===2 ? SHOP_TOTAL*6/7 : SHOP_TOTAL;
+  const nd = WEEKS[w].n, t = SHOP_TOTAL*nd/7;
   document.getElementById("shopTotal").textContent = "~"+(Math.round(t/5)*5)+" ₾";
-  document.getElementById("shopRange").textContent = (Math.round(t*0.9/5)*5)+"–"+(Math.round(t*1.1/5)*5)+" ₾"+(w===2?" · 6 დღე (26–31)":" · 7 დღე");
+  document.getElementById("shopRange").textContent = (Math.round(t*0.9/5)*5)+"–"+(Math.round(t*1.1/5)*5)+" ₾"+" · "+nd+" დღე ("+WEEKS[w].label+")";
 }
-document.getElementById("shopReset").onclick=()=>{ store.set("shop_w"+w,{}); renderShop(); };
+document.getElementById("shopReset").onclick=()=>{ store.set("shop_nov"+w,{}); renderShop(); };
 
 /* ---------- ჩანაცვლება: ხელით ჩაწერა + AI კალორიები (/api/estimate) ---------- */
 let editing = null, editDay = ""; let swapState = {};
-function dayKey(){ const dt = dateOf(w,d); return "2026-"+(dt.out?"11":"10")+"-"+String(dt.n).padStart(2,"0"); }
+function dayKey(){ const dt = dateOf(w,d); return "2026-11-"+String(dt.n).padStart(2,"0"); }
 function saveSwap(day, i, v){ const sw = store.get("swaps")||{}; const k = day+"|"+i; if(v) sw[k]=v; else delete sw[k]; store.set("swaps", sw); }
 function saveExtras(day, fn){ const all = store.get("extras")||{}; const list = fn((all[day]||[]).slice()); if(list.length) all[day]=list; else delete all[day]; store.set("extras", all); }
 const SWAP_ERR = {no_key:"AI ჯერ არ არის ჩართული: Vercel-ში ANTHROPIC_API_KEY არ არის დამატებული.", bad_key:"Anthropic API გასაღები არასწორია. შეამოწმე Vercel-ის პარამეტრებში.",
@@ -820,7 +822,7 @@ const FIT_CLIENT = "719474909279-11vl50k33mvjh1f4e4ohs13qf99h7243.apps.googleuse
 const FIT_SCOPE = "https://www.googleapis.com/auth/googlehealth.activity_and_fitness.readonly";
 let fitTok = store.get("fit_tok"), fitClient = null, fitBusy = false, fitErr = "", fitPlanK = 0;
 const fitCache = store.get("fit_cache") || {};
-function fitDate(){ const dt = dateOf(w,d); return new Date(2026, dt.out?10:9, dt.n); }
+function fitDate(){ const dt = dateOf(w,d); return new Date(2026, 10, dt.n); }
 const isoF = dt => dt.getFullYear()+"-"+String(dt.getMonth()+1).padStart(2,"0")+"-"+String(dt.getDate()).padStart(2,"0");
 const fitValid = () => fitTok && fitTok.exp > Date.now()+60000;
 function loadGis(){
@@ -882,7 +884,7 @@ function renderFit(planK){
   } else if(c && c.kcal==null) body = '<p class="note">ამ დღისთვის Fitbit-ში მონაცემი არ არის.</p>';
   else if(fitBusy) body = '<p class="note">იტვირთება…</p>';
   else if(!fitValid()) body = '<p class="note">სესიას ვადა გაუვიდა. დააჭირე „განახლებას“.</p>';
-  el.innerHTML = '<div class="fhead"><b>⌚ Fitbit · '+day.getDate()+' '+(day.getMonth()===9?"ოქტ":"ნოე")+'</b>'+
+  el.innerHTML = '<div class="fhead"><b>⌚ Fitbit · '+day.getDate()+' '+"ნოე"+'</b>'+
     (key<=today ? '<button type="button" class="fbtn ghost" data-fit="refresh">'+(fitBusy?"…":"განახლება")+'</button>' : '')+'</div>'+
     body + (fitErr?'<p class="note">'+esc(fitErr)+'</p>':'');
   if(key<=today && !fitBusy && fitValid() && !(c && (c.final || Date.now()-c.at<5*60000))) fitFetch();
@@ -895,7 +897,7 @@ document.getElementById("fit").addEventListener("click", e=>{
 render();
 
 /* ---------- წონის კონტროლი ---------- */
-const START = 110, GOAL = 98, HEIGHT = 1.85, START_DATE = "2026-10-11";
+const START = 112.5, GOAL = 106, HEIGHT = 1.85, START_DATE = "2026-11-01", END_DATE = "2026-11-30";
 let entries = [];          // [{date:"YYYY-MM-DD", kg:Number}], sorted asc
 let wdb = null;
 const iso = dt => dt.getFullYear()+"-"+String(dt.getMonth()+1).padStart(2,"0")+"-"+String(dt.getDate()).padStart(2,"0");
@@ -933,7 +935,7 @@ function stat(label, value, sub, cls){ return '<div class="st'+(cls?" "+cls:"")+
 function renderWeights(){
   const S = document.getElementById("wstats");
   if(!entries.length){
-    S.innerHTML = stat("საწყისი", f1(START)+" კგ", "11 ოქტომბერი") + stat("მიზანი", GOAL+" კგ", "დარჩა "+f1(START-GOAL)+" კგ") + stat("BMI", f1(START/HEIGHT**2), "185 სმ");
+    S.innerHTML = stat("საწყისი", f1(START)+" კგ", "1 ნოემბერი") + stat("მიზანი", GOAL+" კგ", "დარჩა "+f1(START-GOAL)+" კგ") + stat("BMI", f1(START/HEIGHT**2), "185 სმ");
     S.insertAdjacentHTML("beforeend",'<p class="note empty">პირველი ჩანაწერის მერე აქ გამოჩნდება დაკლებული კილოგრამები, კვირის საშუალო, ტემპი და პროგნოზი.</p>');
   } else {
     const last = entries[entries.length-1], cur = last.kg;
@@ -955,7 +957,7 @@ function renderWeights(){
       stat("დარჩა მიზნამდე", left>0?f1(left)+" კგ":"0", "მიზანი "+GOAL+" კგ") +
       stat("7-დღიანი საშუალო", a7!=null?f1(a7)+" კგ":"—", a7!=null&&a7p!=null?sign(a7-a7p)+" წინა კვირასთან":"წინა კვირა ჯერ არ არის") +
       stat("კვირის ტემპი", rate!=null?sign(rate)+" კგ":"—", rateSub, rateCls) +
-      stat("პროგნოზი 98 კგ", eta, etaSub) +
+      stat("პროგნოზი "+GOAL+" კგ", eta, etaSub) +
       stat("BMI", f1(cur/HEIGHT**2), "საწყისი "+f1(START/HEIGHT**2)) +
       stat("ჩანაწერები", String(entries.length), "პირველი "+fmtD(entries[0].date));
     S.insertAdjacentHTML("beforeend",'<div class="prog" aria-hidden="true"><i style="width:'+pct+'%"></i></div>');
@@ -977,17 +979,18 @@ function renderChart(){
   const svg = document.getElementById("wchart"), box = document.getElementById("chartwrap");
   const W = Math.max(260, box.clientWidth||600), H = 240, m = {l:40,r:14,t:12,b:26};
   svg.setAttribute("viewBox","0 0 "+W+" "+H); svg.setAttribute("width",W); svg.setAttribute("height",H);
-  const end = entries.length ? (entries[entries.length-1].date > "2026-10-31" ? entries[entries.length-1].date : "2026-10-31") : "2026-10-31";
-  const span = Math.max(7, dayDiff(START_DATE,end));
+  const end = entries.length && entries[entries.length-1].date > END_DATE ? entries[entries.length-1].date : END_DATE;
+  const c0 = entries.length && entries[0].date < START_DATE ? entries[0].date : START_DATE;
+  const span = Math.max(7, dayDiff(c0,end));
   const vals = entries.map(e=>e.kg).concat([START,GOAL]);
   let lo = Math.floor(Math.min(...vals)-1), hi = Math.ceil(Math.max(...vals)+1);
-  const x = d => m.l + dayDiff(START_DATE,d)/span*(W-m.l-m.r);
+  const x = d => m.l + dayDiff(c0,d)/span*(W-m.l-m.r);
   const y = v => m.t + (hi-v)/(hi-lo)*(H-m.t-m.b);
   let g = "";
   const step = (hi-lo)>12?4:2;
   for(let v=Math.ceil(lo/step)*step; v<=hi; v+=step){ g+='<line class="grid" x1="'+m.l+'" x2="'+(W-m.r)+'" y1="'+y(v)+'" y2="'+y(v)+'"/><text class="ax" x="'+(m.l-6)+'" y="'+(y(v)+4)+'" text-anchor="end">'+v+'</text>'; }
   const tickEvery = span>40?14:7;
-  for(let k=0;k<=span;k+=tickEvery){ const d=iso(new Date(parseD(START_DATE).getTime()+k*864e5)); g+='<text class="ax" x="'+x(d)+'" y="'+(H-8)+'" text-anchor="middle">'+fmtD(d)+'</text>'; }
+  for(let k=0;k<=span;k+=tickEvery){ const d=iso(new Date(parseD(c0).getTime()+k*864e5)); g+='<text class="ax" x="'+x(d)+'" y="'+(H-8)+'" text-anchor="middle">'+fmtD(d)+'</text>'; }
   g+='<line class="goalline" x1="'+m.l+'" x2="'+(W-m.r)+'" y1="'+y(GOAL)+'" y2="'+y(GOAL)+'"/>';
   // start marker
   g+='<circle class="startpt" cx="'+x(START_DATE)+'" cy="'+y(START)+'" r="4"/>';
