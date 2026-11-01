@@ -101,6 +101,25 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 @keyframes mopen{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
 @media (prefers-reduced-motion:reduce){.meal,.chev{transition:none}}
 
+/* ჩანაცვლება: what I actually ate instead of the planned meal */
+.mrow{display:flex;align-items:stretch}
+.mrow .mhead{flex:1 1 auto;min-width:0}
+.swapbtn{font:inherit;font-size:13px;color:var(--accent);background:none;border:0;border-left:1px solid var(--line);padding:0 12px;cursor:pointer;flex-shrink:0;border-radius:0 12px 12px 0}
+.swapbtn:hover{background:var(--accent-soft)}
+.meal.swapped{border-color:var(--good);border-style:solid}
+.meal.swapped .slot::after{content:" · ჩანაცვლებული";color:var(--good);font-weight:600}
+.swapform{display:flex;flex-direction:column;gap:8px}
+.swapform textarea{font:inherit;font-size:16px;width:100%;min-height:84px;resize:vertical;color:var(--fg);background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:10px 12px}
+.swapform textarea:focus-visible{outline:2px solid var(--accent);outline-offset:1px;border-color:var(--accent)}
+.sbtns{display:flex;gap:8px;flex-wrap:wrap}
+.sbtn{font:inherit;font-size:14px;font-weight:600;color:#fff;background:var(--accent);border:0;border-radius:999px;padding:8px 16px;cursor:pointer}
+.sbtn.ghost{color:var(--accent);background:var(--accent-soft)}
+.sbtn[disabled]{opacity:.6;cursor:progress}
+.ate{font-size:14px;background:var(--accent-soft);border-radius:10px;padding:8px 12px}
+.sitems{list-style:none!important;padding:0!important}
+.sitems li{display:flex;justify-content:space-between;gap:10px;border-bottom:1px dashed var(--line);padding-bottom:4px}
+.sitems .q{font-family:var(--mono);font-size:13px;color:var(--muted);white-space:nowrap}
+.serr{font-size:13px;color:var(--warn)}
 .card{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:12px}
 .checks{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:2px}
 .checks label{display:grid;grid-template-columns:22px minmax(0,1fr) auto;gap:10px;align-items:start;padding:7px 4px;border-radius:6px;cursor:pointer;font-size:14px}
@@ -256,7 +275,7 @@ dialog.sheet::backdrop{background:rgba(8,12,18,.55)}
     </div>
     <div class="fit" id="fit"></div>
     <ol class="timeline" id="timeline"></ol>
-    <p class="note">დააჭირე კერძს, რომ ნახო ინგრედიენტები და მომზადება ნაბიჯ-ნაბიჯ. ყველა წონა უმი პროდუქტისაა (ხორცი, ბრინჯი, წიწიბურა, მაკარონი), სხვაგვარად თუ არ წერია. ზეთი კოვზით გაზომე.</p>
+    <p class="note">დააჭირე კერძს, რომ ნახო ინგრედიენტები და მომზადება ნაბიჯ-ნაბიჯ. თუ სხვა რამე ჭამე, დააჭირე ✎-ს, ჩაწერე და AI დაითვლის კალორიებს. ყველა წონა უმი პროდუქტისაა (ხორცი, ბრინჯი, წიწიბურა, მაკარონი), სხვაგვარად თუ არ წერია. ზეთი კოვზით გაზომე.</p>
   </section>
 
   <section id="recipes">
@@ -373,24 +392,51 @@ function renderDays(){
     b.onclick=()=>{d=i; render();}; el.appendChild(b); });
 }
 function mealHTML(m, cls, i){
-  const isOpen = open.has(i);
-  return '<div class="meal '+(cls||"")+(isOpen?" open":"")+'">'+
+  const isOpen = open.has(i) || editing===i;
+  const sw = m.swapped;
+  return '<div class="meal '+(cls||"")+(isOpen?" open":"")+(sw?" swapped":"")+'"><div class="mrow">'+
     '<button type="button" class="mhead" id="meal'+i+'" data-i="'+i+'" aria-expanded="'+isOpen+'" aria-controls="mb'+i+'">'+
-      (m.img?'<span class="ph mthumb"><img src="'+IMG(m.img,120,120)+'" alt="" loading="lazy" decoding="async" onerror="imgFail(this)"></span>':'')+
-      '<span class="mt"><span class="slot">'+m.slot+'</span><span class="mn">'+m.name+'</span><span class="kc">🔥 '+m.k+' კკალ · '+m.p+' გ ცილა</span></span>'+
+      (m.img&&!sw?'<span class="ph mthumb"><img src="'+IMG(m.img,120,120)+'" alt="" loading="lazy" decoding="async" onerror="imgFail(this)"></span>':'')+
+      '<span class="mt"><span class="slot">'+m.slot+'</span><span class="mn">'+esc(m.name)+'</span><span class="kc">🔥 '+m.k+' კკალ · '+m.p+' გ ცილა</span></span>'+
       '<span class="mr"><span class="chev" aria-hidden="true"></span></span>'+
     '</button>'+
+    (editing===i?'':'<button type="button" class="swapbtn" data-swap="'+i+'" aria-label="'+m.slot+': სხვა რამე ვჭამე">✎<span class="visually-hidden"> ჩანაცვლება</span></button>')+
+    '</div>'+
     '<div class="mbody" id="mb'+i+'"'+(isOpen?"":" hidden")+'>'+
-      (m.img?'<div class="ph mphoto"><img src="'+IMG(m.img,800,450)+'" alt="'+m.name+'" loading="lazy" decoding="async" onerror="imgFail(this)"></div>':'')+
-      '<div class="meta"><span>⏱ '+m.time+'</span><span>'+m.k+' კკალ</span><span>'+m.p+' გ ცილა</span></div>'+
-      '<div class="cols"><div><div class="lbl">ინგრედიენტები</div><ul>'+m.items.map(x=>'<li>'+x+'</li>').join("")+'</ul></div>'+
-      '<div><div class="lbl">მომზადება</div><ol>'+m.steps.map(x=>'<li>'+x+'</li>').join("")+'</ol></div></div>'+
-      '<p class="tip">'+m.tip+'</p>'+
+      (editing===i ? swapForm(i, m) : sw ? swappedBody(i, m) : planBody(m))+
     '</div></div>';
+}
+function planBody(m){
+  return (m.img?'<div class="ph mphoto"><img src="'+IMG(m.img,800,450)+'" alt="'+m.name+'" loading="lazy" decoding="async" onerror="imgFail(this)"></div>':'')+
+    '<div class="meta"><span>⏱ '+m.time+'</span><span>'+m.k+' კკალ</span><span>'+m.p+' გ ცილა</span></div>'+
+    '<div class="cols"><div><div class="lbl">ინგრედიენტები</div><ul>'+m.items.map(x=>'<li>'+x+'</li>').join("")+'</ul></div>'+
+    '<div><div class="lbl">მომზადება</div><ol>'+m.steps.map(x=>'<li>'+x+'</li>').join("")+'</ol></div></div>'+
+    '<p class="tip">'+m.tip+'</p>';
+}
+function swappedBody(i, m){
+  return '<p class="ate"><b>შენ ჩაწერე:</b> '+esc(m.text)+'</p>'+
+    '<div class="meta"><span>'+m.k+' კკალ</span><span>ცილა '+m.p+' გ</span><span>ნახშირწყალი '+m.c+' გ</span><span>ცხიმი '+m.f+' გ</span></div>'+
+    (m.list&&m.list.length?'<div><div class="lbl">AI-ს შეფასება</div><ul class="sitems">'+m.list.map(x=>'<li><span>'+esc(x.food)+' <span class="muted">('+esc(x.amount)+')</span></span><span class="q">'+x.kcal+' კკალ</span></li>').join("")+'</ul></div>':'')+
+    (m.note?'<p class="tip">'+esc(m.note)+'</p>':'')+
+    '<p class="note">გეგმით იყო: '+esc(m.plan.name)+' ('+m.plan.k+' კკალ). ციფრები მიახლოებითია.</p>'+
+    '<div class="sbtns"><button type="button" class="sbtn ghost" data-edit="'+i+'">შეცვლა</button><button type="button" class="sbtn ghost" data-revert="'+i+'">გეგმაზე დაბრუნება</button></div>';
+}
+function swapForm(i, m){
+  const st = swapState[i]||{};
+  return '<form class="swapform" data-form="'+i+'">'+
+    '<label class="lbl" for="sw'+i+'">რა ჭამე სინამდვილეში?</label>'+
+    '<textarea id="sw'+i+'" maxlength="800" placeholder="მაგ.: 1 აჭარული ხაჭაპური, 1 ქილა კოკა-კოლა" required>'+esc(st.text!=null?st.text:(m.swapped?m.text:""))+'</textarea>'+
+    '<p class="note">რაც უფრო ზუსტად დაწერ რაოდენობას (გრამი, ცალი, ჭიქა), მით უფრო ზუსტი იქნება დათვლა.</p>'+
+    (st.err?'<p class="serr" role="alert">'+esc(st.err)+'</p>':'')+
+    '<div class="sbtns"><button type="submit" class="sbtn"'+(st.busy?' disabled':'')+'>'+(st.busy?'ვითვლი…':'კალორიების დათვლა')+'</button>'+
+    '<button type="button" class="sbtn ghost" data-cancel="'+i+'">გაუქმება</button></div></form>';
 }
 function renderDay(){
   const [b,l,dn] = WEEK[d];
-  const seq = [["10:00",M.PRE,"small"],["12:15",M[b]],["16:00",M[l]],["19:00",M.SHAKE,"small"],["22:30",M[dn]]];
+  const sw = store.get("swaps")||{}, dk = dayKey();
+  if(editDay!==dk){ editing = null; swapState = {}; editDay = dk; }
+  const seq = [["10:00",M.PRE,"small"],["12:15",M[b]],["16:00",M[l]],["19:00",M.SHAKE,"small"],["22:30",M[dn]]]
+    .map(([t,m,c],i)=>{ const o = sw[dk+"|"+i]; return o ? [t,{slot:m.slot,name:o.name,k:o.k,p:o.p,c:o.c,f:o.f,list:o.items,note:o.note,text:o.text,swapped:true,plan:m},c] : [t,m,c]; });
   document.getElementById("timeline").innerHTML = seq.map(([t,m,c],i)=>'<li><span class="time">'+t+'</span>'+mealHTML(m,c,i)+'</li>').join("");
   const k = seq.reduce((s,x)=>s+x[1].k,0), p = seq.reduce((s,x)=>s+x[1].p,0);
   document.getElementById("tk").textContent = k+" / 2000";
@@ -454,9 +500,39 @@ function renderShop(){
 }
 document.getElementById("shopReset").onclick=()=>{ store.set("shop_w"+w,{}); renderShop(); };
 
+/* ---------- ჩანაცვლება: ხელით ჩაწერა + AI კალორიები (/api/estimate) ---------- */
+let editing = null, editDay = ""; let swapState = {};
+function dayKey(){ const dt = dateOf(w,d); return "2026-"+(dt.out?"11":"10")+"-"+String(dt.n).padStart(2,"0"); }
+function saveSwap(day, i, v){ const sw = store.get("swaps")||{}; const k = day+"|"+i; if(v) sw[k]=v; else delete sw[k]; store.set("swaps", sw); }
+const SWAP_ERR = {no_key:"AI ჯერ არ არის ჩართული: Vercel-ში ANTHROPIC_API_KEY არ არის დამატებული.", bad_key:"Anthropic API გასაღები არასწორია. შეამოწმე Vercel-ის პარამეტრებში.",
+  rate_limit:"ძალიან ბევრი მოთხოვნა, სცადე ერთ წუთში.", too_long:"ტექსტი ძალიან გრძელია (მაქს. 800 სიმბოლო).", refusal:"AI-მ ამ ტექსტზე პასუხი არ გასცა, სცადე სხვანაირად ჩაწერა."};
+async function submitSwap(i, text){
+  const day = dayKey(); swapState[i] = {text, busy:true}; renderDay();
+  try{
+    const r = await fetch("/api/estimate", {method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({text})});
+    const j = await r.json().catch(()=>({}));
+    if(!r.ok) throw new Error(SWAP_ERR[j.error] || (r.status===404?"AI სერვისი ამ მისამართზე არ მუშაობს (საჭიროა Vercel).":"დათვლა ვერ მოხერხდა, სცადე თავიდან."));
+    saveSwap(day, i, {text, name:j.name||"ჩემი კერძი", k:j.kcal, p:j.p, c:j.c, f:j.f, items:j.items, note:j.note, at:Date.now()});
+    if(day!==dayKey()) return;
+    delete swapState[i]; editing = null; open.add(i);
+  }catch(err){ if(day!==dayKey()) return; swapState[i] = {text, err: err.message||"ქსელის შეცდომა, სცადე თავიდან."}; }
+  renderDay();
+}
+document.getElementById("timeline").addEventListener("submit", e=>{
+  const f = e.target.closest("[data-form]"); if(!f) return; e.preventDefault();
+  const i = +f.dataset.form, text = f.querySelector("textarea").value.trim();
+  if(text && !(swapState[i]&&swapState[i].busy)) submitSwap(i, text);
+});
+document.getElementById("timeline").addEventListener("click", e=>{
+  const t = e.target.closest("[data-swap],[data-edit],[data-cancel],[data-revert]"); if(!t) return;
+  if(t.dataset.swap!=null || t.dataset.edit!=null){ editing = +(t.dataset.swap ?? t.dataset.edit); editDay = dayKey(); delete swapState[editing]; renderDay(); const ta=document.getElementById("sw"+editing); if(ta) ta.focus(); }
+  else if(t.dataset.cancel!=null){ delete swapState[editing]; editing = null; renderDay(); }
+  else { saveSwap(dayKey(), +t.dataset.revert, null); renderDay(); }
+});
 document.getElementById("timeline").addEventListener("click", e=>{
   const btn = e.target.closest(".mhead"); if(!btn) return;
-  const i = +btn.dataset.i; const card = btn.parentElement; const body = card.querySelector(".mbody");
+  if(editing===+btn.dataset.i) return;
+  const i = +btn.dataset.i; const card = btn.closest(".meal"); const body = card.querySelector(".mbody");
   const nowOpen = !open.has(i);
   if(nowOpen) open.add(i); else open.delete(i);
   btn.setAttribute("aria-expanded", nowOpen); body.hidden = !nowOpen; card.classList.toggle("open", nowOpen);
