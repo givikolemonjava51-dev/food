@@ -5,12 +5,12 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#f2f5f9" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#0d131b" media="(prefers-color-scheme: dark)">
-<title>ოქტომბრის კვების გეგმა</title>
+<title>შენი კვების გეგმა</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+Georgian:wght@400;500;600;700&family=Noto+Serif+Georgian:wght@600;800&family=IBM+Plex+Mono:wght@500;600&display=swap">
 <style>
-/* Layout: one narrow column like a training log — goal strip, week + day switcher, the day as a timeline, then prep, shopping, rules. Padel-court blue accent, ball-yellow only for "today". */
+/* Layout: one narrow column — profile form and computed targets, day switcher with the day as a list of collapsible meals, recipe gallery, weight log, shopping list. Padel-court blue accent, ball-yellow only for "today". */
 :root{
   --bg:#f2f5f9; --surface:#ffffff; --fg:#13202e; --muted:#5a6879; --line:#dbe2ea;
   --accent:#1c5bc9; --accent-soft:#e3ecfa; --ball:#e6d62a; --ball-ink:#2a2600; --good:#1f8a52; --warn:#b5651d;
@@ -213,38 +213,144 @@ dialog.sheet::backdrop{background:rgba(8,12,18,.55)}
 .mc span{font-size:11px;color:var(--muted)}
 .mc.kcal{background:var(--accent);color:#fff}
 .mc.kcal span{color:#fff;opacity:.85}
+/* ---------- profile form & result ---------- */
+.lead{font-size:15px;max-width:60ch}
+.pcard{padding:0;gap:0}
+.pcard summary{list-style:none;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:10px;padding:14px 16px;font-weight:600;border-radius:12px}
+.pcard summary::-webkit-details-marker{display:none}
+.pcard summary:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.pcard[open] summary{border-bottom:1px solid var(--line);border-radius:12px 12px 0 0}
+.pedit{font-size:13px;font-weight:500;color:var(--accent);flex-shrink:0}
+.pcard[open] .pedit{display:none}
+.pform{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px 12px;padding:16px;align-items:end}
+.pform .full{grid-column:1/-1}
+.field{display:flex;flex-direction:column;gap:6px;min-width:0;margin:0;padding:0;border:0;font-size:13px;color:var(--muted)}
+.field legend{padding:0;margin-bottom:6px}
+.field .opt{font-style:normal;opacity:.75}
+.field input[type=number],.field select{font:inherit;font-size:16px;color:var(--fg);background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:10px 12px;width:100%;min-width:0}
+.field input[type=number]{font-family:var(--mono)}
+.field select{appearance:none;-webkit-appearance:none;background-image:linear-gradient(45deg,transparent 50%,var(--muted) 50%),linear-gradient(135deg,var(--muted) 50%,transparent 50%);background-position:calc(100% - 18px) 50%,calc(100% - 13px) 50%;background-size:5px 5px;background-repeat:no-repeat;padding-right:34px}
+.field input:focus-visible,.field select:focus-visible{outline:2px solid var(--accent);outline-offset:1px;border-color:var(--accent)}
+.seg{display:flex;gap:4px;background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:4px}
+.seg label{flex:1 1 0;min-width:0;position:relative}
+.seg input{position:absolute;opacity:0;inset:0;margin:0;cursor:pointer}
+.seg span{display:flex;flex-direction:column;align-items:center;gap:1px;padding:8px 4px;border-radius:9px;font-size:14px;color:var(--fg);text-align:center;line-height:1.25}
+.seg small{font-size:11px;color:var(--muted)}
+.seg input:checked + span{background:var(--accent);color:#fff}
+.seg input:checked + span small{color:#fff;opacity:.85}
+.seg input:focus-visible + span{outline:2px solid var(--accent);outline-offset:2px}
+.tags{display:flex;flex-wrap:wrap;gap:8px}
+.tags label{position:relative}
+.tags input{position:absolute;opacity:0;inset:0;margin:0;cursor:pointer}
+.tags span{display:inline-block;padding:7px 12px;border:1px solid var(--line);border-radius:999px;font-size:14px;color:var(--fg);background:var(--bg)}
+.tags input:checked + span{background:var(--fg);color:var(--bg);border-color:var(--fg)}
+.tags input:checked + span::before{content:"✕ "}
+.tags input:focus-visible + span{outline:2px solid var(--accent);outline-offset:2px}
+#perr{color:var(--warn)}
+#perr:empty{display:none}
+.primary{font:inherit;font-weight:600;font-size:16px;background:var(--accent);color:#fff;border:0;border-radius:12px;padding:13px 18px;cursor:pointer}
+.primary:focus-visible{outline:2px solid var(--fg);outline-offset:2px}
+.result .macros .mc b{font-size:17px}
+.warnbox{background:color-mix(in srgb,var(--warn) 14%,var(--surface));border-left:3px solid var(--warn);border-radius:8px;padding:10px 12px;font-size:14px;display:flex;flex-direction:column;gap:6px}
+.empty-plan{color:var(--muted);font-size:14px}
+#plan{display:flex;flex-direction:column;gap:14px}
+#plan[hidden]{display:none}
+.timeline > li{display:block}
+.bar.c i{background:var(--ball)}
+.bar.f i{background:var(--warn)}
+.swap{align-self:flex-start;font:inherit;font-size:14px;color:var(--accent);background:var(--accent-soft);border:0;border-radius:999px;padding:8px 14px;cursor:pointer}
+.swap:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+@media (max-width:420px){.pform{grid-template-columns:1fr 1fr;gap:12px 10px;padding:14px}.seg span{font-size:13px}}
 </style>
 </head>
 <body>
 
 <div class="wrap">
   <header>
-    <h1>ოქტომბრის კვების გეგმა</h1>
-    <div class="goal">
-      <span>მიზანი <b class="num">110 → 98 კგ</b></span>
-      <span>დღეში <b class="num">≤ 2000 კკალ</b></span>
-      <span>ცილა <b class="num">~180 გ</b></span>
-      <span><b class="num">12–31</b> ოქტომბერი</span>
-    </div>
+    <h1>შენი კვების გეგმა</h1>
+    <p class="muted lead">შეიყვანე შენი მონაცემები და მიზანი. საიტი გამოგითვლის დღიურ კალორიას, ცილას, ნახშირწყლებს და ცხიმს, და რეცეპტებიდან შეგიდგენს კვირის მენიუს შენს ზომაზე.</p>
+    <div class="goal" id="goalstrip" hidden></div>
     <nav>
+      <a href="#profile">პროფილი</a>
       <a href="#day">დღის მენიუ</a>
       <a href="#recipes">რეცეპტები</a>
       <a href="#weight">წონა</a>
-      <a href="#prep">მომზადება</a>
       <a href="#shop">საყიდლები</a>
     </nav>
   </header>
 
+  <section id="profile">
+    <h2>შენი მონაცემები</h2>
+    <details class="card pcard" id="pdetails" open>
+      <summary><span id="psummary">შეავსე, რომ გეგმა შეგიდგინო</span><span class="pedit">შეცვლა</span></summary>
+      <form id="pform" class="pform" novalidate>
+        <fieldset class="field full"><legend>სქესი</legend>
+          <div class="seg" role="radiogroup">
+            <label><input type="radio" name="sex" value="m" checked><span>კაცი</span></label>
+            <label><input type="radio" name="sex" value="f"><span>ქალი</span></label>
+          </div>
+        </fieldset>
+        <label class="field"><span>ასაკი</span><input type="number" name="age" inputmode="numeric" min="14" max="90" placeholder="30" required></label>
+        <label class="field"><span>სიმაღლე, სმ</span><input type="number" name="height" inputmode="numeric" min="130" max="230" placeholder="180" required></label>
+        <label class="field"><span>წონა, კგ</span><input type="number" name="weight" inputmode="decimal" step="0.1" min="35" max="250" placeholder="85" required></label>
+        <label class="field"><span>სასურველი წონა, კგ <i class="opt">არასავალდებულო</i></span><input type="number" name="target" inputmode="decimal" step="0.1" min="35" max="250" placeholder="78"></label>
+        <label class="field full"><span>აქტივობა</span>
+          <select name="act">
+            <option value="1.2">მჯდომარე: ოფისი, ვარჯიში თითქმის არა</option>
+            <option value="1.375">მსუბუქი: ვარჯიში 1–3-ჯერ კვირაში</option>
+            <option value="1.55" selected>საშუალო: ვარჯიში 3–5-ჯერ კვირაში</option>
+            <option value="1.725">მაღალი: ვარჯიში 6–7-ჯერ კვირაში</option>
+            <option value="1.9">ძალიან მაღალი: ფიზიკური შრომა და ვარჯიში</option>
+          </select></label>
+        <fieldset class="field full"><legend>მიზანი</legend>
+          <div class="seg" role="radiogroup">
+            <label><input type="radio" name="goal" value="lose" checked><span>დაკლება</span></label>
+            <label><input type="radio" name="goal" value="keep"><span>შენარჩუნება</span></label>
+            <label><input type="radio" name="goal" value="gain"><span>მომატება</span></label>
+          </div>
+        </fieldset>
+        <fieldset class="field full" id="pacebox"><legend>ტემპი</legend>
+          <div class="seg" role="radiogroup">
+            <label><input type="radio" name="pace" value="1"><span id="pace1">ნელი</span></label>
+            <label><input type="radio" name="pace" value="2" checked><span id="pace2">ზომიერი</span></label>
+            <label><input type="radio" name="pace" value="3"><span id="pace3">სწრაფი</span></label>
+          </div>
+        </fieldset>
+        <fieldset class="field full"><legend>ჭამა დღეში</legend>
+          <div class="seg" role="radiogroup">
+            <label><input type="radio" name="meals" value="3"><span>3-ჯერ</span></label>
+            <label><input type="radio" name="meals" value="4" checked><span>4-ჯერ</span></label>
+            <label><input type="radio" name="meals" value="5"><span>5-ჯერ</span></label>
+          </div>
+        </fieldset>
+        <fieldset class="field full"><legend>არ ვჭამ</legend>
+          <div class="tags">
+            <label><input type="checkbox" name="nofish"><span>თევზი, კრევეტი</span></label>
+            <label><input type="checkbox" name="nored"><span>საქონლის ხორცი</span></label>
+            <label><input type="checkbox" name="veg"><span>ხორცი საერთოდ (ვეგეტარიანელი)</span></label>
+          </div>
+        </fieldset>
+        <p class="note full" id="perr" role="alert"></p>
+        <button type="submit" class="primary full">გეგმის შედგენა</button>
+      </form>
+    </details>
+    <div id="result" hidden></div>
+  </section>
+
   <section id="day">
     <h2>დღის მენიუ</h2>
-    <div class="weeks" id="weeks"></div>
-    <div class="days" id="days"></div>
-    <div class="totals">
-      <div class="meter"><div class="top"><span>კალორია</span><b id="tk"></b></div><div class="bar"><i id="bk"></i></div></div>
-      <div class="meter"><div class="top"><span>ცილა</span><b id="tp"></b></div><div class="bar p"><i id="bp"></i></div></div>
+    <div id="plan" hidden>
+      <div class="days" id="days"></div>
+      <div class="totals">
+        <div class="meter"><div class="top"><span>კალორია</span><b id="tk"></b></div><div class="bar"><i id="bk"></i></div></div>
+        <div class="meter"><div class="top"><span>ცილა</span><b id="tp"></b></div><div class="bar p"><i id="bp"></i></div></div>
+        <div class="meter"><div class="top"><span>ნახშირწყალი</span><b id="tc"></b></div><div class="bar c"><i id="bc"></i></div></div>
+        <div class="meter"><div class="top"><span>ცხიმი</span><b id="tf"></b></div><div class="bar f"><i id="bf"></i></div></div>
+      </div>
+      <ol class="timeline" id="timeline"></ol>
+      <p class="note">დააჭირე კერძს, რომ ნახო ინგრედიენტები და მომზადება. პორციები უკვე შენს კალორიაზეა მორგებული, ამიტომ წონები შეიძლება რეცეპტების გალერეისგან განსხვავდებოდეს. ყველა წონა უმი პროდუქტისაა. არ მოგწონს კერძი? გახსენი და დააჭირე „სხვა კერძი“.</p>
     </div>
-    <ol class="timeline" id="timeline"></ol>
-    <p class="note">დააჭირე კერძს, რომ ნახო ინგრედიენტები და მომზადება ნაბიჯ-ნაბიჯ. ყველა წონა უმი პროდუქტისაა (ხორცი, ბრინჯი, წიწიბურა, მაკარონი), სხვაგვარად თუ არ წერია. ზეთი კოვზით გაზომე.</p>
+    <p class="card empty-plan" id="noplan">მენიუ გამოჩნდება, როცა ზემოთ მონაცემებს შეავსებ.</p>
   </section>
 
   <section id="recipes">
@@ -261,30 +367,23 @@ dialog.sheet::backdrop{background:rgba(8,12,18,.55)}
     <h2>წონის კონტროლი</h2>
     <form id="wform" class="wform" novalidate>
       <label for="wdate"><span>თარიღი</span><input type="date" id="wdate" required></label>
-      <label for="wkg"><span>წონა, კგ</span><input type="number" id="wkg" inputmode="decimal" step="0.1" min="40" max="250" placeholder="109.4" required></label>
+      <label for="wkg"><span>წონა, კგ</span><input type="number" id="wkg" inputmode="decimal" step="0.1" min="40" max="250" placeholder="82.5" required></label>
       <button type="submit" id="wsave">შენახვა</button>
     </form>
     <p class="note" id="wstatus">აიწონე დილით, ტუალეტის შემდეგ და ჭამამდე. იმავე დღის ახალი ჩანაწერი ძველს ჩაანაცვლებს.</p>
     <div class="stats" id="wstats"></div>
     <div class="chartbox">
-      <div class="legend"><span><i class="lg dot"></i>დღიური წონა</span><span><i class="lg line"></i>7-დღიანი საშუალო</span><span><i class="lg goal"></i>მიზანი 98 კგ</span></div>
+      <div class="legend"><span><i class="lg dot"></i>დღიური წონა</span><span><i class="lg line"></i>7-დღიანი საშუალო</span><span id="lgoal" hidden><i class="lg goal"></i><span></span></span></div>
       <div class="chartwrap" id="chartwrap"><svg id="wchart" role="img" aria-label="წონის დინამიკა"></svg><div class="ctip" id="ctip" hidden></div></div>
     </div>
     <details class="card log"><summary>ყველა ჩანაწერი</summary><div class="tablewrap"><table id="wtable"></table></div></details>
   </section>
 
-  <section id="prep">
-    <h2>მომზადება: კვირაში ორჯერ</h2>
-    <p class="muted">მზა საჭმელი მაცივარში 3–4 დღე ძლებს. შაბათ-კვირის პორციები საყინულეში შედე და წინა საღამოს გადმოიტანე. ორაგული ყოველთვის ახალი მოამზადე, 15 წუთი ღუმელში.</p>
-    <div class="grid2" id="preps"></div>
-    <p class="note"><b>პირველი კვირა (12 ოქტომბერი):</b> prep ჯერ არ გაქვს. ორშაბათს დილით იყიდე ყველაფერი, სადილისთვის ქათამი და ბრინჯი მოამზადე სამსახურამდე, დანარჩენი კი ორშაბათ ღამით ან სამშაბათ დილით.</p>
-  </section>
-
   <section id="shop">
     <div class="row"><h2>საყიდლები: ერთი კვირა</h2><button class="reset" id="shopReset" type="button">მონიშვნების გასუფთავება</button></div>
-    <div class="shoptotal"><span class="muted">კვირის ბიუჯეტი</span><b class="num" id="shopTotal"></b><span class="note num" id="shopRange"></span></div>
+    <p class="muted" id="shopsub">სია ავტომატურად იკრიბება შენი კვირის მენიუდან.</p>
     <div class="card"><ul class="checks" id="shoplist"></ul></div>
-    <p class="note">ფასები მიახლოებითია, თბილისის სუპერმარკეტების 2026 წლის მონაცემებით (ქათმის ფილე ~18 ₾/კგ, საქონელი ~26–35 ₾/კგ, კვერცხი ~7 ₾/10 ცალი). ორაგულის, ხაჭოს და მაწონის ფასი ჩემი შეფასებაა, მაღაზიის მიხედვით განსხვავდება. პირველ კვირას ერთჯერადად +25–30 ₾: ზეთის ბოთლი, თაფლი, სანელებლები, მარცვლეულის სრული პაკეტები. პროტეინი არ ითვლება (გაქვს). მონიშვნები ამ ბრაუზერში ინახება.</p>
+    <p class="note">რაოდენობები 7 დღისაა და უმი პროდუქტის წონით. მონიშვნები ამ ბრაუზერში ინახება და მენიუს შეცვლისას თავიდან იწყება.</p>
   </section>
 
 </div>
@@ -292,162 +391,11 @@ dialog.sheet::backdrop{background:rgba(8,12,18,.55)}
 <dialog class="sheet" id="rsheet" aria-labelledby="rtitle"><button type="button" class="rclose" aria-label="დახურვა">×</button><div id="rbody"></div></dialog>
 
 <script>
-const M = {
-  PRE:{slot:"ვარჯიშამდე",name:"ბანანი და წყალი",k:105,p:1,items:["1 ბანანი","1–2 ჭიქა წყალი, კრეატინი"]},
-  SHAKE:{slot:"სნექი",name:"პროტეინის შეიკი",k:260,p:34,items:["30 გ პროტეინი (1 სკუპი)","300 მლ რძე 1.5%"]},
-  B1:{slot:"საუზმე",name:"ომლეტი ხაჭოთი",k:540,p:53,items:["3 კვერცხი + 3 კვერცხის ცილა","100 გ ისპანახი ან სოკო ომლეტში","100 გ ხაჭო გვერდზე","2 ნაჭერი მთლიანმარცვლოვანი პური (60 გ)","პომიდორი, კიტრი; ტაფაზე ზეთის სპრეი"]},
-  B2:{slot:"საუზმე",name:"ხაჭოს თასი",k:560,p:49,items:["250 გ ხაჭო (2–5%)","150 გ მაწონი","1 ბანანი","15 გ ნიგოზი","1 ჩ/კ თაფლი"]},
-  B3:{slot:"საუზმე",name:"ლავაშის რულეტი ქათმით",k:560,p:58,items:["60 გ ლავაში","2 კვერცხი + 2 ცილა, ერბოკვერცხად","100 გ მოხარშული ქათმის მკერდი (prep-დან)","50 გ მაწონი ნივრით, სოუსად","მწვანილი, პომიდორი"]},
-  L1:{slot:"სადილი",name:"ქათამი ბრინჯით",k:600,p:51,items:["200 გ ქათმის მკერდი","70 გ ბრინჯი","200 გ სალათი","10 გ ზეითუნის ზეთი"]},
-  L2:{slot:"სადილი",name:"საქონლის ჩაშუშული წიწიბურით",k:575,p:47,items:["170 გ უცხიმო საქონელი (ფილე/ლაფანი)","70 გ წიწიბურა","250 გ პომიდორი, წიწაკა, ხახვი","5 გ ზეთი"]},
-  L3:{slot:"სადილი",name:"საქონლის ბოლონეზე",k:560,p:46,items:["170 გ უცხიმო საქონლის ფარში (≤5%)","70 გ მაკარონი","150 გ პომიდვრის პასატა","ხახვი, ნიორი, რეჰანი","5 გ ზეთი"]},
-  L4:{slot:"სადილი",name:"ქათმის ბარკალი კარტოფილით",k:555,p:45,items:["200 გ ქათმის ბარკალი, ტყავის გარეშე","300 გ კარტოფილი, ღუმელში","200 გ სალათი","5 გ ზეთი"]},
-  D1:{slot:"ვახშამი",name:"ორაგული ბოსტნეულით",k:475,p:35,items:["150 გ ორაგული, ღუმელში ლიმონით","150 გ კარტოფილი","250 გ ბროკოლი ან მწვანე ლობიო"]},
-  D2:{slot:"ვახშამი",name:"ქათმის ჩაშუშული",k:460,p:52,items:["200 გ ქათმის მკერდი","250 გ პომიდორი, ხახვი, წიწაკა, მწვანილი","5 გ ზეთი","1 ნაჭერი პური","100 გ მაწონი"]},
-  D3:{slot:"ვახშამი",name:"ხაჭო და კვერცხი",k:460,p:46,items:["200 გ ხაჭო","2 მოხარშული კვერცხი","250 გ კიტრი-პომიდვრის სალათი, ზეთის გარეშე","1 ნაჭერი პური"]},
-  D4:{slot:"ვახშამი",name:"ლობიო ქათმით",k:475,p:54,items:["150 გ ქათმის მკერდი, გრილზე","150 გ მოხარშული ლობიო, მინიმალური ზეთით","200 გ სალათი","150 გ მაწონი"]}
-};
-const HOW = {
-  PRE:["5 წთ",["შეჭამე გაღვიძებიდან 15–30 წუთში, დარბაზამდე დაახლოებით 30 წუთით ადრე.","1–2 ჭიქა წყალში გახსენი 3–5 გ კრეატინი და დალიე.","თუ ვარჯიში ძალიან ინტენსიურია, წყალს ელექტროლიტებიც დაამატე."],"ბანანი სწრაფ ენერგიას იძლევა და კუჭს არ ამძიმებს."],
-  SHAKE:["2 წთ",["შეიკერში ჯერ ჩაასხი 300 მლ რძე, მერე ჩაყარე 1 სკუპი პროტეინი. ასე გუნდებად არ შეიკვრება.","დახურე და 20–30 წამი შეანჯღრიე.","სამსახურში: ფხვნილი წაიღე მშრალ შეიკერში, რძე ადგილზე დაამატე."],"ეს ჭამა სადილსა და ვახშამს შორის შიმშილს გიჭერს."],
-  B1:["15 წთ",["ისპანახი ან სოკო დაჭერი. ტაფა ზეთის სპრეით გააცხელე და ბოსტნეული 3–4 წუთი შეწვი, სანამ წყალი არ აორთქლდება.","თასში ათქვიფე 3 მთლიანი კვერცხი და 3 ცილა. მარილი და პილპილი მოაყარე.","კვერცხი ბოსტნეულზე ჩაასხი. საშუალო ცეცხლზე, თავდახურული, 4–5 წუთი აცხე, სანამ ზედაპირი არ გამაგრდება.","პურის 2 ნაჭერი ტოსტერში ან მშრალ ტაფაზე გამოაცხვე.","ხაჭო თეფშზე დადე. თუ გინდა, მწვანილი და ცოტა მარილი მოაყარე. გვერდით დაჭრილი პომიდორი და კიტრი."],"3 ცილის შემდეგ დარჩენილი გულები ამ გეგმაში არ ითვლება, ამიტომ ნუ შეჭამ. მოსახერხებელია მზა კვერცხის ცილის ყიდვაც."],
-  B2:["5 წთ",["250 გ ხაჭო თასში ჩადე და 150 გ მაწონი გადაასხი.","კოვზით კარგად აურიე, სანამ კრემისებური არ გახდება.","ბანანი რგოლებად დაჭერი და ზემოდან დააწყვე.","15 გ ნიგოზი ხელით დაამტვრიე და მოაყარე.","ბოლოს 1 ჩაის კოვზი თაფლი ზემოდან."],"ხაჭო 9%-იანი არ აიღო: ერთი პორცია 100 კკალ-ით მეტი იქნება."],
-  B3:["10 წთ",["prep-დან 100 გ მოხარშული ქათამი ბოჭკოებად დაგლიჯე და მშრალ ტაფაზე 2 წუთი გააცხელე.","2 კვერცხი და 2 ცილა ათქვიფე, მარილი მოაყარე. სპრეით წასმულ ტაფაზე ერბოკვერცხი 2–3 წუთი, მუდმივად ურიე.","სოუსი: 50 გ მაწონს გაურიე 1 კბილი გახეხილი ნიორი და მარილი.","ლავაში გაშალე, შუაზე სოუსი წაუსვი, ზემოდან კვერცხი, ქათამი, დაჭრილი პომიდორი და მწვანილი.","გვერდები შეკეცე და დაახვიე. მშრალ ტაფაზე ორივე მხრიდან 1 წუთი შეაბრაწე."],"სამსახურში წასაღებად ფოლგაში გაახვიე."],
-  L1:["40 წთ (prep)",["ღუმელი 200°C-ზე გააცხელე.","ქათმის მკერდი მოასხურე სპრეით, მოაყარე მარილი, პილპილი, წითელი პაპრიკა და ნივრის ფხვნილი.","ფურცელზე 20–25 წუთი. მზადაა, როცა შიგნით ვარდისფერი აღარ არის (74°C). 5 წუთი დაასვენე, მერე დაჭერი.","ბრინჯი 2–3-ჯერ გარეცხე. ქვაბში 1 წილ ბრინჯს 2 წილი წყალი და მარილი. ადუღების შემდეგ ყველაზე დაბალ ცეცხლზე, თავდახურული, 12–15 წუთი. 5 წუთი დაასვენე.","სალათი ცალკე კონტეინერში. 10 გ ზეთი და ლიმონი ჭამის წინ დაასხი.","ქათამი და ბრინჯი სამსახურში მიკროტალღურში 2 წუთი გააცხელე."],"ქათამი 2 დღეზე მეტით რომ არ გაშრეს, ბრინჯზე 1–2 კოვზი წყალი დაასხი გაცხელების წინ."],
-  L2:["70 წთ (prep)",["საქონლის ხორცი 2–3 სმ კუბიკებად დაჭერი.","ქვაბში 5 გ ზეთი გააცხელე და ხორცი მაღალ ცეცხლზე 4–5 წუთი შეწვი, სანამ ყველა მხრიდან არ შეიბრაწება.","დაჭრილი ხახვი და ბულგარული წიწაკა დაუმატე, 5 წუთი.","გაფცქვნილი და დაჭრილი პომიდორი, 2 კბილი ნიორი, მარილი, უცხო სუნელი და ხმელი ქინძი. თუ მშრალია, ცოტა წყალი.","თავდახურული, დაბალ ცეცხლზე 50–60 წუთი, სანამ ხორცი არ დარბილდება. ბოლოს ახალი ქინძი.","წიწიბურა გარეცხე, 1 წილს 2 წილი წყალი და მარილი. ადუღების შემდეგ დაბალ ცეცხლზე 15–18 წუთი."],"ჩაშუშული მეორე დღეს უფრო გემრიელია, ამიტომ prep-ისთვის იდეალურია."],
-  L3:["35 წთ (prep)",["ხახვი და 2 კბილი ნიორი წვრილად დაჭერი. ტაფაზე 5 გ ზეთში 3 წუთი, სანამ არ დარბილდება.","170 გ ფარში დაუმატე. მაღალ ცეცხლზე, კოვზით დაშალე და 6–8 წუთი შეწვი, სანამ არ შეიბრაწება.","150 გ პასატა, მარილი, პილპილი, რეჰანი ან ორეგანო. დაბალ ცეცხლზე 15 წუთი.","მაკარონი ადუღებულ მარილიან წყალში მოხარშე პაკეტზე მითითებულზე 1 წუთით ნაკლები, რომ გაცხელებისას არ დარბილდეს.","გადაწურე და სოუსს აურიე, ან კონტეინერში ცალ-ცალკე ჩადე."],"ფარში ≤5% ცხიმიანი აიღე. 15%-იანი ერთ პორციაზე ~80 კკალ-ს დაამატებს."],
-  L4:["45 წთ (prep)",["ღუმელი 210°C-ზე გააცხელე.","300 გ კარტოფილი ნაჭრებად დაჭერი (კანის გაფცქვნა არ არის აუცილებელი). აურიე 5 გ ზეთს, მარილს, პაპრიკას და ნივრის ფხვნილს.","კარტოფილი ფურცელზე 35–40 წუთი, შუაში გადააბრუნე.","ქათმის ბარკალს ტყავი მოაცილე. მოაყარე მარილი, პილპილი და პაპრიკა, ან წაუსვი 1 ჩ/კ აჯიკა.","ბარკალი კარტოფილის გვერდით ბოლო 25 წუთზე ჩადე. მზადაა 75°C-ზე, როცა ძვალთან წვენი გამჭვირვალეა.","სალათი ცალკე კონტეინერში."],"ბარკალი მკერდზე წვნიანია და გაცხელების შემდეგაც არ შრება."],
-  D1:["30 წთ",["ღუმელი 200°C-ზე გააცხელე.","150 გ კარტოფილი ნაჭრებად, სპრეი და მარილი, ფურცელზე 15 წუთი.","ორაგული ფურცელზე დადე, მარილი, პილპილი, ლიმნის რგოლები და კამა.","ბროკოლი ან მწვანე ლობიო გვერდით დააწყვე, სპრეი და მარილი.","ყველაფერი ერთად კიდევ 12–15 წუთი. ორაგული მზადაა, როცა ჩანგლით ადვილად იშლება."],"გაყინული ბროკოლი პირდაპირ ღუმელში ჩადე, გალღობა არ სჭირდება."],
-  D2:["35 წთ (prep)",["ქათმის მკერდი 3 სმ ნაჭრებად დაჭერი.","ქვაბში 5 გ ზეთი გააცხელე და ქათამი 5 წუთი შეწვი.","დაჭრილი ხახვი და წიწაკა, კიდევ 5 წუთი.","პომიდორი, 2 კბილი ნიორი, მარილი, უცხო სუნელი, წითელი წიწაკა. თავდახურული, დაბალ ცეცხლზე 15–20 წუთი.","ბოლოს ბევრი ახალი ქინძი და რეჰანი.","თეფშზე 100 გ მაწონი გვერდზე და 1 ნაჭერი პური."],"ესაა ჩახოხბილის მსუბუქი ვერსია, ცხიმიანი ხორცის და ბევრი ზეთის გარეშე."],
-  D3:["12 წთ",["2 კვერცხი ცივ წყალში ჩადე. ადუღებიდან 9 წუთი ხარშე, მერე ცივ წყალში გააციე და გაფცქვენი.","სალათი: კიტრი, პომიდორი, ცოტა ხახვი, მწვანილი, მარილი და ლიმონი. ზეთის გარეშე.","200 გ ხაჭოს მარილი და დაჭრილი მწვანილი გაურიე, ან ცარიელი შეჭამე.","გვერდით 1 ნაჭერი პური."],"ყველაზე სწრაფი ვახშამია: დაღლილ დღეს გამოიყენე."],
-  D4:["~2 სთ ლობიო (prep) + 15 წთ",["ლობიო: 75 გ მშრალი ლობიო წინა ღამით ცივ წყალში დაალბე.","გარეცხე, ახალი წყალი დაასხი და 1–1.5 საათი ხარშე, სანამ არ დარბილდება. მარილი მხოლოდ ბოლოს.","წყლის ნაწილი გადაწურე. დაუმატე დაჭრილი ხახვი, ნიორი, ქინძი, უცხო სუნელი და წითელი წიწაკა. ნახევარი ლობიო ოდნავ დანაყე.","ქათამი: 150 გ მკერდი გაანახევრე სისქეში, მარილი და პაპრიკა. გრილ-ტაფაზე, სპრეით, 5–6 წუთი თითო მხარეს.","თეფშზე 150 გ ლობიო, ქათამი, სალათი და 150 გ მაწონი."],"ლობიო 2 ვახშმისთვის ერთად მოხარშე: ნახევარი საყინულეში 2–3 თვე ძლებს."]
-};
-for (const k in HOW) { M[k].time = HOW[k][0]; M[k].steps = HOW[k][1]; M[k].tip = HOW[k][2]; }
-const open = new Set();
-
-const WEEK = [["B1","L1","D2"],["B2","L2","D1"],["B3","L3","D4"],["B1","L4","D3"],["B2","L1","D1"],["B3","L2","D2"],["B1","L3","D4"]];
-const DAYN = ["ორშაბათი","სამშაბათი","ოთხშაბათი","ხუთშაბათი","პარასკევი","შაბათი","კვირა"];
-const DAYS = ["ორშ","სამ","ოთხ","ხუთ","პარ","შაბ","კვ"];
-const WEEKS = [{label:"12–18 ოქტ",start:12},{label:"19–25 ოქტ",start:19},{label:"26–31 ოქტ",start:26}];
-
 const store = {
   get(k){try{return JSON.parse(localStorage.getItem(k))}catch(e){return null}},
   set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
 };
 
-const now = new Date();
-let w = 0, d = 0, todayW = -1, todayD = -1;
-if (now.getFullYear()===2026 && (now.getMonth()===9 && now.getDate()>=12 || now.getMonth()===10 && now.getDate()===1)) {
-  const day = now.getMonth()===10 ? 32 : now.getDate();
-  todayW = Math.min(2, Math.floor((day-12)/7)); todayD = (day-12) - todayW*7;
-  w = todayW; d = todayD;
-}
-
-function dateOf(wi, di){ const n = WEEKS[wi].start + di; return n>31 ? {n:n-31,out:true} : {n,out:false}; }
-
-function renderWeeks(){
-  const el = document.getElementById("weeks"); el.innerHTML="";
-  WEEKS.forEach((x,i)=>{ const b=document.createElement("button"); b.type="button"; b.id="wk"+i;
-    b.textContent="კვირა "+(i+1)+" · "+x.label; b.setAttribute("aria-pressed", i===w);
-    b.onclick=()=>{w=i; if(w===2&&d===6) d=5; render();}; el.appendChild(b); });
-}
-function renderDays(){
-  const el = document.getElementById("days"); el.innerHTML="";
-  DAYS.forEach((x,i)=>{ const dt=dateOf(w,i); const b=document.createElement("button"); b.type="button"; b.id="dy"+i;
-    b.innerHTML='<span class="d">'+x+'</span><span class="n">'+dt.n+'</span>';
-    b.setAttribute("aria-pressed", i===d); b.setAttribute("aria-label", DAYN[i]+" "+dt.n+(dt.out?" ნოემბერი":" ოქტომბერი"));
-    if(dt.out) b.classList.add("out");
-    if(w===todayW && i===todayD) b.classList.add("today");
-    b.onclick=()=>{d=i; render();}; el.appendChild(b); });
-}
-function mealHTML(m, cls, i){
-  const isOpen = open.has(i);
-  return '<div class="meal '+(cls||"")+(isOpen?" open":"")+'">'+
-    '<button type="button" class="mhead" id="meal'+i+'" data-i="'+i+'" aria-expanded="'+isOpen+'" aria-controls="mb'+i+'">'+
-      (m.img?'<span class="ph mthumb"><img src="'+IMG(m.img,120,120)+'" alt="" loading="lazy" decoding="async" onerror="imgFail(this)"></span>':'')+
-      '<span class="mt"><span class="slot">'+m.slot+'</span><span class="mn">'+m.name+'</span><span class="kc">🔥 '+m.k+' კკალ · '+m.p+' გ ცილა</span></span>'+
-      '<span class="mr"><span class="chev" aria-hidden="true"></span></span>'+
-    '</button>'+
-    '<div class="mbody" id="mb'+i+'"'+(isOpen?"":" hidden")+'>'+
-      (m.img?'<div class="ph mphoto"><img src="'+IMG(m.img,800,450)+'" alt="'+m.name+'" loading="lazy" decoding="async" onerror="imgFail(this)"></div>':'')+
-      '<div class="meta"><span>⏱ '+m.time+'</span><span>'+m.k+' კკალ</span><span>'+m.p+' გ ცილა</span></div>'+
-      '<div class="cols"><div><div class="lbl">ინგრედიენტები</div><ul>'+m.items.map(x=>'<li>'+x+'</li>').join("")+'</ul></div>'+
-      '<div><div class="lbl">მომზადება</div><ol>'+m.steps.map(x=>'<li>'+x+'</li>').join("")+'</ol></div></div>'+
-      '<p class="tip">'+m.tip+'</p>'+
-    '</div></div>';
-}
-function renderDay(){
-  const [b,l,dn] = WEEK[d];
-  const seq = [["10:00",M.PRE,"small"],["12:15",M[b]],["16:00",M[l]],["19:00",M.SHAKE,"small"],["22:30",M[dn]]];
-  document.getElementById("timeline").innerHTML = seq.map(([t,m,c],i)=>'<li><span class="time">'+t+'</span>'+mealHTML(m,c,i)+'</li>').join("");
-  const k = seq.reduce((s,x)=>s+x[1].k,0), p = seq.reduce((s,x)=>s+x[1].p,0);
-  document.getElementById("tk").textContent = k+" / 2000";
-  document.getElementById("tp").textContent = p+" / 180 გ";
-  document.getElementById("bk").style.width = Math.min(100,k/20)+"%";
-  document.getElementById("bp").style.width = Math.min(100,p/1.8)+"%";
-}
-
-const PREPS = [
-  {id:"sun",title:"კვირა · ~2 საათი",sub:"ორშაბათი–ოთხშაბათისთვის",items:[
-    "ქათმის მკერდი ~700 გ ღუმელში (200°C, 20–25 წთ): ორშაბათის სადილი 200 გ, ჩაშუშული 200 გ, ოთხშაბათის ვახშამი 150 გ, რულეტისთვის ~135 გ",
-    "ბრინჯი, წიწიბურა, მაკარონი — 70 გ თითო",
-    "საქონლის ჩაშუშული (170 გ) პომიდვრით, წიწაკით, ხახვით",
-    "საქონლის ბოლონეზე (170 გ ფარში + პასატა)",
-    "ლობიო: 75 გ მშრალი, ღამით დაალბე და მოხარშე",
-    "ქათმის ჩაშუშული ერთ ქვაბში",
-    "დაყავი კონტეინერებში, დააწერე დღე"]},
-  {id:"wed",title:"ოთხშაბათი · ~1.5 საათი",sub:"ხუთშაბათი–კვირისთვის",items:[
-    "ქათმის ბარკალი 200 გ + კარტოფილი 300 გ ღუმელში, ხუთშაბათისთვის",
-    "ქათმის მკერდი ~700 გ: პარასკევის სადილი 200 გ, შაბათის ჩაშუშული 200 გ, კვირის ვახშამი 150 გ, რულეტისთვის ~135 გ",
-    "ბრინჯი, წიწიბურა, მაკარონი — 70 გ თითო",
-    "საქონლის ჩაშუშული და ბოლონეზე შაბათ-კვირისთვის, საყინულეში",
-    "ლობიო: 75 გ მშრალი, კვირის ვახშმისთვის"]}
-];
-const SHOP = [
-  ["ხორცი და თევზი",[["ქათმის მკერდი","1.4 კგ",25],["ქათმის ბარკალი, ტყავის გარეშე","200 გ",3],["უცხიმო საქონლის ხორცი","350 გ",12],["უცხიმო საქონლის ფარში (≤5%)","350 გ",9],["ორაგული","300 გ",18]]],
-  ["კვერცხი და რძის ნაწარმი",[["კვერცხი","30 ცალი",17],["ხაჭო 2–5%","1 კგ",16],["მაწონი","1 კგ",8],["რძე 1.5%","2.5 ლ",13]]],
-  ["მარცვლეული და ცომეული",[["ბრინჯი","150 გ",1],["წიწიბურა","150 გ",1],["მაკარონი","150 გ",1],["კარტოფილი","700 გ",1.5],["მთლიანმარცვლოვანი პური","1 ცალი",3.5],["ლავაში","2 ცალი",3],["მშრალი წითელი ლობიო","150 გ",1.5]]],
-  ["ხილი და ბოსტნეული",[["ბანანი","10 ცალი",8],["პომიდორი","1.5 კგ",10],["კიტრი","1 კგ",5],["ბულგარული წიწაკა","4 ცალი",4],["ხახვი","4 ცალი",1],["ბროკოლი ან მწვანე ლობიო","500 გ",6],["ისპანახი ან სოკო","300 გ",4],["მწვანილი, ნიორი, ლიმონი","",5]]],
-  ["სხვა",[["პომიდვრის პასატა","300 გ",4],["ნიგოზი","30 გ",1.5],["ზეთი, სპრეი, თაფლი, სანელებლები (კვირის წილი)","",3]]]
-];
-const SHOP_TOTAL = SHOP.reduce((s,[,items])=>s+items.reduce((a,x)=>a+x[2],0),0);
-const fmtL = n => "~"+(Math.round(n*2)/2)+" ₾";
-
-function checks(key, list, grouped){
-  const st = store.get(key) || {};
-  const ul = document.createElement("ul"); ul.className="checks";
-  const add=(txt,q,id,price)=>{ const li=document.createElement("li"); const lab=document.createElement("label");
-    const cb=document.createElement("input"); cb.type="checkbox"; cb.id=key+"_"+id; cb.checked=!!st[id];
-    cb.onchange=()=>{ st[id]=cb.checked; store.set(key,st); };
-    const s=document.createElement("span"); s.textContent=txt; lab.append(cb,s);
-    const qq=document.createElement("span"); qq.className="q"; qq.textContent=(q||"")+(price!=null?(q?" · ":"")+fmtL(price):""); lab.append(qq);
-    li.append(lab); ul.append(li); };
-  if(grouped){ let n=0; list.forEach(([g,items])=>{ const h=document.createElement("li"); h.className="group"; h.textContent=g; ul.append(h); items.forEach(([t,q,pr])=>add(t,q,n++,pr)); }); }
-  else list.forEach((t,i)=>add(t,"",i));
-  return ul;
-}
-function renderPreps(){
-  const el=document.getElementById("preps"); el.innerHTML="";
-  PREPS.forEach(p=>{ const c=document.createElement("div"); c.className="card";
-    c.innerHTML='<div><h3>'+p.title+'</h3><p class="note">'+p.sub+'</p></div>';
-    c.append(checks("prep_w"+w+"_"+p.id, p.items)); el.append(c); });
-}
-function renderShop(){
-  const old=document.getElementById("shoplist"); const nu=checks("shop_w"+w, SHOP, true); nu.id="shoplist"; old.replaceWith(nu);
-  document.querySelector("#shop h2").textContent = "საყიდლები: კვირა "+(w+1);
-  const t = w===2 ? SHOP_TOTAL*6/7 : SHOP_TOTAL;
-  document.getElementById("shopTotal").textContent = "~"+(Math.round(t/5)*5)+" ₾";
-  document.getElementById("shopRange").textContent = (Math.round(t*0.9/5)*5)+"–"+(Math.round(t*1.1/5)*5)+" ₾"+(w===2?" · 6 დღე (26–31)":" · 7 დღე");
-}
-document.getElementById("shopReset").onclick=()=>{ store.set("shop_w"+w,{}); renderShop(); };
-
-document.getElementById("timeline").addEventListener("click", e=>{
-  const btn = e.target.closest(".mhead"); if(!btn) return;
-  const i = +btn.dataset.i; const card = btn.parentElement; const body = card.querySelector(".mbody");
-  const nowOpen = !open.has(i);
-  if(nowOpen) open.add(i); else open.delete(i);
-  btn.setAttribute("aria-expanded", nowOpen); body.hidden = !nowOpen; card.classList.toggle("open", nowOpen);
-});
 /* ---------- რეცეპტები ----------
    ყველა მონაცემი 1 პორციაზეა. კალორია ითვლება მაკროებიდან: 4×ცილა + 4×ნახშირწყალი + 9×ცხიმი.
    ფოტოები: Unsplash (უფასო ლიცენზია). */
@@ -609,8 +557,6 @@ const RECIPES = [
   ""]
 ].map(([id,name,cat,min,p,c,f,img,items,steps,tip])=>({id,name,cat,min,p,c,f,img,items,steps,tip,k:Math.round((4*p+4*c+9*f)/5)*5}));
 
-const PHOTO = {B1:"1677844592730-ce9c936d8f1a",B2:"1693054074152-05995e763f07",B3:"1778168199427-4e839943d20f",L1:"1762631383520-df106b252f6a",L2:"1769773183948-d24e3c5a2b82",L3:"1761545832779-bc0b4290fc5e",L4:"1606728035253-49e8a23146de",D1:"1758157836016-3f3fbc5bf796",D2:"1694579740719-0e601c5d2437",D3:"1607532941433-304659e8198a",D4:"1698917467449-08bcd1d9014b",SHAKE:"1570696516188-ade861b84a49"};
-for (const k in PHOTO) M[k].img = PHOTO[k];
 function imgFail(el){ el.onerror=null; el.closest(".ph").classList.add("noimg"); el.remove(); }
 const esc = s => String(s).replace(/[&<>"]/g, ch => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[ch]));
 
@@ -679,11 +625,20 @@ function closeRecipe(){
   if(location.hash.startsWith("#r-")) openRecipe(location.hash.slice(3));
 })();
 
-function render(){ renderWeeks(); renderDays(); renderDay(); renderPreps(); renderShop(); }
-render();
 
 /* ---------- წონის კონტროლი ---------- */
-const START = 110, GOAL = 98, HEIGHT = 1.85, START_DATE = "2026-10-11";
+let START = null, GOAL = null, HEIGHT = null, START_DATE = null, GTYPE = "lose";
+function applyProfileToWeights(){
+  const P = store.get("profile");
+  HEIGHT = P ? P.height/100 : null;
+  GOAL = P && P.target ? P.target : null;
+  GTYPE = P ? P.goal : "lose";
+  START = P && P.startWeight ? P.startWeight : null;
+  START_DATE = P && P.startDate ? P.startDate : null;
+  const lg = document.getElementById("lgoal");
+  lg.hidden = !GOAL; lg.lastChild.textContent = GOAL ? "მიზანი "+f1(GOAL)+" კგ" : "";
+  renderWeights();
+}
 let entries = [];          // [{date:"YYYY-MM-DD", kg:Number}], sorted asc
 let wdb = null;
 const iso = dt => dt.getFullYear()+"-"+String(dt.getMonth()+1).padStart(2,"0")+"-"+String(dt.getDate()).padStart(2,"0");
@@ -710,7 +665,7 @@ function slopePerWeek(){
   if(entries.length<2) return null;
   const last = entries[entries.length-1].date;
   const xs = entries.filter(e=>dayDiff(e.date,last)<14);
-  const pts = (xs.length>=2?xs:entries).map(e=>[dayDiff(START_DATE,e.date), e.kg]);
+  const pts = (xs.length>=2?xs:entries).map(e=>[dayDiff(entries[0].date,e.date), e.kg]);
   if(pts.length<2) return null;
   const n=pts.length, mx=pts.reduce((s,p)=>s+p[0],0)/n, my=pts.reduce((s,p)=>s+p[1],0)/n;
   const den=pts.reduce((s,p)=>s+(p[0]-mx)**2,0); if(!den) return null;
@@ -720,33 +675,46 @@ function stat(label, value, sub, cls){ return '<div class="st'+(cls?" "+cls:"")+
 
 function renderWeights(){
   const S = document.getElementById("wstats");
+  const start = START!=null ? START : entries.length ? entries[0].kg : null;
+  const startDate = START_DATE || (entries.length ? entries[0].date : iso(new Date()));
   if(!entries.length){
-    S.innerHTML = stat("საწყისი", f1(START)+" კგ", "11 ოქტომბერი") + stat("მიზანი", GOAL+" კგ", "დარჩა "+f1(START-GOAL)+" კგ") + stat("BMI", f1(START/HEIGHT**2), "185 სმ");
-    S.insertAdjacentHTML("beforeend",'<p class="note empty">პირველი ჩანაწერის მერე აქ გამოჩნდება დაკლებული კილოგრამები, კვირის საშუალო, ტემპი და პროგნოზი.</p>');
+    if(start==null){ S.innerHTML = '<p class="note empty">ჯერ შეავსე პროფილი ზემოთ ან ჩაწერე პირველი წონა. აქ გამოჩნდება ცვლილება, კვირის საშუალო, ტემპი და პროგნოზი.</p>'; renderChart(); renderTable(); return; }
+    S.innerHTML = stat("საწყისი", f1(start)+" კგ", fmtD(startDate)) +
+      (GOAL ? stat("მიზანი", f1(GOAL)+" კგ", "დარჩა "+f1(Math.abs(start-GOAL))+" კგ") : "") +
+      (HEIGHT ? stat("BMI", f1(start/HEIGHT**2), Math.round(HEIGHT*100)+" სმ") : "");
+    S.insertAdjacentHTML("beforeend",'<p class="note empty">პირველი ჩანაწერის მერე აქ გამოჩნდება ცვლილება, კვირის საშუალო, ტემპი და პროგნოზი.</p>');
   } else {
     const last = entries[entries.length-1], cur = last.kg;
-    const lost = START-cur, left = cur-GOAL;
-    const pct = Math.max(0,Math.min(100,(START-cur)/(START-GOAL)*100));
+    const change = cur-start;
     const a7 = avgWindow(last.date,7), prevEnd = iso(new Date(parseD(last.date).getTime()-7*864e5)), a7p = avgWindow(prevEnd,7);
     const rate = slopePerWeek();
-    let eta = "საჭიროა 2+ ჩანაწერი", etaSub = "";
-    if(rate!=null){
-      if(left<=0){ eta="მიღწეულია"; }
-      else if(rate<-0.05){ const days=Math.ceil(left/(-rate)*7); const d=new Date(parseD(last.date).getTime()+days*864e5); eta=d.getDate()+" "+MON[d.getMonth()]; etaSub=(d.getFullYear()!==2026?d.getFullYear()+" · ":"")+"ახლანდელი ტემპით"; }
-      else { eta="—"; etaSub="წონა არ იკლებს"; }
+    let html = stat("ახლანდელი", f1(cur)+" კგ", fmtD(last.date)) +
+      stat("ცვლილება", sign(change)+" კგ", "საწყისიდან ("+f1(start)+" კგ)", (GTYPE==="lose"&&change<0)||(GTYPE==="gain"&&change>0)?"good":"");
+    if(GOAL){
+      const left = Math.abs(cur-GOAL), done = GTYPE==="gain" ? cur>=GOAL : cur<=GOAL;
+      const pct = Math.max(0,Math.min(100,(cur-start)/(GOAL-start||1)*100));
+      html += stat("დარჩა მიზნამდე", done?"0":f1(left)+" კგ", Math.round(pct)+"% · მიზანი "+f1(GOAL)+" კგ");
+      let eta = "საჭიროა 2+ ჩანაწერი", etaSub = "";
+      if(rate!=null){
+        const toward = GTYPE==="gain" ? rate : -rate;
+        if(done) eta = "მიღწეულია";
+        else if(toward>0.05){ const days=Math.ceil(left/toward*7); const dt=new Date(parseD(last.date).getTime()+days*864e5); eta=dt.getDate()+" "+MON[dt.getMonth()]; etaSub=(dt.getFullYear()!==new Date().getFullYear()?dt.getFullYear()+" · ":"")+"ახლანდელი ტემპით"; }
+        else { eta="—"; etaSub="წონა მიზნისკენ არ მიდის"; }
+      }
+      html += stat("პროგნოზი", eta, etaSub);
     }
-    const rateCls = rate==null?"":rate<=-1.3?"warn":rate<=-0.5?"good":"warn";
-    const rateSub = rate==null?"საჭიროა 2+ ჩანაწერი":rate<=-1.3?"ძალიან სწრაფია, კუნთს ზიანდება":rate<=-0.5?"ნორმაშია (0.5–1.2)":"ნელია: შეამოწმე ზეთი და პორციები";
-    S.innerHTML =
-      stat("ახლანდელი", f1(cur)+" კგ", fmtD(last.date)) +
-      stat("სულ დაკლებული", sign(-lost).replace("+","+")+" კგ", Math.round(pct)+"% მიზნამდე", lost>0?"good":"") +
-      stat("დარჩა მიზნამდე", left>0?f1(left)+" კგ":"0", "მიზანი "+GOAL+" კგ") +
-      stat("7-დღიანი საშუალო", a7!=null?f1(a7)+" კგ":"—", a7!=null&&a7p!=null?sign(a7-a7p)+" წინა კვირასთან":"წინა კვირა ჯერ არ არის") +
-      stat("კვირის ტემპი", rate!=null?sign(rate)+" კგ":"—", rateSub, rateCls) +
-      stat("პროგნოზი 98 კგ", eta, etaSub) +
-      stat("BMI", f1(cur/HEIGHT**2), "საწყისი "+f1(START/HEIGHT**2)) +
-      stat("ჩანაწერები", String(entries.length), "პირველი "+fmtD(entries[0].date));
-    S.insertAdjacentHTML("beforeend",'<div class="prog" aria-hidden="true"><i style="width:'+pct+'%"></i></div>');
+    html += stat("7-დღიანი საშუალო", a7!=null?f1(a7)+" კგ":"—", a7!=null&&a7p!=null?sign(a7-a7p)+" წინა კვირასთან":"წინა კვირა ჯერ არ არის");
+    let rateCls = "", rateSub = "საჭიროა 2+ ჩანაწერი";
+    if(rate!=null){
+      if(GTYPE==="lose"){ rateCls = rate<=-1.3?"warn":rate<=-0.25?"good":"warn"; rateSub = rate<=-1.3?"ძალიან სწრაფია, კუნთი იკარგება":rate<=-0.25?"ნორმაშია":"ნელია: შეამოწმე ზეთი და პორციები"; }
+      else if(GTYPE==="gain"){ rateCls = rate>=0.6?"warn":rate>=0.1?"good":"warn"; rateSub = rate>=0.6?"ძალიან სწრაფია, ცხიმიც მოგემატება":rate>=0.1?"ნორმაშია":"ნელია: ცოტა მეტი ჭამე"; }
+      else { rateCls = Math.abs(rate)<=0.3?"good":"warn"; rateSub = Math.abs(rate)<=0.3?"სტაბილურია":"წონა იცვლება: კალორია შეასწორე"; }
+    }
+    html += stat("კვირის ტემპი", rate!=null?sign(rate)+" კგ":"—", rateSub, rateCls);
+    if(HEIGHT) html += stat("BMI", f1(cur/HEIGHT**2), "საწყისი "+f1(start/HEIGHT**2));
+    html += stat("ჩანაწერები", String(entries.length), "პირველი "+fmtD(entries[0].date));
+    S.innerHTML = html;
+    if(GOAL){ const pct = Math.max(0,Math.min(100,(cur-start)/(GOAL-start||1)*100)); S.insertAdjacentHTML("beforeend",'<div class="prog" aria-hidden="true"><i style="width:'+pct+'%"></i></div>'); }
   }
   renderChart(); renderTable();
 }
@@ -755,7 +723,7 @@ function renderTable(){
   const T = document.getElementById("wtable");
   if(!entries.length){ T.innerHTML='<tr><td class="note">ჩანაწერები ჯერ არ არის.</td></tr>'; return; }
   const rows = entries.slice().reverse().map((e,i,arr)=>{
-    const prev = arr[i+1]; const ch = prev? e.kg-prev.kg : e.kg-START;
+    const prev = arr[i+1]; const ch = prev? e.kg-prev.kg : (START!=null? e.kg-START : 0);
     return '<tr><td>'+fmtD(e.date)+'</td><td class="num">'+f1(e.kg)+'</td><td class="num '+(ch<0?"down":ch>0?"up":"")+'">'+sign(ch)+'</td><td><button type="button" class="del" data-date="'+e.date+'" aria-label="წაშლა '+fmtD(e.date)+'">წაშლა</button></td></tr>';
   }).join("");
   T.innerHTML='<thead><tr><th>თარიღი</th><th>კგ</th><th>ცვლილება</th><th></th></tr></thead><tbody>'+rows+'</tbody>';
@@ -765,20 +733,23 @@ function renderChart(){
   const svg = document.getElementById("wchart"), box = document.getElementById("chartwrap");
   const W = Math.max(260, box.clientWidth||600), H = 240, m = {l:40,r:14,t:12,b:26};
   svg.setAttribute("viewBox","0 0 "+W+" "+H); svg.setAttribute("width",W); svg.setAttribute("height",H);
-  const end = entries.length ? (entries[entries.length-1].date > "2026-10-31" ? entries[entries.length-1].date : "2026-10-31") : "2026-10-31";
-  const span = Math.max(7, dayDiff(START_DATE,end));
-  const vals = entries.map(e=>e.kg).concat([START,GOAL]);
+  const O = START_DATE && (!entries.length || START_DATE<=entries[0].date) ? START_DATE : entries.length ? entries[0].date : iso(new Date());
+  const minEnd = iso(new Date(parseD(O).getTime()+28*864e5));
+  const end = entries.length && entries[entries.length-1].date > minEnd ? entries[entries.length-1].date : minEnd;
+  const span = Math.max(7, dayDiff(O,end));
+  const vals = entries.map(e=>e.kg).concat([START,GOAL].filter(v=>v!=null));
+  if(!vals.length) vals.push(70);
   let lo = Math.floor(Math.min(...vals)-1), hi = Math.ceil(Math.max(...vals)+1);
-  const x = d => m.l + dayDiff(START_DATE,d)/span*(W-m.l-m.r);
+  const x = d => m.l + dayDiff(O,d)/span*(W-m.l-m.r);
   const y = v => m.t + (hi-v)/(hi-lo)*(H-m.t-m.b);
   let g = "";
   const step = (hi-lo)>12?4:2;
   for(let v=Math.ceil(lo/step)*step; v<=hi; v+=step){ g+='<line class="grid" x1="'+m.l+'" x2="'+(W-m.r)+'" y1="'+y(v)+'" y2="'+y(v)+'"/><text class="ax" x="'+(m.l-6)+'" y="'+(y(v)+4)+'" text-anchor="end">'+v+'</text>'; }
   const tickEvery = span>40?14:7;
-  for(let k=0;k<=span;k+=tickEvery){ const d=iso(new Date(parseD(START_DATE).getTime()+k*864e5)); g+='<text class="ax" x="'+x(d)+'" y="'+(H-8)+'" text-anchor="middle">'+fmtD(d)+'</text>'; }
-  g+='<line class="goalline" x1="'+m.l+'" x2="'+(W-m.r)+'" y1="'+y(GOAL)+'" y2="'+y(GOAL)+'"/>';
+  for(let k=0;k<=span;k+=tickEvery){ const d=iso(new Date(parseD(O).getTime()+k*864e5)); g+='<text class="ax" x="'+x(d)+'" y="'+(H-8)+'" text-anchor="middle">'+fmtD(d)+'</text>'; }
+  if(GOAL!=null) g+='<line class="goalline" x1="'+m.l+'" x2="'+(W-m.r)+'" y1="'+y(GOAL)+'" y2="'+y(GOAL)+'"/>';
   // start marker
-  g+='<circle class="startpt" cx="'+x(START_DATE)+'" cy="'+y(START)+'" r="4"/>';
+  if(START!=null && START_DATE) g+='<circle class="startpt" cx="'+x(START_DATE)+'" cy="'+y(START)+'" r="4"/>';
   // 7-day rolling average
   if(entries.length>=2){
     const pts = entries.map(e=>{ const a=avgWindow(e.date,7); return x(e.date).toFixed(1)+","+y(a).toFixed(1); });
@@ -811,11 +782,11 @@ document.getElementById("wform").addEventListener("submit", async e=>{
   if(!isFinite(kg)||kg<40||kg>250){ status("შეიყვანე წონა 40-დან 250 კგ-მდე, მაგალითად 109.4."); return; }
   const v = Math.round(kg*10)/10;
   if(wdb){
-    try{ await wdb.doc("weights/"+date).set({date, kg:v, at:Date.now()}); status("შენახულია: "+fmtD(date)+", "+f1(v)+" კგ."); document.getElementById("wkg").value=""; return; }
+    try{ await wdb.doc("weights/"+date).set({date, kg:v, at:Date.now()}); onNewWeight(date, v); status("შენახულია: "+fmtD(date)+", "+f1(v)+" კგ."); document.getElementById("wkg").value=""; return; }
     catch(err){ status("სერვერზე ვერ შევინახე ("+(err&&err.code||"შეცდომა")+"), ამიტომ ამ ბრაუზერში შევინახე."); }
   }
-  setEntries(entries.filter(x=>x.date!==date).concat([{date,kg:v}])); localSave();
-  if(!wdb) status("შენახულია ამ ბრაუზერში: "+fmtD(date)+", "+f1(v)+" კგ.");
+  setEntries(entries.filter(x=>x.date!==date).concat([{date,kg:v}])); localSave(); onNewWeight(date, v);
+  if(!wdb) status("შენახულია ამ ბრაუზერში: "+fmtD(date)+", "+f1(v)+" კგ."+(profile?" კალორია ახალ წონაზე გადავთვალე.":""));
   document.getElementById("wkg").value="";
 });
 document.getElementById("wtable").addEventListener("click", async e=>{
@@ -826,6 +797,7 @@ document.getElementById("wtable").addEventListener("click", async e=>{
   setEntries(entries.filter(x=>x.date!==date)); localSave();
 });
 
+applyProfileToWeights();
 localLoad();
 (async ()=>{
   try{
@@ -845,6 +817,330 @@ localLoad();
     }, err=>{ status("ონლაინ შენახვა მიუწვდომელია, ჩანაწერები ამ ბრაუზერში ინახება."); wdb=null; });
   }catch(e){}
 })();
+/* ---------- პროფილი და გამოთვლა ----------
+   BMR: Mifflin–St Jeor. TDEE = BMR × აქტივობა.
+   დაკლება: დეფიციტი ტემპის მიხედვით (1 კგ ცხიმი ≈ 7700 კკალ), მაქსიმუმ TDEE-ს 25%, მინიმუმ 1500 (კაცი) / 1200 (ქალი).
+   ცილა საცნობარო წონაზე (BMI 25-ზე მეტისას ითვლება BMI 25-ის წონით). */
+const PACE = {lose:[0.25,0.5,0.75], gain:[0.15,0.25,0.4]};
+const ACTN = {"1.2":"მჯდომარე","1.375":"მსუბუქი აქტივობა","1.55":"საშუალო აქტივობა","1.725":"მაღალი აქტივობა","1.9":"ძალიან მაღალი აქტივობა"};
+const GOALN = {lose:"დაკლება", keep:"შენარჩუნება", gain:"მომატება"};
+let profile = store.get("profile");
+
+function calc(P){
+  const h = P.height/100, bmi = P.weight/(h*h);
+  const bmr = 10*P.weight + 6.25*P.height - 5*P.age + (P.sex==="m"?5:-161);
+  const tdee = bmr*P.act;
+  const floor = P.sex==="m"?1500:1200;
+  let kcal = tdee, rate = 0, notes = [];
+  if(P.goal==="lose"){
+    rate = PACE.lose[P.pace-1];
+    const def = Math.min(rate*7700/7, tdee*0.25);
+    kcal = tdee - def;
+    if(kcal < floor){ kcal = floor; }
+    rate = (tdee-kcal)*7/7700;
+    if(rate < PACE.lose[P.pace-1]-0.05) notes.push("შენი აქტივობით ეს ტემპი უსაფრთხოდ არ გამოდის, ამიტომ გეგმა კვირაში ~"+f2(rate)+" კგ-ზეა გათვლილი.");
+  } else if(P.goal==="gain"){
+    rate = PACE.gain[P.pace-1];
+    kcal = tdee + rate*7700/7;
+  }
+  kcal = Math.round(kcal/10)*10;
+  const refW = bmi>25 ? 25*h*h : P.weight;
+  const pPerKg = P.goal==="lose"?2.0:P.goal==="gain"?1.8:1.6;
+  let p = Math.round(refW*pPerKg/5)*5;
+  let f = Math.round(Math.max(kcal*0.27/9, refW*0.7)/5)*5;
+  let c = Math.round((kcal - 4*p - 9*f)/4/5)*5;
+  if(c < 80){ f = Math.max(Math.round(refW*0.6/5)*5, f-15); c = Math.max(40, Math.round((kcal-4*p-9*f)/4/5)*5); }
+  const water = Math.round((P.weight*0.033 + (P.act>=1.55?0.5:0))*10)/10;
+  if(P.age<18) notes.push("18 წლამდე ეს ფორმულა ზუსტი არ არის. გეგმა ექიმთან ან დიეტოლოგთან შეათანხმე.");
+  if(P.goal==="lose" && bmi<18.5) notes.push("შენი BMI ნორმაზე დაბალია, ამიტომ წონის კლებას არ გირჩევ. სჯობს შენარჩუნება ან მომატება აირჩიო.");
+  if(P.goal==="lose" && bmi>=18.5 && bmi<20) notes.push("BMI უკვე ნორმის ქვედა ზღვართანაა. დაკლებამდე კარგად დაფიქრდი.");
+  if(P.goal==="gain" && bmi>=30) notes.push("BMI 30-ზე მეტია. თუ კუნთის მომატება გინდა, სცადე შენარჩუნება და ძალოვანი ვარჯიში.");
+  let eta = null;
+  if(P.target && rate>0){
+    const diff = P.goal==="lose" ? P.weight-P.target : P.target-P.weight;
+    if(diff>0){ const d = new Date(Date.now()+Math.ceil(diff/rate*7)*864e5); eta = {weeks:Math.ceil(diff/rate), date:d}; }
+    else notes.push(P.goal==="lose"?"სასურველი წონა ახლანდელზე ნაკლები უნდა იყოს, თუ კლება გინდა.":"სასურველი წონა ახლანდელზე მეტი უნდა იყოს, თუ მომატება გინდა.");
+  }
+  return {bmi, bmr:Math.round(bmr), tdee:Math.round(tdee/10)*10, kcal, p, c, f, rate, water, eta, notes};
+}
+const f2 = n => String(Math.round(n*100)/100).replace(/\.?0+$/,"") || "0";
+const bmiName = b => b<18.5?"ნორმაზე დაბალი":b<25?"ნორმა":b<30?"ჭარბი წონა":"სიმსუქნე";
+
+function readForm(){
+  const F = document.getElementById("pform"), v = n => F.elements[n];
+  const num = n => parseFloat(String(v(n).value).replace(",","."));
+  const P = {
+    sex: F.querySelector("[name=sex]:checked").value,
+    age: num("age"), height: num("height"), weight: num("weight"),
+    target: num("target") || null, act: parseFloat(v("act").value),
+    goal: F.querySelector("[name=goal]:checked").value,
+    pace: +F.querySelector("[name=pace]:checked").value,
+    meals: +F.querySelector("[name=meals]:checked").value,
+    nofish: v("nofish").checked, nored: v("nored").checked, veg: v("veg").checked
+  };
+  if(!(P.age>=14 && P.age<=90)) return "ასაკი შეიყვანე 14-დან 90-მდე.";
+  if(!(P.height>=130 && P.height<=230)) return "სიმაღლე შეიყვანე სანტიმეტრებში, მაგალითად 178.";
+  if(!(P.weight>=35 && P.weight<=250)) return "წონა შეიყვანე კილოგრამებში, მაგალითად 82.5.";
+  if(P.target!=null && !(P.target>=35 && P.target<=250)) return "სასურველი წონა 35-დან 250 კგ-მდე უნდა იყოს, ან დატოვე ცარიელი.";
+  P.weight = Math.round(P.weight*10)/10; if(P.target) P.target = Math.round(P.target*10)/10;
+  return P;
+}
+function fillForm(P){
+  const F = document.getElementById("pform");
+  const set = (n,val) => { const r = F.querySelector("[name="+n+"][value='"+val+"']"); if(r) r.checked = true; };
+  set("sex",P.sex); set("goal",P.goal); set("pace",P.pace); set("meals",P.meals);
+  F.elements.age.value = P.age; F.elements.height.value = P.height; F.elements.weight.value = P.weight;
+  F.elements.target.value = P.target||""; F.elements.act.value = String(P.act);
+  F.elements.nofish.checked = !!P.nofish; F.elements.nored.checked = !!P.nored; F.elements.veg.checked = !!P.veg;
+  syncPace();
+}
+function syncPace(){
+  const F = document.getElementById("pform"), g = F.querySelector("[name=goal]:checked").value;
+  document.getElementById("pacebox").hidden = g==="keep";
+  const r = PACE[g]; if(!r) return;
+  const sg = g==="lose"?"−":"+";
+  ["ნელი","ზომიერი","სწრაფი"].forEach((t,i)=>{ document.getElementById("pace"+(i+1)).innerHTML = t+'<small class="num">'+sg+f2(r[i])+' კგ/კვ</small>'; });
+}
+document.getElementById("pform").addEventListener("change", e=>{
+  if(e.target.name==="goal") syncPace();
+  if(e.target.name==="veg" && e.target.checked){ e.target.form.elements.nored.checked = true; e.target.form.elements.nofish.checked = true; }
+});
+document.getElementById("pform").addEventListener("submit", e=>{
+  e.preventDefault();
+  const P = readForm(), err = document.getElementById("perr");
+  if(typeof P==="string"){ err.textContent = P; return; }
+  err.textContent = "";
+  const old = profile;
+  const sameGoal = old && old.goal===P.goal && old.target===P.target;
+  P.startWeight = sameGoal && old.startWeight ? old.startWeight : P.weight;
+  P.startDate = sameGoal && old.startDate ? old.startDate : isoDay(new Date());
+  profile = P; store.set("profile", P); store.set("swaps", {});
+  renderAll();
+  document.getElementById("pdetails").open = false;
+  document.getElementById("result").scrollIntoView({behavior:"smooth", block:"start"});
+});
+
+/* ---------- მენიუს აწყობა ---------- */
+const isoDay = dt => dt.getFullYear()+"-"+String(dt.getMonth()+1).padStart(2,"0")+"-"+String(dt.getDate()).padStart(2,"0");
+const TAG = r => { const t = r.items.join(" ");
+  return { fish:/ორაგულ|თინუს|თევზ|კრევეტ/.test(t), red:/საქონ/.test(t), meat:/საქონ|ქათ[მა]|ინდაურ/.test(t) }; };
+RECIPES.forEach(r=>{ r.tag = TAG(r); r.dens = r.p*4/r.k; });
+const SLOTS = {
+  3:[["b","საუზმე",.30],["l","სადილი",.40],["d","ვახშამი",.30]],
+  4:[["b","საუზმე",.25],["l","სადილი",.35],["s","სნექი",.12],["d","ვახშამი",.28]],
+  5:[["b","საუზმე",.22],["s","სნექი",.10],["l","სადილი",.33],["s","მეორე სნექი",.10],["d","ვახშამი",.25]]
+};
+function pools(P, T){
+  const ok = r => !(P.nofish && r.tag.fish) && !(P.nored && r.tag.red) && !(P.veg && r.tag.meat);
+  const by = cat => RECIPES.filter(r=>r.cat===cat && ok(r));
+  let b = by("b"), l = by("l"), d = by("d"), s = by("s");
+  if(l.length+d.length < 6){ const m = l.concat(d); l = m; d = m; }
+  if(!s.length) s = b; if(!b.length) b = s;
+  const sort = list => {
+    const xs = list.slice();
+    // ვტოვებთ კერძებს, რომელთა ცილის წილი შენს სამიზნესთან ყველაზე ახლოსაა
+    const want = T.p*4/T.kcal;
+    xs.sort((a,c)=>Math.abs(a.dens-want)-Math.abs(c.dens-want));
+    if(xs.length>=6) xs.length = Math.ceil(xs.length*0.75);
+    return xs;
+  };
+  return {b:sort(b), l:sort(l), d:sort(d), s:sort(s)};
+}
+// რიცხვების მასშტაბირება ინგრედიენტში: "180 გ ქათამი" → "235 გ ქათამი". პროცენტები და დიაპაზონები უცვლელია.
+function scaleText(txt, k){
+  if(Math.abs(k-1)<0.03) return txt;
+  return txt.replace(/(^|[^\d.,–\-≤])(\d+(?:\.\d+)?)(?![\d.,%–\-])(\s*(?:გ|მლ)(?![ა-ჰ]))?/g, (m,pre,n,unit)=>{
+    let v = parseFloat(n)*k;
+    if(unit) v = v>=40 ? Math.round(v/5)*5 : Math.max(1,Math.round(v));
+    else v = v>=3 ? Math.round(v) : Math.max(0.5, Math.round(v*2)/2);
+    return pre + String(v) + (unit||"");
+  });
+}
+function buildDay(P, T, di){
+  const pl = pools(P, T), slots = SLOTS[P.meals]||SLOTS[4], swaps = store.get("swaps")||{};
+  const used = new Set(), seen = {};
+  const picks = slots.map(([cat,label,share],si)=>{
+    const pool = pl[cat], occ = (seen[cat] = (seen[cat]||0)+1) - 1;
+    let idx = di + occ*3 + (swaps[di+"_"+si]||0), r, tries = 0;
+    do { r = pool[((idx%pool.length)+pool.length)%pool.length]; idx++; tries++; } while(used.has(r.id) && tries<pool.length);
+    used.add(r.id);
+    return {r, label, want: T.kcal*share, si};
+  });
+  // პორციის კოეფიციენტი: ჯერ თითო ჭამა თავის წილზე, მერე ნარჩენი უზღუდავ ჭამებზე გადანაწილდება
+  picks.forEach(x=>{ x.k = x.want/x.r.k; });
+  for(let pass=0; pass<3; pass++){
+    let extra = 0, free = 0;
+    picks.forEach(x=>{ const c = Math.min(2, Math.max(0.5, x.k)); extra += (x.k-c)*x.r.k; x.k = c; if(c>0.5 && c<2) free += x.r.k*c; });
+    if(Math.abs(extra)<5 || !free) break;
+    picks.forEach(x=>{ if(x.k>0.5 && x.k<2) x.k += extra*(x.k*x.r.k/free)/x.r.k; });
+  }
+  return picks.map(x=>{
+    const k = Math.round(Math.min(2,Math.max(0.5,x.k))*20)/20, r = x.r;
+    return {id:r.id, slot:x.label, si:x.si, name:r.name, img:r.img, factor:k,
+      k:Math.round(r.k*k/5)*5, p:Math.round(r.p*k), c:Math.round(r.c*k), f:Math.round(r.f*k),
+      time:fmtMin(r.min), items:r.items.map(t=>scaleText(t,k)), steps:r.steps, tip:r.tip};
+  });
+}
+
+/* ---------- რენდერი ---------- */
+const DAYN = ["ორშაბათი","სამშაბათი","ოთხშაბათი","ხუთშაბათი","პარასკევი","შაბათი","კვირა"];
+const DAYS = ["ორშ","სამ","ოთხ","ხუთ","პარ","შაბ","კვ"];
+const MONF = ["იანვარი","თებერვალი","მარტი","აპრილი","მაისი","ივნისი","ივლისი","აგვისტო","სექტემბერი","ოქტომბერი","ნოემბერი","დეკემბერი"];
+const todayIdx = (new Date().getDay()+6)%7;
+let d = todayIdx, T = null, WEEKPLAN = [];
+const open = new Set();
+
+function renderResult(){
+  const R = document.getElementById("result"), S = document.getElementById("goalstrip");
+  if(!profile){ R.hidden = true; S.hidden = true; return; }
+  const P = profile;
+  const rateTxt = P.goal==="keep" ? "წონის შენარჩუნება" : (P.goal==="lose"?"−":"+")+f2(T.rate)+" კგ კვირაში";
+  R.hidden = false;
+  R.innerHTML =
+    '<div class="card result">'+
+      '<div class="row"><span class="slot">შენი დღიური ნორმა</span><span class="slot">'+GOALN[P.goal]+' · '+rateTxt+'</span></div>'+
+      '<div class="macros">'+
+        '<div class="mc kcal"><b class="num">'+T.kcal+'</b><span>კკალ</span></div>'+
+        '<div class="mc"><b class="num">'+T.p+' გ</b><span>ცილა</span></div>'+
+        '<div class="mc"><b class="num">'+T.c+' გ</b><span>ნახშირწყ.</span></div>'+
+        '<div class="mc"><b class="num">'+T.f+' გ</b><span>ცხიმი</span></div>'+
+      '</div>'+
+      '<div class="stats">'+
+        stat("BMI", f1(T.bmi), bmiName(T.bmi))+
+        stat("ბაზალური (BMR)", T.bmr+" კკალ", "მოსვენებულ მდგომარეობაში")+
+        stat("ხარჯავ დღეში", T.tdee+" კკალ", ACTN[String(P.act)])+
+        stat("წყალი", f1(T.water)+" ლ", "დღეში, მინიმუმ")+
+        (T.eta ? stat("მიზანი "+f1(P.target)+" კგ", T.eta.date.getDate()+" "+MONF[T.eta.date.getMonth()], "~"+T.eta.weeks+" კვირა"+(T.eta.date.getFullYear()!==new Date().getFullYear()?" · "+T.eta.date.getFullYear():"")) : "")+
+      '</div>'+
+      (T.notes.length ? '<div class="warnbox">'+T.notes.map(n=>'<p>'+esc(n)+'</p>').join("")+'</div>' : '')+
+      '<p class="note">ეს მიახლოებითი გათვლაა. 2–3 კვირა მიჰყევი და წონის მიხედვით შეასწორე: თუ წონა არ იცვლება სასურველი ტემპით, კალორია 100–150-ით შეცვალე. ჯანმრთელობის პრობლემის შემთხვევაში ექიმს მიმართე.</p>'+
+    '</div>';
+  S.hidden = false;
+  S.innerHTML = '<span>დღეში <b class="num">'+T.kcal+' კკალ</b></span><span>ცილა <b class="num">'+T.p+' გ</b></span>'+
+    (P.target ? '<span>მიზანი <b class="num">'+f1(P.weight)+' → '+f1(P.target)+' კგ</b></span>' : '<span>წონა <b class="num">'+f1(P.weight)+' კგ</b></span>');
+  document.getElementById("psummary").textContent =
+    (P.sex==="m"?"კაცი":"ქალი")+" · "+P.age+" წ · "+P.height+" სმ · "+f1(P.weight)+" კგ · "+GOALN[P.goal];
+}
+function weekDates(){
+  const now = new Date(), mon = new Date(now.getFullYear(), now.getMonth(), now.getDate()-todayIdx);
+  return DAYS.map((_,i)=>new Date(mon.getFullYear(), mon.getMonth(), mon.getDate()+i));
+}
+function renderDays(){
+  const el = document.getElementById("days"), dates = weekDates(); el.innerHTML = "";
+  DAYS.forEach((x,i)=>{ const b = document.createElement("button"); b.type = "button"; b.id = "dy"+i;
+    b.innerHTML = '<span class="d">'+x+'</span><span class="n">'+dates[i].getDate()+'</span>';
+    b.setAttribute("aria-pressed", i===d); b.setAttribute("aria-label", DAYN[i]+", "+dates[i].getDate()+" "+MONF[dates[i].getMonth()]);
+    if(i===todayIdx) b.classList.add("today");
+    b.onclick = ()=>{ d = i; open.clear(); renderDays(); renderDay(); }; el.appendChild(b); });
+}
+function mealHTML(m, i){
+  const isOpen = open.has(i), cls = /სნექი/.test(m.slot) ? " small" : "";
+  return '<div class="meal'+cls+(isOpen?" open":"")+'">'+
+    '<button type="button" class="mhead" id="meal'+i+'" data-i="'+i+'" aria-expanded="'+isOpen+'" aria-controls="mb'+i+'">'+
+      '<span class="ph mthumb"><img src="'+IMG(m.img,120,120)+'" alt="" loading="lazy" decoding="async" onerror="imgFail(this)"></span>'+
+      '<span class="mt"><span class="slot">'+m.slot+'</span><span class="mn">'+esc(m.name)+'</span><span class="kc">🔥 '+m.k+' კკალ · '+m.p+' გ ცილა</span></span>'+
+      '<span class="mr"><span class="chev" aria-hidden="true"></span></span>'+
+    '</button>'+
+    '<div class="mbody" id="mb'+i+'"'+(isOpen?"":" hidden")+'>'+
+      '<div class="ph mphoto"><img src="'+IMG(m.img,800,450)+'" alt="'+esc(m.name)+'" loading="lazy" decoding="async" onerror="imgFail(this)"></div>'+
+      '<div class="meta"><span>⏱ '+m.time+'</span><span>პორცია ×'+m.factor+'</span><span>ნ '+m.c+' გ</span><span>ც '+m.f+' გ</span></div>'+
+      '<div class="cols"><div><div class="lbl">ინგრედიენტები</div><ul>'+m.items.map(x=>'<li>'+esc(x)+'</li>').join("")+'</ul></div>'+
+      '<div><div class="lbl">მომზადება</div><ol>'+m.steps.map(x=>'<li>'+esc(x)+'</li>').join("")+'</ol></div></div>'+
+      (m.tip?'<p class="tip">'+esc(m.tip)+'</p>':'')+
+      '<button type="button" class="swap" data-si="'+m.si+'">🔄 სხვა კერძი</button>'+
+    '</div></div>';
+}
+function meter(id, val, max, unit){
+  document.getElementById("t"+id).textContent = val+" / "+max+(unit||"");
+  document.getElementById("b"+id).style.width = Math.min(100, val/max*100)+"%";
+}
+function renderDay(){
+  const day = WEEKPLAN[d];
+  document.getElementById("timeline").innerHTML = day.map((m,i)=>'<li>'+mealHTML(m,i)+'</li>').join("");
+  const sum = key => day.reduce((s,m)=>s+m[key],0);
+  meter("k", sum("k"), T.kcal); meter("p", sum("p"), T.p, " გ"); meter("c", sum("c"), T.c, " გ"); meter("f", sum("f"), T.f, " გ");
+}
+document.getElementById("timeline").addEventListener("click", e=>{
+  const sw = e.target.closest(".swap");
+  if(sw){ const swaps = store.get("swaps")||{}, key = d+"_"+sw.dataset.si; swaps[key] = (swaps[key]||0)+1; store.set("swaps", swaps);
+    const i = +sw.dataset.si; open.add(i);
+    WEEKPLAN[d] = buildDay(profile, T, d); renderDay(); renderShop();
+    document.getElementById("meal"+i).focus(); return; }
+  const btn = e.target.closest(".mhead"); if(!btn) return;
+  const i = +btn.dataset.i, card = btn.parentElement, body = card.querySelector(".mbody");
+  const nowOpen = !open.has(i);
+  if(nowOpen) open.add(i); else open.delete(i);
+  btn.setAttribute("aria-expanded", nowOpen); body.hidden = !nowOpen; card.classList.toggle("open", nowOpen);
+});
+
+/* ---------- საყიდლები: კვირის მენიუს ინგრედიენტების ჯამი ---------- */
+const MEAS = ["ს/კ","ჩ/კ","კბილი","ნაჭერი"];
+function shopList(){
+  const wt = new Map(), cnt = new Map(), misc = new Set();
+  WEEKPLAN.flat().forEach(m=>m.items.forEach(line=>{
+    line.replace(/^[^:]{1,12}:\s*/,"").replace(/\s*\([^)]*\)/g,"").split(/,\s*|\s\+\s|\s+და\s+(?=\d)/).forEach(part=>{
+      part = part.trim(); if(!part) return;
+      let x;
+      if((x = part.match(/^(\d+(?:\.\d+)?)\s*(გ|მლ)\s+(.+)$/))){ const key = x[3]+"|"+x[2]; wt.set(key,(wt.get(key)||0)+parseFloat(x[1])); }
+      else if((x = part.match(/^(\d+(?:\.\d+)?)\s+(.+)$/))){
+        const ws = x[2].split(" "), unit = MEAS.includes(ws[0]) ? ws.shift() : "ც";
+        const name = ws.join(" ");
+        if(unit==="ს/კ"||unit==="ჩ/კ") misc.add(name); else { const key = name+"|"+unit; cnt.set(key,(cnt.get(key)||0)+parseFloat(x[1])); }
+      } else misc.add(part);
+    });
+  }));
+  const fmtW = (v,u) => u==="გ" ? (v>=1000 ? f1(v/1000).replace(/\.0$/,"")+" კგ" : Math.round(v/10)*10+" გ") : (v>=1000 ? f1(v/1000).replace(/\.0$/,"")+" ლ" : Math.round(v/10)*10+" მლ");
+  const sortG = (a,b) => a[0].localeCompare(b[0],"ka");
+  return [
+    ["წონით", [...wt].map(([k,v])=>{ const [n,u]=k.split("|"); return [n, fmtW(v,u)]; }).sort(sortG)],
+    ["ცალობით", [...cnt].map(([k,v])=>{ const [n,u]=k.split("|"); return [n, (Math.round(v*2)/2)+" "+u]; }).sort(sortG)],
+    ["სანელებლები, მწვანილი და სხვა", [...misc].filter(n=>![...wt.keys(),...cnt.keys()].some(k=>k.split("|")[0]===n)).map(n=>[n,""]).sort(sortG)]
+  ].filter(g=>g[1].length);
+}
+function checks(key, list){
+  const st = store.get(key) || {};
+  const ul = document.createElement("ul"); ul.className = "checks";
+  let n = 0;
+  list.forEach(([g,items])=>{ const h = document.createElement("li"); h.className = "group"; h.textContent = g; ul.append(h);
+    items.forEach(([txt,q])=>{ const id = n++; const li = document.createElement("li"), lab = document.createElement("label");
+      const cb = document.createElement("input"); cb.type = "checkbox"; cb.id = key+"_"+id; cb.checked = !!st[id];
+      cb.onchange = ()=>{ st[id] = cb.checked; store.set(key, st); };
+      const s = document.createElement("span"); s.textContent = txt;
+      const qq = document.createElement("span"); qq.className = "q"; qq.textContent = q;
+      lab.append(cb, s, qq); li.append(lab); ul.append(li); }); });
+  return ul;
+}
+let shopKey = "shop";
+function renderShop(){
+  const old = document.getElementById("shoplist");
+  if(!WEEKPLAN.length){ const ul = document.createElement("ul"); ul.className = "checks"; ul.id = "shoplist"; ul.innerHTML = '<li class="note">სია გამოჩნდება, როცა გეგმას შეადგენ.</li>'; old.replaceWith(ul); return; }
+  const sig = WEEKPLAN.flat().map(m=>m.id+m.factor).join(",");
+  let h = 0; for(let i=0;i<sig.length;i++) h = (h*31 + sig.charCodeAt(i))|0;
+  shopKey = "shop_"+(h>>>0).toString(36);
+  const nu = checks(shopKey, shopList()); nu.id = "shoplist"; old.replaceWith(nu);
+}
+document.getElementById("shopReset").onclick = ()=>{ store.set(shopKey, {}); renderShop(); };
+
+function renderAll(){
+  T = profile ? calc(profile) : null;
+  renderResult();
+  document.getElementById("plan").hidden = !profile;
+  document.getElementById("noplan").hidden = !!profile;
+  WEEKPLAN = profile ? DAYS.map((_,i)=>buildDay(profile, T, i)) : [];
+  if(profile){ renderDays(); renderDay(); }
+  renderShop();
+  if(typeof applyProfileToWeights==="function") applyProfileToWeights();
+}
+if(profile){ fillForm(profile); document.getElementById("pdetails").open = false; } else syncPace();
+renderAll();
+
+// ახალი წონის ჩაწერისას გეგმა ახალ წონაზე გადაითვლება
+function onNewWeight(date, kg){
+  if(!profile) return;
+  const latest = entries.length ? entries[entries.length-1].date : date;
+  if(date < latest || (profile.startDate && date < profile.startDate)) return;
+  profile.weight = kg; store.set("profile", profile); fillForm(profile); renderAll();
+}
 </script>
 </body>
 </html>
