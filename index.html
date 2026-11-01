@@ -161,6 +161,17 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 .shoptotal{display:flex;align-items:baseline;gap:6px 12px;flex-wrap:wrap}
 .shoptotal b{font-size:26px}
 .note{font-size:13px;color:var(--muted)}
+.fit{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 14px;display:flex;flex-direction:column;gap:10px}
+.fit .fhead{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.fit .fhead b{font-size:14px}
+.fit .fbtn{font:inherit;font-size:14px;font-weight:600;color:#fff;background:var(--accent);border:0;border-radius:999px;padding:8px 14px;cursor:pointer}
+.fit .fbtn.ghost{color:var(--accent);background:var(--accent-soft)}
+.fit .fbtn:focus-visible{outline:2px solid var(--fg);outline-offset:2px}
+.fnums{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+.fnums div{background:var(--accent-soft);border-radius:10px;padding:8px 6px;display:flex;flex-direction:column;align-items:center;gap:1px;min-width:0;text-align:center}
+.fnums b{font-family:var(--mono);font-size:16px}
+.fnums span{font-size:11px;color:var(--muted)}
+.fnums .good b{color:var(--good)} .fnums .warn b{color:var(--warn)}
 @media (max-width:420px){.days button .d{font-size:11px}.checks .q{white-space:normal;text-align:right;max-width:9em}.timeline > li{grid-template-columns:44px 1fr;gap:8px}.kc{font-size:12px}}
 @media (prefers-reduced-motion:no-preference){.bar i{transition:width .3s ease}}
 
@@ -243,6 +254,7 @@ dialog.sheet::backdrop{background:rgba(8,12,18,.55)}
       <div class="meter"><div class="top"><span>კალორია</span><b id="tk"></b></div><div class="bar"><i id="bk"></i></div></div>
       <div class="meter"><div class="top"><span>ცილა</span><b id="tp"></b></div><div class="bar p"><i id="bp"></i></div></div>
     </div>
+    <div class="fit" id="fit"></div>
     <ol class="timeline" id="timeline"></ol>
     <p class="note">დააჭირე კერძს, რომ ნახო ინგრედიენტები და მომზადება ნაბიჯ-ნაბიჯ. ყველა წონა უმი პროდუქტისაა (ხორცი, ბრინჯი, წიწიბურა, მაკარონი), სხვაგვარად თუ არ წერია. ზეთი კოვზით გაზომე.</p>
   </section>
@@ -385,6 +397,7 @@ function renderDay(){
   document.getElementById("tp").textContent = p+" / 180 გ";
   document.getElementById("bk").style.width = Math.min(100,k/20)+"%";
   document.getElementById("bp").style.width = Math.min(100,p/1.8)+"%";
+  if(typeof renderFit==="function") renderFit(k);
 }
 
 const PREPS = [
@@ -680,6 +693,86 @@ function closeRecipe(){
 })();
 
 function render(){ renderWeeks(); renderDays(); renderDay(); renderPreps(); renderShop(); }
+
+/* ---------- Fitbit / Google Health API: დღის დახარჯული კალორია ----------
+   Google Identity Services token client (ბრაუზერში, სერვერის გარეშე). ტოკენი ~1 საათი ძლებს და ამ ბრაუზერში ინახება.
+   POST health.googleapis.com/v4/users/me/dataTypes/total-calories/dataPoints:dailyRollUp → rollupDataPoints[].totalCalories.kcalSum */
+const FIT_CLIENT = "719474909279-11vl50k33mvjh1f4e4ohs13qf99h7243.apps.googleusercontent.com";
+const FIT_SCOPE = "https://www.googleapis.com/auth/googlehealth.activity_and_fitness.readonly";
+let fitTok = store.get("fit_tok"), fitClient = null, fitBusy = false, fitErr = "", fitPlanK = 0;
+const fitCache = store.get("fit_cache") || {};
+function fitDate(){ const dt = dateOf(w,d); return new Date(2026, dt.out?10:9, dt.n); }
+const isoF = dt => dt.getFullYear()+"-"+String(dt.getMonth()+1).padStart(2,"0")+"-"+String(dt.getDate()).padStart(2,"0");
+const fitValid = () => fitTok && fitTok.exp > Date.now()+60000;
+function loadGis(){
+  return new Promise((ok,no)=>{
+    if(window.google && google.accounts && google.accounts.oauth2) return ok();
+    const s = document.createElement("script"); s.src = "https://accounts.google.com/gsi/client"; s.async = true;
+    s.onload = ()=>ok(); s.onerror = ()=>no(new Error("gsi")); document.head.appendChild(s);
+  });
+}
+async function fitConnect(silent){
+  try{ await loadGis(); }catch(e){ fitErr = "Google-ის შესვლის ფანჯარა ვერ ჩაიტვირთა."; renderFit(); return; }
+  if(!fitClient) fitClient = google.accounts.oauth2.initTokenClient({client_id:FIT_CLIENT, scope:FIT_SCOPE, callback:()=>{}});
+  fitClient.callback = r=>{
+    if(r.error){ fitErr = r.error==="access_denied" ? "წვდომა არ მიეცა." : "შესვლა ვერ მოხერხდა ("+r.error+")."; renderFit(); return; }
+    fitTok = {t:r.access_token, exp:Date.now()+(+r.expires_in||3600)*1000}; store.set("fit_tok", fitTok); store.set("fit_on", true);
+    fitErr = ""; fitFetch(true);
+  };
+  fitClient.error_callback = e=>{ fitErr = e && e.type==="popup_closed" ? "" : "შესვლის ფანჯარა დაიბლოკა. სცადე ხელახლა."; renderFit(); };
+  fitClient.requestAccessToken({prompt: silent ? "" : "consent"});
+}
+async function fitFetch(force){
+  const day = fitDate(), key = isoF(day), today = isoF(new Date());
+  if(key > today || fitBusy) return;
+  if(!force && fitCache[key] && fitCache[key].final) return;
+  if(!fitValid()){ renderFit(); return; }
+  fitBusy = true; renderFit();
+  const cd = (h,m,s) => ({date:{year:day.getFullYear(),month:day.getMonth()+1,day:day.getDate()}, time:{hours:h,minutes:m,seconds:s,nanos:0}});
+  try{
+    const r = await fetch("https://health.googleapis.com/v4/users/me/dataTypes/total-calories/dataPoints:dailyRollUp", {
+      method:"POST", headers:{"Authorization":"Bearer "+fitTok.t, "Content-Type":"application/json", "Accept":"application/json"},
+      body: JSON.stringify({range:{start:cd(0,0,0), end:cd(23,59,59)}, windowSizeDays:1})
+    });
+    if(r.status===401){ fitTok = null; store.set("fit_tok", null); fitErr = ""; }
+    else if(!r.ok){ const t = await r.text(); let m = ""; try{ m = JSON.parse(t).error.message; }catch(e){ m = "HTTP "+r.status; } fitErr = "Google-მა შეცდომა დააბრუნა: "+m; }
+    else {
+      const j = await r.json(), pt = (j.rollupDataPoints||[])[0];
+      const kcal = pt && pt.totalCalories && pt.totalCalories.kcalSum != null ? Math.round(+pt.totalCalories.kcalSum) : null;
+      fitCache[key] = {kcal, final: key < today, at: Date.now()}; store.set("fit_cache", fitCache); fitErr = "";
+    }
+  }catch(e){ fitErr = "Google-თან კავშირი ვერ მოხერხდა."; }
+  fitBusy = false; renderFit();
+}
+function renderFit(planK){
+  if(planK!=null) fitPlanK = planK;
+  const el = document.getElementById("fit"); if(!el) return;
+  const day = fitDate(), key = isoF(day), today = isoF(new Date()), on = store.get("fit_on");
+  const c = fitCache[key];
+  let body = "";
+  if(!on && !fitValid()){
+    el.innerHTML = '<div class="fhead"><b>⌚ Fitbit: დახარჯული კალორია</b><button type="button" class="fbtn" data-fit="connect">დაკავშირება</button></div>'+
+      (fitErr?'<p class="note">'+esc(fitErr)+'</p>':'<p class="note">დააკავშირე Google/Fitbit ანგარიში და აქ გამოჩნდება, რამდენი კალორია დახარჯე ამ დღეს.</p>');
+    return;
+  }
+  if(key > today) body = '<p class="note">ეს დღე ჯერ არ დამდგარა.</p>';
+  else if(c && c.kcal!=null){
+    const bal = fitPlanK - c.kcal;
+    body = '<div class="fnums"><div><b>'+c.kcal+'</b><span>დახარჯე'+(c.final?'':' (ჯერჯერობით)')+'</span></div><div><b>'+fitPlanK+'</b><span>გეგმით ჭამ</span></div>'+
+      '<div class="'+(bal<0?"good":"warn")+'"><b>'+(bal<0?"−":"+")+Math.abs(bal)+'</b><span>'+(bal<0?"დეფიციტი":"ზედმეტი")+'</span></div></div>';
+  } else if(c && c.kcal==null) body = '<p class="note">ამ დღისთვის Fitbit-ში მონაცემი არ არის.</p>';
+  else if(fitBusy) body = '<p class="note">იტვირთება…</p>';
+  else if(!fitValid()) body = '<p class="note">სესიას ვადა გაუვიდა. დააჭირე „განახლებას“.</p>';
+  el.innerHTML = '<div class="fhead"><b>⌚ Fitbit · '+day.getDate()+' '+(day.getMonth()===9?"ოქტ":"ნოე")+'</b>'+
+    (key<=today ? '<button type="button" class="fbtn ghost" data-fit="refresh">'+(fitBusy?"…":"განახლება")+'</button>' : '')+'</div>'+
+    body + (fitErr?'<p class="note">'+esc(fitErr)+'</p>':'');
+  if(key<=today && !fitBusy && fitValid() && !(c && (c.final || Date.now()-c.at<5*60000))) fitFetch();
+}
+document.getElementById("fit").addEventListener("click", e=>{
+  const b = e.target.closest("[data-fit]"); if(!b) return;
+  if(b.dataset.fit==="connect") fitConnect(false);
+  else if(fitValid()) fitFetch(true); else fitConnect(true);
+});
 render();
 
 /* ---------- წონის კონტროლი ---------- */
