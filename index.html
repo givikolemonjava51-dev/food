@@ -3,119 +3,219 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#f2f5f9" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#0d131b" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#f4f6f1" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0e1310" media="(prefers-color-scheme: dark)">
 <title>ნოემბრის კვების გეგმა</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+Georgian:wght@400;500;600;700&family=Noto+Serif+Georgian:wght@600;800&family=IBM+Plex+Mono:wght@500;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+Georgian:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap">
 <style>
-/* Layout: one narrow column like a training log — goal strip, week + day switcher, the day as a timeline, then prep, shopping, rules. Padel-court blue accent, ball-yellow only for "today". */
+/* Layout: one calm column. A green hero with the month goal, a sticky tab bar (bottom on phones),
+   then the day as rings + a week bar chart + meal timeline. Cards everywhere, one accent colour.
+   Chart colours: protein / fat / carbs use the validated categorical slots 1–3 (blue, orange, aqua). */
 :root{
-  --bg:#f2f5f9; --surface:#ffffff; --fg:#13202e; --muted:#5a6879; --line:#dbe2ea;
-  --accent:#1c5bc9; --accent-soft:#e3ecfa; --ball:#e6d62a; --ball-ink:#2a2600; --good:#1f8a52; --warn:#b5651d;
-  --display:"Noto Serif Georgian", Georgia, serif;
+  --bg:#f4f6f1; --surface:#ffffff; --surface-2:#eef2ea; --fg:#17201a; --muted:#5d6a60; --line:#e0e6dc;
+  --accent:#167a3e; --accent-soft:#e2f1e6; --accent-ink:#ffffff;
+  --prot:#2a78d6; --fat:#eb6834; --carb:#1baf7a;
+  --good:#167a3e; --warn:#c2410c; --ball:#f2c230;
+  --hero1:#178046; --hero2:#0e5a45;
+  --shadow:0 1px 2px rgba(23,32,26,.05),0 10px 28px -16px rgba(23,48,30,.28);
+  --r:16px;
   --body:"Noto Sans Georgian", system-ui, -apple-system, "Segoe UI", sans-serif;
   --mono:"IBM Plex Mono", ui-monospace, Menlo, monospace;
 }
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
-  --bg:#0d131b; --surface:#151d28; --fg:#e6ecf3; --muted:#93a1b2; --line:#243041;
-  --accent:#6f9ef2; --accent-soft:#1a2941; --ball:#d8c824; --ball-ink:#1d1a00; --good:#4cc485; --warn:#e9a25f; color-scheme:dark}}
+  --bg:#0e1310; --surface:#161d18; --surface-2:#1d2620; --fg:#e7eee9; --muted:#9aa89e; --line:#28332b;
+  --accent:#4cc27a; --accent-soft:#1a2e21; --accent-ink:#06210f;
+  --prot:#3987e5; --fat:#d95926; --carb:#199e70;
+  --good:#4cc27a; --warn:#f08a4b; --ball:#e3b62a;
+  --hero1:#145c35; --hero2:#0b3a2e;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 10px 28px -16px rgba(0,0,0,.7); color-scheme:dark}}
 :root[data-theme="dark"]{
-  --bg:#0d131b; --surface:#151d28; --fg:#e6ecf3; --muted:#93a1b2; --line:#243041;
-  --accent:#6f9ef2; --accent-soft:#1a2941; --ball:#d8c824; --ball-ink:#1d1a00; --good:#4cc485; --warn:#e9a25f; color-scheme:dark}
+  --bg:#0e1310; --surface:#161d18; --surface-2:#1d2620; --fg:#e7eee9; --muted:#9aa89e; --line:#28332b;
+  --accent:#4cc27a; --accent-soft:#1a2e21; --accent-ink:#06210f;
+  --prot:#3987e5; --fat:#d95926; --carb:#199e70;
+  --good:#4cc27a; --warn:#f08a4b; --ball:#e3b62a;
+  --hero1:#145c35; --hero2:#0b3a2e;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 10px 28px -16px rgba(0,0,0,.7); color-scheme:dark}
 
 *{box-sizing:border-box}
 [hidden]{display:none!important}
-html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
-body{margin:0;overflow-wrap:break-word;background:var(--bg);color:var(--fg);font-family:var(--body);font-size:15px;line-height:1.55}
-.wrap{max-width:760px;margin:0 auto;padding-inline:max(16px,env(safe-area-inset-left)) max(16px,env(safe-area-inset-right));padding-block:28px 64px;display:flex;flex-direction:column;gap:36px}
-h1,h2{font-family:var(--display);text-wrap:balance;margin:0;line-height:1.2}
-h1{font-size:clamp(26px,6vw,36px);font-weight:800}
-h2{font-size:21px;font-weight:600}
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%;scroll-behavior:smooth}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+body{margin:0;overflow-wrap:break-word;background:var(--bg);color:var(--fg);font-family:var(--body);font-size:15px;line-height:1.55;-webkit-tap-highlight-color:transparent}
+a{color:var(--accent)}
+.wrap{max-width:760px;margin:0 auto;padding-inline:max(16px,env(safe-area-inset-left)) max(16px,env(safe-area-inset-right));padding-block:16px 40px;display:flex;flex-direction:column;gap:32px}
+h1,h2{text-wrap:balance;margin:0;line-height:1.2;font-weight:700}
+h1{font-size:clamp(25px,6.4vw,34px);letter-spacing:-.01em}
+h2{font-size:20px}
 h3{margin:0;font-size:16px;font-weight:600}
 .num{font-family:var(--mono);font-variant-numeric:tabular-nums}
 .muted{color:var(--muted)}
 .visually-hidden{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 p{margin:0}
+.ico{width:18px;height:18px;flex-shrink:0;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+button:focus-visible,a:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 
-header{display:flex;flex-direction:column;gap:14px}
-.goal{display:flex;flex-wrap:wrap;gap:8px 18px;font-size:14px;color:var(--muted)}
-.goal b{color:var(--fg);font-weight:600}
-nav{display:flex;flex-wrap:wrap;gap:6px}
-nav a{color:var(--accent);text-decoration:none;font-size:14px;padding:4px 10px;border:1px solid var(--line);border-radius:999px;background:var(--surface)}
-nav a:hover,nav a:focus-visible{border-color:var(--accent);outline:none}
+/* ---------- hero ---------- */
+.hero{position:relative;overflow:hidden;color:#fff;border-radius:24px;padding:20px 20px 18px;background:radial-gradient(120% 90% at 100% 0%,rgba(255,255,255,.16),transparent 55%),linear-gradient(140deg,var(--hero1),var(--hero2));box-shadow:var(--shadow);display:flex;flex-direction:column;gap:16px}
+.hero::after{content:"";position:absolute;right:-40px;bottom:-60px;width:190px;height:190px;border-radius:50%;border:28px solid rgba(255,255,255,.06);pointer-events:none}
+.eyebrow{font-size:12px;letter-spacing:.06em;opacity:.8;display:flex;align-items:center;gap:6px}
+.hero-sub{font-size:14px;opacity:.85;margin-top:2px}
+.hero-main{display:grid;grid-template-columns:auto minmax(0,1fr);gap:16px;align-items:center;position:relative;z-index:1}
+.hring{width:112px;height:112px;position:relative}
+.hring svg{width:100%;height:100%;transform:rotate(-90deg)}
+.hring .trk{stroke:rgba(255,255,255,.2)}
+.hring .val{stroke:#fff}
+.hring .ctr{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;line-height:1.15}
+.hring .ctr b{font-family:var(--mono);font-size:20px}
+.hring .ctr span{font-size:11px;opacity:.85}
+.kpis{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.kpis li{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.14);border-radius:12px;padding:8px 10px;display:flex;flex-direction:column;gap:1px;min-width:0}
+.kpis li span{font-size:11px;opacity:.85;display:flex;align-items:center;gap:5px}
+.kpis li span .ico{width:13px;height:13px}
+.kpis li b{font-family:var(--mono);font-size:13px;font-weight:600}
+@media (max-width:380px){.hero-main{grid-template-columns:1fr;justify-items:center}.kpis{width:100%}}
 
-.changes{font-size:14px;background:var(--accent-soft);border-radius:10px;padding:12px 14px;display:flex;flex-direction:column;gap:4px}
+/* ---------- tabs: sticky on top, fixed bar at the bottom on phones ---------- */
+.tabs{position:sticky;top:0;z-index:20;margin-inline:-16px;padding:8px 16px;background:color-mix(in srgb,var(--bg) 86%,transparent);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px)}
+.tabs ul{list-style:none;margin:0;padding:4px;display:grid;grid-template-columns:repeat(5,1fr);gap:4px;background:var(--surface);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow)}
+.tabs a{display:flex;align-items:center;justify-content:center;gap:6px;padding:8px 6px;border-radius:12px;color:var(--muted);text-decoration:none;font-size:13px;font-weight:500;white-space:nowrap}
+.tabs a[aria-current="true"]{background:var(--accent-soft);color:var(--accent)}
+@media (max-width:640px){
+  body{padding-bottom:calc(76px + env(safe-area-inset-bottom))}
+  .tabs{position:fixed;top:auto;bottom:0;left:0;right:0;margin:0;padding:6px max(10px,env(safe-area-inset-left)) calc(6px + env(safe-area-inset-bottom)) max(10px,env(safe-area-inset-right));border-top:1px solid var(--line);background:color-mix(in srgb,var(--surface) 92%,transparent)}
+  .tabs ul{background:none;border:0;box-shadow:none;padding:0;max-width:520px;margin:0 auto;grid-template-columns:repeat(5,auto);justify-content:space-between;gap:2px}
+  .tabs a{flex-direction:column;gap:2px;font-size:11px;padding:6px 7px}
+  .tabs a .ico{width:22px;height:22px}
+}
 
-section{display:flex;flex-direction:column;gap:14px;scroll-margin-top:16px}
-.weeks,.days{display:flex;gap:6px;flex-wrap:wrap}
-.weeks button,.days button{font:inherit;cursor:pointer;border:1px solid var(--line);background:var(--surface);color:var(--fg);border-radius:8px}
-.weeks button{padding:6px 12px;font-size:14px}
+/* ---------- sections ---------- */
+section{display:flex;flex-direction:column;gap:14px;scroll-margin-top:84px}
+@media (max-width:640px){section{scroll-margin-top:12px}}
+.shead{display:flex;align-items:center;gap:10px;justify-content:space-between;flex-wrap:wrap}
+.shead .t{display:flex;align-items:center;gap:10px;min-width:0}
+.sico{width:36px;height:36px;border-radius:11px;display:grid;place-items:center;background:var(--accent-soft);color:var(--accent);flex-shrink:0}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:16px;display:flex;flex-direction:column;gap:12px;box-shadow:var(--shadow)}
+.note{font-size:13px;color:var(--muted)}
+details.help{font-size:13px;color:var(--muted)}
+details.help summary{cursor:pointer;list-style:none;display:inline-flex;align-items:center;gap:6px;color:var(--accent);font-weight:500}
+details.help summary::-webkit-details-marker{display:none}
+details.help[open] summary{margin-bottom:6px}
+details.help p+p{margin-top:6px}
+.row{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.reset{font:inherit;font-size:13px;color:var(--accent);background:none;border:0;cursor:pointer;padding:4px}
+
+/* ---------- week + day pickers ---------- */
+.weeks{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px;padding:4px;background:var(--surface-2);border-radius:14px}
+.weeks button{font:inherit;cursor:pointer;border:0;background:none;color:var(--muted);border-radius:10px;padding:7px 4px;font-size:13px;display:flex;flex-direction:column;align-items:center;line-height:1.25}
+.weeks button small{font-size:11px;font-family:var(--mono);opacity:.8}
+.weeks button[aria-pressed="true"]{background:var(--surface);color:var(--fg);font-weight:600;box-shadow:0 1px 3px rgba(0,0,0,.12)}
 .days{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
-.days button{padding:8px 2px;display:flex;flex-direction:column;align-items:center;gap:2px;position:relative}
-.days button .d{font-size:12px;color:var(--muted)}
+.days button{font:inherit;cursor:pointer;border:1px solid var(--line);background:var(--surface);color:var(--fg);border-radius:12px;padding:8px 2px;display:flex;flex-direction:column;align-items:center;gap:1px;position:relative}
+.days button .d{font-size:11px;color:var(--muted)}
 .days button .n{font-family:var(--mono);font-weight:600;font-size:16px}
-.weeks button[aria-pressed="true"],.days button[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:#fff}
-.days button[aria-pressed="true"] .d{color:#fff;opacity:.85}
-.days button.today::after{content:"";position:absolute;top:5px;right:5px;width:7px;height:7px;border-radius:50%;background:var(--ball);box-shadow:0 0 0 1px var(--ball-ink)}
+.days button[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.days button[aria-pressed="true"] .d{color:var(--accent-ink);opacity:.85}
+.days button.today::after{content:"";position:absolute;top:5px;right:5px;width:7px;height:7px;border-radius:50%;background:var(--ball)}
 .days button.out{opacity:.45}
-button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 
-.totals{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-.meter{display:flex;flex-direction:column;gap:6px;min-width:0}
-.meter .top{display:flex;justify-content:space-between;font-size:13px;color:var(--muted)}
-.meter .top b{color:var(--fg);font-family:var(--mono);font-weight:600}
-.bar{height:6px;background:var(--line);border-radius:3px;overflow:hidden}
-.bar i{display:block;height:100%;background:var(--accent);border-radius:3px}
-.bar.p i{background:var(--good)}
+/* ---------- day summary: rings + week bars ---------- */
+.summary{display:grid;grid-template-columns:auto minmax(0,1fr);gap:18px;align-items:center}
+@media (max-width:520px){.summary{grid-template-columns:1fr}}
+.rings{display:flex;gap:14px;justify-content:center}
+.ring{display:flex;flex-direction:column;align-items:center;gap:6px;min-width:0}
+.ring .rv{position:relative;width:104px;height:104px}
+.ring svg{width:100%;height:100%;transform:rotate(-90deg)}
+.ring .trk{stroke:var(--surface-2)}
+.ring .val{stroke:var(--accent);transition:stroke-dashoffset .5s ease}
+.ring.prot .val{stroke:var(--prot)}
+.ring.over .val{stroke:var(--warn)}
+.ring .ctr{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1.1}
+.ring .ctr b{font-family:var(--mono);font-size:19px}
+.ring .ctr span{font-size:11px;color:var(--muted);font-family:var(--mono)}
+.ring .rl{font-size:13px;color:var(--muted);display:flex;align-items:center;gap:5px}
+.ring .rl .ico{width:14px;height:14px}
+.ring.over .rl{color:var(--warn);font-weight:600}
+@media (prefers-reduced-motion:reduce){.ring .val{transition:none}}
+.wk{min-width:0;display:flex;flex-direction:column;gap:6px}
+.wk .wkh{display:flex;justify-content:space-between;align-items:baseline;gap:8px;font-size:13px;color:var(--muted)}
+.wk .wkh b{color:var(--fg);font-weight:600}
+.wkbox{position:relative}
+#wkchart{display:block;width:100%;height:150px;overflow:visible}
+#wkchart .bar{fill:color-mix(in srgb,var(--accent) 32%,var(--surface-2));cursor:pointer}
+#wkchart .bar.sel{fill:var(--accent)}
+#wkchart .bar.over{fill:color-mix(in srgb,var(--warn) 45%,var(--surface-2))}
+#wkchart .bar.sel.over{fill:var(--warn)}
+#wkchart .ref{stroke:var(--muted);stroke-width:1;stroke-dasharray:3 4}
+#wkchart .reft{fill:var(--muted);font-family:var(--mono);font-size:10px}
+#wkchart .xl{fill:var(--muted);font-size:10px;font-family:var(--body)}
+#wkchart .xl.sel{fill:var(--fg);font-weight:700}
+#wkchart .vl{fill:var(--fg);font-family:var(--mono);font-size:10px;font-weight:600}
+#wkchart .hit{fill:transparent;cursor:pointer}
 
-.timeline{list-style:none;margin:0;padding:0;display:flex;flex-direction:column}
-.timeline{gap:10px}
-.timeline > li{display:grid;grid-template-columns:52px 1fr;gap:12px;align-items:start}
-.time{font-family:var(--mono);font-weight:600;font-size:14px;color:var(--accent);padding-top:15px}
-.meal{min-width:0;background:var(--surface);border:1px solid var(--line);border-radius:12px;transition:box-shadow .2s ease,border-color .2s ease}
-.meal.small{background:transparent;border-style:dashed}
-.meal.open{border-color:var(--accent);box-shadow:0 6px 24px -10px color-mix(in srgb,var(--accent) 55%,transparent)}
-.mhead{all:unset;box-sizing:border-box;width:100%;display:flex;justify-content:space-between;align-items:center;gap:10px;padding:12px 14px;cursor:pointer;border-radius:12px}
+/* ---------- Fitbit ---------- */
+.fit{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:12px 14px;display:flex;flex-direction:column;gap:10px;box-shadow:var(--shadow)}
+.fit .fhead{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.fit .fhead b{font-size:14px}
+.fit .fbtn{font:inherit;font-size:14px;font-weight:600;color:var(--accent-ink);background:var(--accent);border:0;border-radius:999px;padding:8px 14px;cursor:pointer}
+.fit .fbtn.ghost{color:var(--accent);background:var(--accent-soft)}
+.fnums{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+.fnums div{background:var(--surface-2);border-radius:12px;padding:8px 6px;display:flex;flex-direction:column;align-items:center;gap:1px;min-width:0;text-align:center}
+.fnums b{font-family:var(--mono);font-size:16px}
+.fnums span{font-size:11px;color:var(--muted)}
+.fnums .good b{color:var(--good)} .fnums .warn b{color:var(--warn)}
+
+/* ---------- meal timeline ---------- */
+.timeline{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:10px;position:relative}
+.timeline::before{content:"";position:absolute;left:25px;top:18px;bottom:30px;width:2px;background:var(--line);border-radius:2px}
+.timeline > li{display:grid;grid-template-columns:52px 1fr;gap:10px;align-items:start;position:relative}
+.time{font-family:var(--mono);font-weight:600;font-size:12px;color:var(--accent);margin-top:16px;justify-self:center;background:var(--bg);padding:2px 0;position:relative;z-index:1}
+.time:empty{visibility:hidden}
+.meal{min-width:0;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow);transition:box-shadow .2s ease,border-color .2s ease}
+.meal.small{background:var(--surface);box-shadow:none;border-style:dashed}
+.meal.open{border-color:var(--accent);box-shadow:0 10px 30px -14px color-mix(in srgb,var(--accent) 60%,transparent)}
+.mrow{display:flex;align-items:stretch}
+.mrow .mhead{flex:1 1 auto;min-width:0}
+.mhead{all:unset;box-sizing:border-box;width:100%;display:flex;justify-content:flex-start;align-items:center;gap:12px;padding:10px 12px;cursor:pointer;border-radius:var(--r)}
 .mhead:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
-.mt{display:flex;flex-direction:column;gap:2px;min-width:0}
-.slot{font-size:12px;letter-spacing:.04em;color:var(--muted)}
-.mn{font-weight:600;font-size:16px}
-.meal.small .mn{font-weight:500;font-size:15px}
-.meal.open .mn{font-family:var(--display);font-size:20px}
-.mr{display:flex;align-items:center;gap:10px;flex-shrink:0}
-.kc{font-family:var(--mono);font-size:13px;color:var(--muted);white-space:nowrap}
-.chev{width:9px;height:9px;border-right:2px solid var(--muted);border-bottom:2px solid var(--muted);transform:rotate(45deg) translateY(-3px);transition:transform .2s ease}
+.mt{display:flex;flex-direction:column;gap:1px;min-width:0;flex:1 1 auto}
+.slot{font-size:11px;letter-spacing:.05em;color:var(--muted);font-weight:500}
+.mn{font-weight:600;font-size:15px;line-height:1.3}
+.meal.small .mn{font-weight:500;font-size:14px}
+.meal.open .mn{font-size:18px}
+.mr{display:flex;align-items:center;gap:10px;flex-shrink:0;margin-left:auto}
+.kc{font-family:var(--mono);font-size:12px;color:var(--muted);white-space:nowrap;margin-top:2px;display:flex;gap:8px;flex-wrap:wrap}
+.kc .k{color:var(--fg)}
+.kc .pp{color:var(--prot)}
+.chev{width:8px;height:8px;border-right:2px solid var(--muted);border-bottom:2px solid var(--muted);transform:rotate(45deg) translateY(-3px);transition:transform .2s ease}
 .meal.open .chev{transform:rotate(-135deg) translate(-2px,-2px);border-color:var(--accent)}
 .mbody{padding:0 14px 16px;display:flex;flex-direction:column;gap:14px}
 .meta{display:flex;flex-wrap:wrap;gap:6px}
-.meta span{font-family:var(--mono);font-size:12px;background:var(--accent-soft);color:var(--fg);padding:3px 8px;border-radius:999px}
+.meta span{font-family:var(--mono);font-size:12px;background:var(--surface-2);color:var(--fg);padding:4px 10px;border-radius:999px}
 .cols{display:grid;grid-template-columns:minmax(0,2fr) minmax(0,3fr);gap:18px}
 .lbl{font-size:12px;letter-spacing:.05em;color:var(--accent);font-weight:600;margin-bottom:6px}
 .mbody ul,.mbody ol{margin:0;padding-left:20px;font-size:14px;display:flex;flex-direction:column;gap:6px}
 .mbody ol li::marker{font-family:var(--mono);color:var(--accent);font-weight:600}
-.tip{font-size:13px;color:var(--muted);border-top:1px solid var(--line);padding-top:10px}
+.tip{font-size:13px;color:var(--muted);background:var(--surface-2);border-radius:12px;padding:10px 12px}
+.tip::before{content:"💡 "}
 @media (max-width:560px){.cols{grid-template-columns:1fr}}
 @media (prefers-reduced-motion:no-preference){.meal.open .mbody{animation:mopen .22s ease-out}}
 @keyframes mopen{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
 @media (prefers-reduced-motion:reduce){.meal,.chev{transition:none}}
 
-/* ჩანაცვლება: what I actually ate instead of the planned meal */
-.mrow{display:flex;align-items:stretch}
-.mrow .mhead{flex:1 1 auto;min-width:0}
-.swapbtn{font:inherit;font-size:13px;color:var(--accent);background:none;border:0;border-left:1px solid var(--line);padding:0 12px;cursor:pointer;flex-shrink:0;border-radius:0 12px 12px 0}
+.swapbtn{font:inherit;font-size:15px;color:var(--accent);background:none;border:0;border-left:1px solid var(--line);padding:0 14px;cursor:pointer;flex-shrink:0;border-radius:0 var(--r) var(--r) 0}
 .swapbtn:hover{background:var(--accent-soft)}
 .meal.swapped{border-color:var(--good);border-style:solid}
 .meal.swapped .slot::after{content:" · ჩანაცვლებული";color:var(--good);font-weight:600}
 .swapform{display:flex;flex-direction:column;gap:8px}
-.swapform textarea{font:inherit;font-size:16px;width:100%;min-height:84px;resize:vertical;color:var(--fg);background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:10px 12px}
+.swapform textarea{font:inherit;font-size:16px;width:100%;min-height:84px;resize:vertical;color:var(--fg);background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:10px 12px}
 .swapform textarea:focus-visible{outline:2px solid var(--accent);outline-offset:1px;border-color:var(--accent)}
 .sbtns{display:flex;gap:8px;flex-wrap:wrap}
-.sbtn{font:inherit;font-size:14px;font-weight:600;color:#fff;background:var(--accent);border:0;border-radius:999px;padding:8px 16px;cursor:pointer}
+.sbtn{font:inherit;font-size:14px;font-weight:600;color:var(--accent-ink);background:var(--accent);border:0;border-radius:999px;padding:9px 16px;cursor:pointer}
 .sbtn.ghost{color:var(--accent);background:var(--accent-soft)}
 .sbtn[disabled]{opacity:.6;cursor:progress}
-.ate{font-size:14px;background:var(--accent-soft);border-radius:10px;padding:8px 12px}
+.ate{font-size:14px;background:var(--accent-soft);border-radius:12px;padding:8px 12px}
 .sitems{list-style:none!important;padding:0!important}
 .sitems li{display:flex;justify-content:space-between;gap:10px;border-bottom:1px dashed var(--line);padding-bottom:4px}
 .sitems .q{font-family:var(--mono);font-size:13px;color:var(--muted);white-space:nowrap}
@@ -124,62 +224,75 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 .sbtn.danger[data-confirm="1"]{border-color:var(--warn)}
 .meal.extra{border-color:var(--good);border-style:solid}
 .meal.extra .slot::after{content:none}
-.meal.skipped{opacity:.6;border-style:dashed}
+.meal.skipped{opacity:.6;border-style:dashed;box-shadow:none}
 .meal.skipped .mn{text-decoration:line-through}
 .meal.skipped .slot::after{content:" · წაშლილი";color:var(--warn);font-weight:600}
-.addbtn{font:inherit;font-size:15px;font-weight:600;color:var(--accent);background:var(--accent-soft);border:1px dashed var(--accent);border-radius:12px;padding:12px 14px;cursor:pointer;width:100%;text-align:left}
+.addbtn{font:inherit;font-size:15px;font-weight:600;color:var(--accent);background:var(--accent-soft);border:1.5px dashed color-mix(in srgb,var(--accent) 55%,transparent);border-radius:var(--r);padding:13px 14px;cursor:pointer;width:100%;text-align:left;display:flex;align-items:center;gap:8px}
 .stime{display:flex;align-items:center;gap:8px;font-size:14px;color:var(--muted)}
 .stime input{font:inherit;font-size:16px;color:var(--fg);background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:6px 10px}
-.card{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:12px}
+
+/* ---------- checklists (prep, shopping) ---------- */
 .checks{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:2px}
-.checks label{display:grid;grid-template-columns:22px minmax(0,1fr) auto;gap:10px;align-items:start;padding:7px 4px;border-radius:6px;cursor:pointer;font-size:14px}
-.checks label:hover{background:var(--accent-soft)}
-.checks input{margin:3px 0 0;width:16px;height:16px;accent-color:var(--accent)}
+.checks label{display:grid;grid-template-columns:22px minmax(0,1fr) auto;gap:10px;align-items:start;padding:8px 6px;border-radius:10px;cursor:pointer;font-size:14px}
+.checks label:hover{background:var(--surface-2)}
+.checks input{margin:2px 0 0;width:18px;height:18px;accent-color:var(--accent)}
 .checks input:checked ~ span{color:var(--muted);text-decoration:line-through}
-.checks .q{font-family:var(--mono);font-size:13px;color:var(--muted);white-space:nowrap}
-.group{font-size:12px;letter-spacing:.05em;color:var(--muted);padding:10px 4px 2px}
+.checks .q{font-family:var(--mono);font-size:12px;color:var(--muted);white-space:nowrap}
+.group{font-size:12px;letter-spacing:.05em;color:var(--accent);font-weight:600;padding:12px 6px 2px;display:flex;align-items:center;gap:6px}
 .group:first-child{padding-top:0}
-.row{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
-.reset{font:inherit;font-size:13px;color:var(--accent);background:none;border:0;cursor:pointer;padding:4px}
-
 .grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px}
+.prepc .ph3{display:flex;align-items:center;gap:10px}
+.pbar{height:6px;background:var(--surface-2);border-radius:3px;overflow:hidden}
+.pbar i{display:block;height:100%;background:var(--accent);border-radius:3px;transition:width .3s ease}
+.shoptotal{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 12px;align-items:end}
+.shoptotal .big{font-size:28px;font-weight:600;line-height:1.1}
+.shoptotal .pct{font-family:var(--mono);font-size:13px;color:var(--muted);text-align:right}
+.shoptotal .pbar{grid-column:1/-1}
 
+/* ---------- weight ---------- */
 .wform{display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end}
 .wform label{display:flex;flex-direction:column;gap:4px;font-size:13px;color:var(--muted);flex:1 1 140px;min-width:0}
-.wform input{font:inherit;font-family:var(--mono);font-size:16px;color:var(--fg);background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:9px 10px;width:100%}
+.wform input{font:inherit;font-family:var(--mono);font-size:16px;color:var(--fg);background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:10px 12px;width:100%}
 .wform input:focus-visible{outline:2px solid var(--accent);outline-offset:1px;border-color:var(--accent)}
-.wform button{font:inherit;font-weight:600;background:var(--accent);color:#fff;border:0;border-radius:8px;padding:11px 18px;cursor:pointer;flex:0 0 auto}
-.wform button:focus-visible{outline:2px solid var(--fg);outline-offset:2px}
-.stats{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:12px;overflow:hidden}
-.st{background:var(--surface);padding:12px 14px;display:flex;flex-direction:column;gap:2px;min-width:0}
+.wform button{font:inherit;font-weight:600;background:var(--accent);color:var(--accent-ink);border:0;border-radius:10px;padding:11px 20px;cursor:pointer;flex:0 0 auto}
+.stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+@media (min-width:600px){.stats{grid-template-columns:repeat(4,minmax(0,1fr))}}
+.st{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:12px 14px;display:flex;flex-direction:column;gap:2px;min-width:0;box-shadow:var(--shadow)}
 .sl{font-size:12px;color:var(--muted)}
 .sv{font-size:20px;font-weight:600}
 .ss{font-size:12px;color:var(--muted)}
 .st.good .sv{color:var(--good)}
 .st.warn .sv{color:var(--warn)}
-.stats .empty{grid-column:1/-1;background:var(--surface);padding:12px 14px;margin:0}
-.prog{grid-column:1/-1;height:6px;background:var(--surface);position:relative}
-.prog i{position:absolute;left:0;top:0;bottom:0;background:var(--good)}
-.chartbox{display:flex;flex-direction:column;gap:8px}
+.stats .empty{grid-column:1/-1;margin:0}
+.prog{grid-column:1/-1;display:flex;flex-direction:column;gap:6px}
+.prog .pl{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);font-family:var(--mono)}
+.prog .pbar{height:10px;border-radius:5px}
+.prog .pbar i{background:linear-gradient(90deg,var(--accent),color-mix(in srgb,var(--accent) 70%,#fff));border-radius:5px}
+.chartbox{gap:8px}
 .legend{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:13px;color:var(--muted)}
 .legend span{display:inline-flex;align-items:center;gap:6px}
 .lg{display:inline-block}
 .lg.dot{width:9px;height:9px;border-radius:50%;background:var(--muted)}
-.lg.line{width:18px;height:2px;background:var(--accent)}
+.lg.line{width:18px;height:3px;border-radius:2px;background:var(--accent)}
 .lg.goal{width:18px;border-top:2px dashed var(--good)}
 .chartwrap{position:relative;overflow-x:auto}
 #wchart{display:block;max-width:100%;height:auto}
 #wchart .grid{stroke:var(--line);stroke-width:1}
 #wchart .ax{fill:var(--muted);font-family:var(--mono);font-size:11px}
-#wchart .goalline{stroke:var(--good);stroke-width:2;stroke-dasharray:5 5}
-#wchart .avgline{fill:none;stroke:var(--accent);stroke-width:2;stroke-linejoin:round;stroke-linecap:round}
-#wchart .wpt{fill:var(--muted);stroke:var(--bg);stroke-width:2}
-#wchart .startpt{fill:var(--bg);stroke:var(--muted);stroke-width:2}
+#wchart .goalline{stroke:var(--good);stroke-width:1.5;stroke-dasharray:5 5}
+#wchart .avgline{fill:none;stroke:var(--accent);stroke-width:2.5;stroke-linejoin:round;stroke-linecap:round}
+#wchart .area{fill:url(#wgrad)}
+#wchart .wpt{fill:var(--muted);stroke:var(--surface);stroke-width:2}
+#wchart .startpt{fill:var(--surface);stroke:var(--muted);stroke-width:2}
 #wchart .hit{fill:transparent;cursor:pointer}
 #wchart .endlbl{fill:var(--fg);font-family:var(--mono);font-size:12px;font-weight:600}
-.ctip{position:absolute;pointer-events:none;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:6px 10px;font-size:13px;display:flex;flex-direction:column;box-shadow:0 4px 14px -6px rgba(0,0,0,.3);min-width:110px}
+.ctip{position:absolute;pointer-events:none;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:6px 10px;font-size:13px;display:flex;flex-direction:column;box-shadow:0 6px 18px -6px rgba(0,0,0,.3);min-width:110px;z-index:3}
 .ctip span{font-family:var(--mono)}
-.log summary{cursor:pointer;font-weight:600}
+details.log{padding:0}
+.log summary{cursor:pointer;font-weight:600;padding:14px 16px}
+.log .tablewrap{padding:0 16px 12px}
+details.more summary{cursor:pointer;color:var(--accent);font-size:13px;font-weight:500}
+details.more .stats{margin-top:10px}
 .tablewrap{overflow-x:auto}
 #wtable{width:100%;border-collapse:collapse;font-size:14px}
 #wtable th{text-align:left;font-weight:500;font-size:12px;color:var(--muted);padding:6px 8px;border-bottom:1px solid var(--line)}
@@ -187,127 +300,156 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 #wtable .down{color:var(--good)} #wtable .up{color:var(--warn)}
 .del{font:inherit;font-size:12px;color:var(--muted);background:none;border:1px solid var(--line);border-radius:6px;padding:3px 8px;cursor:pointer}
 .del[data-confirm="1"]{color:var(--warn);border-color:var(--warn)}
-.shoptotal{display:flex;align-items:baseline;gap:6px 12px;flex-wrap:wrap}
-.shoptotal b{font-size:26px}
-.note{font-size:13px;color:var(--muted)}
-.fit{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 14px;display:flex;flex-direction:column;gap:10px}
-.fit .fhead{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
-.fit .fhead b{font-size:14px}
-.fit .fbtn{font:inherit;font-size:14px;font-weight:600;color:#fff;background:var(--accent);border:0;border-radius:999px;padding:8px 14px;cursor:pointer}
-.fit .fbtn.ghost{color:var(--accent);background:var(--accent-soft)}
-.fit .fbtn:focus-visible{outline:2px solid var(--fg);outline-offset:2px}
-.fnums{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
-.fnums div{background:var(--accent-soft);border-radius:10px;padding:8px 6px;display:flex;flex-direction:column;align-items:center;gap:1px;min-width:0;text-align:center}
-.fnums b{font-family:var(--mono);font-size:16px}
-.fnums span{font-size:11px;color:var(--muted)}
-.fnums .good b{color:var(--good)} .fnums .warn b{color:var(--warn)}
-@media (max-width:420px){.days button .d{font-size:11px}.checks .q{white-space:normal;text-align:right;max-width:9em}.timeline > li{grid-template-columns:44px 1fr;gap:8px}.kc{font-size:12px}}
-@media (prefers-reduced-motion:no-preference){.bar i{transition:width .3s ease}}
+@media (max-width:420px){.checks .q{white-space:normal;text-align:right;max-width:9em}.timeline > li{grid-template-columns:44px 1fr;gap:8px}.timeline::before{left:21px}.kc{font-size:11px}.mhead{gap:10px}}
 
 /* ---------- photos & recipes ---------- */
-.ph{position:relative;display:block;overflow:hidden;background:linear-gradient(135deg,var(--accent-soft),color-mix(in srgb,var(--ball) 35%,var(--accent-soft)))}
+.ph{position:relative;display:block;overflow:hidden;background:linear-gradient(135deg,var(--accent-soft),color-mix(in srgb,var(--ball) 30%,var(--accent-soft)))}
 .ph img{display:block;width:100%;height:100%;object-fit:cover}
 .ph.noimg::after{content:"🍽";position:absolute;inset:0;display:grid;place-items:center;font-size:28px;opacity:.6}
-.mhead{justify-content:flex-start}
-.mhead .mr{margin-left:auto}
-.mhead .mt{flex:1 1 auto}
-.mhead .kc{font-size:12px;margin-top:2px}
-.mthumb{width:52px;height:52px;border-radius:10px;flex-shrink:0}
+.mthumb{width:54px;height:54px;border-radius:12px;flex-shrink:0}
 .meal.small .mthumb{width:40px;height:40px}
-.mphoto{aspect-ratio:16/9;border-radius:10px}
+.mphoto{aspect-ratio:16/9;border-radius:12px}
 .meal.open .mthumb{display:none}
+.semoji{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;background:var(--surface-2);font-size:20px;flex-shrink:0}
+.meal.open .semoji{display:none}
 .rtools{display:flex;flex-direction:column;gap:10px}
 .rsearch{position:relative}
-.rsearch input{font:inherit;font-size:16px;width:100%;color:var(--fg);background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:11px 16px 11px 42px}
+.rsearch input{font:inherit;font-size:16px;width:100%;color:var(--fg);background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:12px 16px 12px 44px;box-shadow:var(--shadow)}
 .rsearch input:focus-visible{outline:2px solid var(--accent);outline-offset:1px;border-color:var(--accent)}
-.rsearch svg{position:absolute;left:15px;top:50%;transform:translateY(-50%);width:18px;height:18px;stroke:var(--muted);fill:none;stroke-width:2}
+.rsearch svg{position:absolute;left:16px;top:50%;transform:translateY(-50%);width:18px;height:18px;stroke:var(--muted);fill:none;stroke-width:2}
 .chips{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;margin-inline:-16px;padding:2px 16px;scroll-padding-inline:16px}
 .chips::-webkit-scrollbar{display:none}
 .chips button{font:inherit;font-size:14px;white-space:nowrap;cursor:pointer;color:var(--fg);background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:7px 14px;flex-shrink:0}
-.chips button[aria-pressed="true"]{background:var(--fg);color:var(--bg);border-color:var(--fg)}
-.rgrid{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:22px 14px}
+.chips button[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.rgrid{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px 14px}
 @media (min-width:640px){.rgrid{grid-template-columns:repeat(3,minmax(0,1fr))}}
 .rcard{all:unset;box-sizing:border-box;cursor:pointer;display:flex;flex-direction:column;gap:6px;width:100%;border-radius:18px}
 .rcard:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
-.rcard .ph{aspect-ratio:4/5;border-radius:18px}
+.rcard .ph{aspect-ratio:4/5;border-radius:18px;box-shadow:var(--shadow)}
+.rcard .ph::before{content:"";position:absolute;inset:55% 0 0;background:linear-gradient(transparent,rgba(0,0,0,.35));z-index:1;pointer-events:none}
 @media (hover:hover) and (prefers-reduced-motion:no-preference){.rcard img{transition:transform .35s ease}.rcard:hover img{transform:scale(1.04)}}
-.kbadge{position:absolute;left:8px;bottom:8px;background:rgba(255,255,255,.94);color:#13202e;font-size:12px;font-weight:600;padding:4px 9px;border-radius:999px;box-shadow:0 2px 8px -2px rgba(0,0,0,.3)}
+.kbadge{position:absolute;left:8px;bottom:8px;z-index:2;background:rgba(255,255,255,.95);color:#17201a;font-size:12px;font-weight:600;padding:4px 9px;border-radius:999px;box-shadow:0 2px 8px -2px rgba(0,0,0,.3)}
 .kbadge::before{content:"🔥 "}
 .rn{font-weight:600;font-size:15px;line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-.rm{font-size:13px;color:var(--muted)}
+.rm{font-size:12px;color:var(--muted);display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.rm .pbadge{font-family:var(--mono);color:var(--prot);font-weight:600}
 .rempty{grid-column:1/-1}
-dialog.sheet{border:0;padding:0;margin:auto auto 0;width:100%;max-width:640px;max-height:92dvh;border-radius:20px 20px 0 0;background:var(--surface);color:var(--fg);overflow:auto;overscroll-behavior:contain}
-@media (min-width:700px){dialog.sheet{margin:auto;border-radius:20px;max-height:88dvh}}
-dialog.sheet::backdrop{background:rgba(8,12,18,.55)}
+dialog.sheet{border:0;padding:0;margin:auto auto 0;width:100%;max-width:640px;max-height:92dvh;border-radius:24px 24px 0 0;background:var(--surface);color:var(--fg);overflow:auto;overscroll-behavior:contain}
+@media (min-width:700px){dialog.sheet{margin:auto;border-radius:24px;max-height:88dvh}}
+dialog.sheet::backdrop{background:rgba(6,12,8,.55);-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px)}
 @media (prefers-reduced-motion:no-preference){dialog.sheet[open]{animation:sheetin .25s ease-out}}
 @keyframes sheetin{from{transform:translateY(24px);opacity:0}to{transform:none;opacity:1}}
-.rclose{position:sticky;top:10px;float:right;margin:10px 10px -46px 0;z-index:2;width:36px;height:36px;border-radius:50%;border:0;background:rgba(255,255,255,.92);color:#13202e;font-size:20px;line-height:1;cursor:pointer;box-shadow:0 2px 8px -2px rgba(0,0,0,.35)}
-.hero{aspect-ratio:7/5}
+.rclose{position:sticky;top:10px;float:right;margin:10px 10px -46px 0;z-index:2;width:36px;height:36px;border-radius:50%;border:0;background:rgba(255,255,255,.92);color:#17201a;font-size:20px;line-height:1;cursor:pointer;box-shadow:0 2px 8px -2px rgba(0,0,0,.35)}
+.hero-img{aspect-ratio:7/5}
 .rinner{padding:16px 16px calc(24px + env(safe-area-inset-bottom));display:flex;flex-direction:column;gap:14px}
-.rtitle{font-family:var(--display);font-size:22px;line-height:1.25}
+.rtitle{font-size:22px;line-height:1.25;font-weight:700}
 .rinner ul,.rinner ol{margin:0;padding-left:20px;font-size:14px;display:flex;flex-direction:column;gap:6px}
 .rinner ol li::marker{font-family:var(--mono);color:var(--accent);font-weight:600}
-.macros{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
-.mc{background:var(--accent-soft);border-radius:10px;padding:8px 6px;display:flex;flex-direction:column;align-items:center;gap:1px;min-width:0}
-.mc b{font-size:15px}
-.mc span{font-size:11px;color:var(--muted)}
-.mc.kcal{background:var(--accent);color:#fff}
-.mc.kcal span{color:#fff;opacity:.85}
+/* macro panel: donut of energy split + tiles */
+.macros{display:grid;grid-template-columns:auto minmax(0,1fr);gap:16px;align-items:center;background:var(--surface-2);border-radius:16px;padding:12px 14px}
+.donut{position:relative;width:96px;height:96px}
+.donut svg{width:100%;height:100%;transform:rotate(-90deg)}
+.donut .ctr{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1.1}
+.donut .ctr b{font-family:var(--mono);font-size:18px}
+.donut .ctr span{font-size:11px;color:var(--muted)}
+.mlist{list-style:none!important;margin:0;padding:0!important;display:flex;flex-direction:column;gap:6px!important}
+.mlist li{display:grid;grid-template-columns:10px minmax(0,1fr) auto auto;gap:8px;align-items:center;font-size:14px}
+.mlist i{width:10px;height:10px;border-radius:3px}
+.mlist b{font-family:var(--mono);font-weight:600}
+.mlist .pc{font-family:var(--mono);font-size:12px;color:var(--muted);min-width:3.2em;text-align:right}
+.mlist .prot i{background:var(--prot)} .mlist .carb i{background:var(--carb)} .mlist .fat i{background:var(--fat)}
+.donut .prot{stroke:var(--prot)} .donut .carb{stroke:var(--carb)} .donut .fat{stroke:var(--fat)}
+.donut .trk{stroke:var(--surface)}
 </style>
 </head>
 <body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-plate" viewBox="0 0 24 24"><circle cx="12" cy="12" r="7"/><circle cx="12" cy="12" r="3.5"/><path d="M2 3v6a2 2 0 0 0 2 2M4 3v18M22 3c-1.5 1-2 3-2 5s.5 3 2 3v10"/></symbol>
+  <symbol id="i-book" viewBox="0 0 24 24"><path d="M4 19.5V5a2 2 0 0 1 2-2h14v15H6.5A2.5 2.5 0 0 0 4 20.5 2.5 2.5 0 0 0 6.5 23H20v-5"/><path d="M9 8h7M9 12h5"/></symbol>
+  <symbol id="i-scale" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="5"/><rect x="8" y="7" width="8" height="4" rx="1"/><path d="M8 16h.01M16 16h.01"/></symbol>
+  <symbol id="i-pot" viewBox="0 0 24 24"><path d="M3 10h18M5 10v7a3 3 0 0 0 3 3h8a3 3 0 0 0 3-3v-7"/><path d="M9 6c0-1 .5-2 1-2.5M13 6c0-1 .5-2 1-2.5"/><path d="M1 10h2M21 10h2"/></symbol>
+  <symbol id="i-cart" viewBox="0 0 24 24"><circle cx="9" cy="20" r="1.5"/><circle cx="18" cy="20" r="1.5"/><path d="M2 3h3l2.6 12.2a2 2 0 0 0 2 1.6h8.2a2 2 0 0 0 2-1.5L22 8H6"/></symbol>
+  <symbol id="i-flame" viewBox="0 0 24 24"><path d="M12 22c4 0 7-2.7 7-7 0-4-3-6.5-4-10-1.5 2-2 3.5-2 5-1.5-1-2.5-2.5-3-4.5C7.5 8 5 11 5 15c0 4.3 3 7 7 7Z"/></symbol>
+  <symbol id="i-dumbbell" viewBox="0 0 24 24"><path d="M6.5 6.5v11M17.5 6.5v11M3 9.5v5M21 9.5v5M6.5 12h11"/></symbol>
+  <symbol id="i-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/></symbol>
+  <symbol id="i-cal" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/></symbol>
+  <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+</svg>
 
 <div class="wrap">
-  <header>
-    <h1>ნოემბრის კვების გეგმა</h1>
-    <div class="goal">
-      <span>მიზანი <b class="num">112.5 → 106 კგ</b></span>
-      <span>დღეში <b class="num">≤ 2000 კკალ</b></span>
-      <span>ცილა <b class="num">~180 გ</b></span>
-      <span><b class="num">1–30</b> ნოემბერი</span>
+  <header class="hero">
+    <div>
+      <span class="eyebrow"><svg class="ico"><use href="#i-cal"/></svg>1–30 ნოემბერი · 2026</span>
+      <h1>ნოემბრის კვების გეგმა</h1>
+      <p class="hero-sub" id="heroSub">112.5 კგ-დან 106 კგ-მდე, ნაბიჯ-ნაბიჯ</p>
     </div>
-    <nav>
-      <a href="#day">დღის მენიუ</a>
-      <a href="#recipes">რეცეპტები</a>
-      <a href="#weight">წონა</a>
-      <a href="#prep">მომზადება</a>
-      <a href="#shop">საყიდლები</a>
-    </nav>
+    <div class="hero-main">
+      <div class="hring" id="hring" role="img" aria-label="მიზნამდე პროგრესი"></div>
+      <ul class="kpis">
+        <li><span><svg class="ico"><use href="#i-target"/></svg>მიზანი</span><b>106 კგ</b></li>
+        <li><span><svg class="ico"><use href="#i-flame"/></svg>დღეში</span><b>≤2000 კკალ</b></li>
+        <li><span><svg class="ico"><use href="#i-dumbbell"/></svg>ცილა</span><b>~180 გ</b></li>
+        <li><span><svg class="ico"><use href="#i-cal"/></svg>დღე</span><b id="heroDay">1 / 30</b></li>
+      </ul>
+    </div>
   </header>
 
+  <nav class="tabs" aria-label="განყოფილებები">
+    <ul>
+      <li><a href="#day"><svg class="ico"><use href="#i-plate"/></svg>მენიუ</a></li>
+      <li><a href="#recipes"><svg class="ico"><use href="#i-book"/></svg>რეცეპტები</a></li>
+      <li><a href="#weight"><svg class="ico"><use href="#i-scale"/></svg>წონა</a></li>
+      <li><a href="#prep"><svg class="ico"><use href="#i-pot"/></svg>მომზადება</a></li>
+      <li><a href="#shop"><svg class="ico"><use href="#i-cart"/></svg>საყიდლები</a></li>
+    </ul>
+  </nav>
+
   <section id="day">
-    <h2>დღის მენიუ</h2>
+    <div class="shead"><div class="t"><span class="sico"><svg class="ico"><use href="#i-plate"/></svg></span><h2 id="dayTitle">დღის მენიუ</h2></div></div>
     <div class="weeks" id="weeks"></div>
     <div class="days" id="days"></div>
-    <div class="totals">
-      <div class="meter"><div class="top"><span>კალორია</span><b id="tk"></b></div><div class="bar"><i id="bk"></i></div></div>
-      <div class="meter"><div class="top"><span>ცილა</span><b id="tp"></b></div><div class="bar p"><i id="bp"></i></div></div>
+    <div class="card summary">
+      <div class="rings">
+        <div class="ring" id="ringK"></div>
+        <div class="ring prot" id="ringP"></div>
+      </div>
+      <div class="wk">
+        <div class="wkh"><b>კვირის კალორიები</b><span class="num" id="wkavg"></span></div>
+        <div class="wkbox"><svg id="wkchart" role="img" aria-label="კალორიები კვირის დღეების მიხედვით"></svg></div>
+      </div>
     </div>
     <div class="fit" id="fit"></div>
     <ol class="timeline" id="timeline"></ol>
-    <p class="note">დააჭირე კერძს, რომ ნახო ინგრედიენტები და მომზადება ნაბიჯ-ნაბიჯ. თუ სხვა რამე ჭამე, დააჭირე ✎-ს; თუ რამე დამატებით ჭამე, „+ კერძის დამატება“. ჩაწერე და AI დაითვლის კალორიებს. კერძის გახსნისას შეგიძლია წაშალო. ყველა წონა უმი პროდუქტისაა (ხორცი, ბრინჯი, წიწიბურა, მაკარონი), სხვაგვარად თუ არ წერია. ზეთი კოვზით გაზომე.</p>
+    <details class="help"><summary><svg class="ico"><use href="#i-info"/></svg>როგორ გამოვიყენო</summary>
+      <p>დააჭირე კერძს, რომ ნახო ინგრედიენტები და მომზადება ნაბიჯ-ნაბიჯ. თუ სხვა რამე ჭამე, დააჭირე ✎-ს; თუ რამე დამატებით ჭამე, „+ კერძის დამატება“. ჩაწერე და AI დაითვლის კალორიებს. კერძის გახსნისას შეგიძლია წაშალო.</p>
+      <p>ყველა წონა უმი პროდუქტისაა (ხორცი, ბრინჯი, წიწიბურა, მაკარონი), სხვაგვარად თუ არ წერია. ზეთი კოვზით გაზომე.</p>
+    </details>
   </section>
 
   <section id="recipes">
-    <div class="row"><h2>რეცეპტები</h2><span class="note num" id="rcount"></span></div>
+    <div class="shead"><div class="t"><span class="sico"><svg class="ico"><use href="#i-book"/></svg></span><h2>რეცეპტები</h2></div><span class="note num" id="rcount"></span></div>
     <div class="rtools">
       <label class="rsearch"><span class="visually-hidden">ძებნა</span><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><input type="search" id="rsearch" placeholder="მოძებნე კერძი ან ინგრედიენტი…" autocomplete="off"></label>
       <div class="chips" id="rchips" role="group" aria-label="ფილტრი"></div>
     </div>
     <ul class="rgrid" id="rgrid"></ul>
-    <p class="note">კალორია და მაკროები ყველგან 1 პორციაზეა და ითვლება ინგრედიენტების წონით (უმი ხორცი და მარცვლეული). დააჭირე ბარათს რეცეპტის სანახავად. ფოტოები: <a href="https://unsplash.com" rel="noopener" target="_blank">Unsplash</a>, უფასო ლიცენზიით; ფოტო კერძის იდეას აჩვენებს და შეიძლება ზუსტად არ ემთხვეოდეს.</p>
+    <p class="note">კალორია და მაკროები 1 პორციაზეა, ინგრედიენტების წონით (უმი ხორცი და მარცვლეული). ფოტოები: <a href="https://unsplash.com" rel="noopener" target="_blank">Unsplash</a>; ფოტო კერძის იდეას აჩვენებს და შეიძლება ზუსტად არ ემთხვეოდეს.</p>
   </section>
 
   <section id="weight">
-    <h2>წონის კონტროლი</h2>
-    <form id="wform" class="wform" novalidate>
-      <label for="wdate"><span>თარიღი</span><input type="date" id="wdate" required></label>
-      <label for="wkg"><span>წონა, კგ</span><input type="number" id="wkg" inputmode="decimal" step="0.1" min="40" max="250" placeholder="109.4" required></label>
-      <button type="submit" id="wsave">შენახვა</button>
-    </form>
-    <p class="note" id="wstatus">აიწონე დილით, ტუალეტის შემდეგ და ჭამამდე. იმავე დღის ახალი ჩანაწერი ძველს ჩაანაცვლებს.</p>
+    <div class="shead"><div class="t"><span class="sico"><svg class="ico"><use href="#i-scale"/></svg></span><h2>წონის კონტროლი</h2></div></div>
+    <div class="card">
+      <form id="wform" class="wform" novalidate>
+        <label for="wdate"><span>თარიღი</span><input type="date" id="wdate" required></label>
+        <label for="wkg"><span>წონა, კგ</span><input type="number" id="wkg" inputmode="decimal" step="0.1" min="40" max="250" placeholder="109.4" required></label>
+        <button type="submit" id="wsave">შენახვა</button>
+      </form>
+      <p class="note" id="wstatus">აიწონე დილით, ტუალეტის შემდეგ და ჭამამდე. იმავე დღის ახალი ჩანაწერი ძველს ჩაანაცვლებს.</p>
+    </div>
     <div class="stats" id="wstats"></div>
-    <div class="chartbox">
+    <details class="more" id="wmorebox" hidden><summary>მეტი მაჩვენებელი</summary><div class="stats" id="wmore"></div></details>
+    <div class="card chartbox">
       <div class="legend"><span><i class="lg dot"></i>დღიური წონა</span><span><i class="lg line"></i>7-დღიანი საშუალო</span><span><i class="lg goal"></i>მიზანი 106 კგ</span></div>
       <div class="chartwrap" id="chartwrap"><svg id="wchart" role="img" aria-label="წონის დინამიკა"></svg><div class="ctip" id="ctip" hidden></div></div>
     </div>
@@ -315,17 +457,25 @@ dialog.sheet::backdrop{background:rgba(8,12,18,.55)}
   </section>
 
   <section id="prep">
-    <h2>მომზადება: კვირაში ორჯერ</h2>
+    <div class="shead"><div class="t"><span class="sico"><svg class="ico"><use href="#i-pot"/></svg></span><h2>მომზადება: კვირაში ორჯერ</h2></div></div>
     <p class="muted">მზა საჭმელი მაცივარში 3–4 დღე ძლებს. შაბათ-კვირის პორციები საყინულეში შედე და წინა საღამოს გადმოიტანე. ორაგული ყოველთვის ახალი მოამზადე, 15 წუთი ღუმელში.</p>
     <div class="grid2" id="preps"></div>
     <p class="note"><b>პირველი დღე (1 ნოემბერი):</b> კვირაა, ამიტომ დღეს იყიდე პირველი კვირის საყიდლები და საღამოს კვირის prep გააკეთე ორშაბათი–ოთხშაბათისთვის.</p>
   </section>
 
   <section id="shop">
-    <div class="row"><h2>საყიდლები: ერთი კვირა</h2><button class="reset" id="shopReset" type="button">მონიშვნების გასუფთავება</button></div>
-    <div class="shoptotal"><span class="muted">კვირის ბიუჯეტი</span><b class="num" id="shopTotal"></b><span class="note num" id="shopRange"></span></div>
+    <div class="shead"><div class="t"><span class="sico"><svg class="ico"><use href="#i-cart"/></svg></span><h2>საყიდლები: ერთი კვირა</h2></div><button class="reset" id="shopReset" type="button">გასუფთავება</button></div>
+    <div class="card">
+      <div class="shoptotal">
+        <div><span class="note">კვირის ბიუჯეტი</span><div class="big num" id="shopTotal"></div><span class="note num" id="shopRange"></span></div>
+        <span class="pct" id="shopPct"></span>
+        <div class="pbar" aria-hidden="true"><i id="shopBar"></i></div>
+      </div>
+    </div>
     <div class="card"><ul class="checks" id="shoplist"></ul></div>
-    <p class="note">ფასები მიახლოებითია, თბილისის სუპერმარკეტების 2026 წლის მონაცემებით (ქათმის ფილე ~18 ₾/კგ, საქონელი ~26–35 ₾/კგ, კვერცხი ~7 ₾/10 ცალი). ორაგულის, ხაჭოს და მაწონის ფასი ჩემი შეფასებაა, მაღაზიის მიხედვით განსხვავდება. პირველ კვირას ერთჯერადად +25–30 ₾: ზეთის ბოთლი, თაფლი, სანელებლები, მარცვლეულის სრული პაკეტები. პროტეინი არ ითვლება (გაქვს). მონიშვნები ამ ბრაუზერში ინახება.</p>
+    <details class="help"><summary><svg class="ico"><use href="#i-info"/></svg>ფასების შესახებ</summary>
+      <p>ფასები მიახლოებითია, თბილისის სუპერმარკეტების 2026 წლის მონაცემებით (ქათმის ფილე ~18 ₾/კგ, საქონელი ~26–35 ₾/კგ, კვერცხი ~7 ₾/10 ცალი). ორაგულის, ხაჭოს და მაწონის ფასი ჩემი შეფასებაა, მაღაზიის მიხედვით განსხვავდება. პირველ კვირას ერთჯერადად +25–30 ₾: ზეთის ბოთლი, თაფლი, სანელებლები, მარცვლეულის სრული პაკეტები. პროტეინი არ ითვლება (გაქვს). მონიშვნები ამ ბრაუზერში ინახება.</p>
+    </details>
   </section>
 
 </div>
@@ -390,7 +540,7 @@ function wdOf(wi, di){ return (new Date(2026, 10, WEEKS[wi].start + di).getDay()
 function renderWeeks(){
   const el = document.getElementById("weeks"); el.innerHTML="";
   WEEKS.forEach((x,i)=>{ const b=document.createElement("button"); b.type="button"; b.id="wk"+i;
-    b.textContent="კვირა "+(i+1)+" · "+x.label; b.setAttribute("aria-pressed", i===w);
+    b.innerHTML="კვირა "+(i+1)+"<small>"+x.label+"</small>"; b.setAttribute("aria-pressed", i===w);
     b.onclick=()=>{w=i; if(d>=WEEKS[w].n) d=WEEKS[w].n-1; render();}; el.appendChild(b); });
 }
 function renderDays(){
@@ -403,13 +553,14 @@ function renderDays(){
     if(w===todayW && i===todayD) b.classList.add("today");
     b.onclick=()=>{d=i; render();}; el.appendChild(b); });
 }
+const SLOT_EMO = {"ვარჯიშამდე":"🍌","სნექი":"🥤","საუზმე":"🍳","სადილი":"🍲","ვახშამი":"🥗","დამატებული":"🍽"};
 function mealHTML(m, cls, i){
   const isOpen = open.has(i) || editing===i;
   const sw = m.swapped || m.extra, sk = m.skipped;
   return '<div class="meal '+(cls||"")+(isOpen?" open":"")+(sw?" swapped":"")+(m.extra?" extra":"")+(sk?" skipped":"")+'"><div class="mrow">'+
     '<button type="button" class="mhead" id="meal'+i+'" data-i="'+i+'" aria-expanded="'+isOpen+'" aria-controls="mb'+i+'">'+
-      (m.img&&!sw&&!sk?'<span class="ph mthumb"><img src="'+IMG(m.img,120,120)+'" alt="" loading="lazy" decoding="async" onerror="imgFail(this)"></span>':'')+
-      '<span class="mt"><span class="slot">'+m.slot+'</span><span class="mn">'+esc(m.name)+'</span><span class="kc">'+(sk?'წაშლილია · 0 კკალ':'🔥 '+m.k+' კკალ · '+m.p+' გ ცილა')+'</span></span>'+
+      (m.img&&!sw&&!sk?'<span class="ph mthumb"><img src="'+IMG(m.img,120,120)+'" alt="" loading="lazy" decoding="async" onerror="imgFail(this)"></span>':'<span class="semoji" aria-hidden="true">'+(sk?'🚫':sw?'✍️':SLOT_EMO[m.slot]||'🍽')+'</span>')+
+      '<span class="mt"><span class="slot">'+m.slot+'</span><span class="mn">'+esc(m.name)+'</span><span class="kc">'+(sk?'წაშლილია · 0 კკალ':'<span class="k">🔥 '+m.k+' კკალ</span><span class="pp">'+m.p+' გ ცილა</span>')+'</span></span>'+
       '<span class="mr"><span class="chev" aria-hidden="true"></span></span>'+
     '</button>'+
     (editing===i||sk?'':'<button type="button" class="swapbtn" data-swap="'+i+'" aria-label="'+m.slot+': '+(m.extra?'შეცვლა':'სხვა რამე ვჭამე')+'">✎<span class="visually-hidden"> ჩანაცვლება</span></button>')+
@@ -452,27 +603,66 @@ function swapForm(i, m){
     '<div class="sbtns"><button type="submit" class="sbtn"'+(st.busy?' disabled':'')+'>'+(st.busy?'ვითვლი…':(isAdd?'დათვლა და დამატება':'კალორიების დათვლა'))+'</button>'+
     '<button type="button" class="sbtn ghost" data-cancel="'+i+'">გაუქმება</button></div></form>';
 }
-const ADD = 99, EX = 100;
+const ADD = 99, EX = 100, KCAL_MAX = 2000, PROT_GOAL = 180;
+/* progress ring: value vs target, centre shows the number */
+function ringSVG(frac, r, sw){
+  const C = 2*Math.PI*r, f = Math.max(0, Math.min(1, frac));
+  return '<svg viewBox="0 0 '+(2*r+sw)+' '+(2*r+sw)+'" aria-hidden="true"><circle class="trk" cx="'+(r+sw/2)+'" cy="'+(r+sw/2)+'" r="'+r+'" fill="none" stroke-width="'+sw+'"/>'+
+    '<circle class="val" cx="'+(r+sw/2)+'" cy="'+(r+sw/2)+'" r="'+r+'" fill="none" stroke-width="'+sw+'" stroke-linecap="round" stroke-dasharray="'+C.toFixed(1)+'" stroke-dashoffset="'+(C*(1-f)).toFixed(1)+'"'+(f===0?' opacity="0"':'')+'/></svg>';
+}
+function ring(id, v, max, unit, icon, label){
+  const el = document.getElementById(id);
+  el.classList.toggle("over", id==="ringK" && v>max);
+  el.setAttribute("role","img"); el.setAttribute("aria-label", label+": "+v+" / "+max+" "+unit);
+  el.innerHTML = '<div class="rv">'+ringSVG(v/max, 44, 10)+'<div class="ctr"><b>'+v+'</b><span>/ '+max+' '+unit+'</span></div></div>'+
+    '<span class="rl"><span aria-hidden="true">'+icon+'</span>'+label+'</span>';
+}
+/* week bars: planned + logged kcal per day, dashed 2000 line, tap a bar to open that day */
+function renderWeekChart(){
+  const svg = document.getElementById("wkchart"), n = WEEKS[w].n;
+  const W = Math.max(240, svg.clientWidth||320), H = 150, top = 16, bot = 20, ch = H-top-bot;
+  const vals = Array.from({length:n},(_,i)=>dayKcal(w,i));
+  const max = Math.max(2400, ...vals), y = v => top + ch*(1-v/max);
+  const slot = W/n, bw = Math.min(26, slot*0.56);
+  let g = '<line class="ref" x1="0" x2="'+W+'" y1="'+y(KCAL_MAX)+'" y2="'+y(KCAL_MAX)+'"/><text class="reft" x="'+W+'" y="'+(y(KCAL_MAX)-4)+'" text-anchor="end">2000</text>';
+  vals.forEach((v,i)=>{
+    const cx = slot*i + slot/2, h = Math.max(2, ch*v/max), x = cx-bw/2, yy = top+ch-h, rr = Math.min(4, bw/2);
+    const cls = "bar"+(i===d?" sel":"")+(v>KCAL_MAX?" over":"");
+    g += '<path class="'+cls+'" d="M'+x+','+(top+ch)+'V'+(yy+rr)+'Q'+x+','+yy+' '+(x+rr)+','+yy+'H'+(x+bw-rr)+'Q'+(x+bw)+','+yy+' '+(x+bw)+','+(yy+rr)+'V'+(top+ch)+'Z"/>';
+    if(i===d) g += '<text class="vl" x="'+cx+'" y="'+(yy-5)+'" text-anchor="middle">'+v+'</text>';
+    g += '<text class="xl'+(i===d?" sel":"")+'" x="'+cx+'" y="'+(H-5)+'" text-anchor="middle">'+DAYS[wdOf(w,i)]+'</text>';
+    g += '<rect class="hit" data-d="'+i+'" x="'+(slot*i)+'" y="0" width="'+slot+'" height="'+H+'"><title>'+DAYN[wdOf(w,i)]+' '+dateOf(w,i).n+' ნოე: '+v+' კკალ</title></rect>';
+  });
+  svg.setAttribute("viewBox","0 0 "+W+" "+H); svg.innerHTML = g;
+  const avg = Math.round(vals.reduce((s,v)=>s+v,0)/n);
+  document.getElementById("wkavg").textContent = "საშუალოდ "+avg+" კკალ";
+}
+document.getElementById("wkchart").addEventListener("click", e=>{ const h=e.target.closest("[data-d]"); if(h){ d=+h.dataset.d; render(); } });
 function nowHM(){ const n = new Date(); return String(n.getHours()).padStart(2,"0")+":"+String(n.getMinutes()).padStart(2,"0"); }
-function renderDay(){
-  const [b,l,dn] = WEEK[wdOf(w,d)];
-  const sw = store.get("swaps")||{}, dk = dayKey(), ex = (store.get("extras")||{})[dk]||[];
-  if(editDay!==dk){ editing = null; swapState = {}; editDay = dk; }
-  const seq = [["10:00",M.PRE,"small"],["12:15",M[b]],["16:00",M[l]],["19:00",M.SHAKE,"small"],["22:30",M[dn]]]
+function daySeq(wi, di){
+  const [b,l,dn] = WEEK[wdOf(wi,di)];
+  const sw = store.get("swaps")||{}, dk = keyOf(wi,di), ex = (store.get("extras")||{})[dk]||[];
+  return [["10:00",M.PRE,"small"],["12:15",M[b]],["16:00",M[l]],["19:00",M.SHAKE,"small"],["22:30",M[dn]]]
     .map(([t,m,c],i)=>{ const o = sw[dk+"|"+i];
       const mm = !o ? m : o.skipped ? {slot:m.slot,name:m.name,k:0,p:0,skipped:true,plan:m} : {slot:m.slot,name:o.name,k:o.k,p:o.p,c:o.c,f:o.f,list:o.items,note:o.note,text:o.text,swapped:true,plan:m};
       return [t,mm,c,i]; })
     .concat(ex.map((o,j)=>[o.time,{slot:"დამატებული",name:o.name,k:o.k,p:o.p,c:o.c,f:o.f,list:o.items,note:o.note,text:o.text,time:o.time,extra:true},"",EX+j]))
     .sort((x,y)=>x[0]<y[0]?-1:x[0]>y[0]?1:0);
+}
+const dayKcal = (wi,di) => daySeq(wi,di).reduce((s,x)=>s+x[1].k,0);
+function renderDay(){
+  const dk = dayKey();
+  if(editDay!==dk){ editing = null; swapState = {}; editDay = dk; }
+  const seq = daySeq(w,d);
+  document.getElementById("dayTitle").textContent = DAYN[wdOf(w,d)]+", "+dateOf(w,d).n+" ნოემბერი";
   document.getElementById("timeline").innerHTML = seq.map(([t,m,c,i])=>'<li><span class="time">'+t+'</span>'+mealHTML(m,c,i)+'</li>').join("")+
     '<li><span class="time"></span>'+(editing===ADD
       ? '<div class="meal open extra"><div class="mbody">'+swapForm(ADD,null)+'</div></div>'
-      : '<button type="button" class="addbtn" data-add="1">+ კერძის დამატება</button>')+'</li>';
+      : '<button type="button" class="addbtn" data-add="1"><svg class="ico"><use href="#i-plus"/></svg>კერძის დამატება</button>')+'</li>';
   const k = seq.reduce((s,x)=>s+x[1].k,0), p = seq.reduce((s,x)=>s+x[1].p,0);
-  document.getElementById("tk").textContent = k+" / 2000";
-  document.getElementById("tp").textContent = p+" / 180 გ";
-  document.getElementById("bk").style.width = Math.min(100,k/20)+"%";
-  document.getElementById("bp").style.width = Math.min(100,p/1.8)+"%";
+  ring("ringK", k, KCAL_MAX, "კკალ", "🔥", k>KCAL_MAX ? "+"+(k-KCAL_MAX)+" ზედმეტი" : "კალორია");
+  ring("ringP", p, PROT_GOAL, "გ", "💪", "ცილა");
+  renderWeekChart();
   if(typeof renderFit==="function") renderFit(k);
 }
 
@@ -499,30 +689,36 @@ const SHOP = [
   ["ხილი და ბოსტნეული",[["ბანანი","10 ცალი",8],["პომიდორი","1.5 კგ",10],["კიტრი","1 კგ",5],["ბულგარული წიწაკა","4 ცალი",4],["ხახვი","4 ცალი",1],["ბროკოლი ან მწვანე ლობიო","500 გ",6],["ისპანახი ან სოკო","300 გ",4],["მწვანილი, ნიორი, ლიმონი","",5]]],
   ["სხვა",[["პომიდვრის პასატა","300 გ",4],["ნიგოზი","30 გ",1.5],["ზეთი, სპრეი, თაფლი, სანელებლები (კვირის წილი)","",3]]]
 ];
+const SHOP_EMO = {"ხორცი და თევზი":"🥩","კვერცხი და რძის ნაწარმი":"🥚","მარცვლეული და ცომეული":"🌾","ხილი და ბოსტნეული":"🥦","სხვა":"🧂"};
+function shopProg(ul){ const a=ul.querySelectorAll("input"), n=[...a].filter(x=>x.checked).length;
+  document.getElementById("shopBar").style.width=(a.length?n/a.length*100:0)+"%";
+  document.getElementById("shopPct").textContent=n+" / "+a.length+" ნაყიდი"; }
 const SHOP_TOTAL = SHOP.reduce((s,[,items])=>s+items.reduce((a,x)=>a+x[2],0),0);
 const fmtL = n => "~"+(Math.round(n*2)/2)+" ₾";
 
-function checks(key, list, grouped){
+function checks(key, list, grouped, onUpd){
   const st = store.get(key) || {};
   const ul = document.createElement("ul"); ul.className="checks";
   const add=(txt,q,id,price)=>{ const li=document.createElement("li"); const lab=document.createElement("label");
     const cb=document.createElement("input"); cb.type="checkbox"; cb.id=key+"_"+id; cb.checked=!!st[id];
-    cb.onchange=()=>{ st[id]=cb.checked; store.set(key,st); };
+    cb.onchange=()=>{ st[id]=cb.checked; store.set(key,st); if(onUpd) onUpd(ul); };
     const s=document.createElement("span"); s.textContent=txt; lab.append(cb,s);
     const qq=document.createElement("span"); qq.className="q"; qq.textContent=(q||"")+(price!=null?(q?" · ":"")+fmtL(price):""); lab.append(qq);
     li.append(lab); ul.append(li); };
-  if(grouped){ let n=0; list.forEach(([g,items])=>{ const h=document.createElement("li"); h.className="group"; h.textContent=g; ul.append(h); items.forEach(([t,q,pr])=>add(t,q,n++,pr)); }); }
+  if(grouped){ let n=0; list.forEach(([g,items])=>{ const h=document.createElement("li"); h.className="group"; h.textContent=(SHOP_EMO[g]?SHOP_EMO[g]+" ":"")+g; ul.append(h); items.forEach(([t,q,pr])=>add(t,q,n++,pr)); }); }
   else list.forEach((t,i)=>add(t,"",i));
   return ul;
 }
 function renderPreps(){
   const el=document.getElementById("preps"); el.innerHTML="";
   PREPS.forEach(p=>{ const c=document.createElement("div"); c.className="card";
-    c.innerHTML='<div><h3>'+p.title+'</h3><p class="note">'+p.sub+'</p></div>';
-    c.append(checks("prep_nov"+w+"_"+p.id, p.items)); el.append(c); });
+    c.className="card prepc";
+    c.innerHTML='<div class="ph3"><span class="sico" aria-hidden="true">'+(p.id==="sun"?"🍗":"🥘")+'</span><div><h3>'+p.title+'</h3><p class="note">'+p.sub+'</p></div></div><div class="pbar" aria-hidden="true"><i></i></div>';
+    const upd = ul=>{ const a=ul.querySelectorAll("input"), n=[...a].filter(x=>x.checked).length; c.querySelector(".pbar i").style.width=(a.length?n/a.length*100:0)+"%"; };
+    const ul = checks("prep_nov"+w+"_"+p.id, p.items, false, upd); c.append(ul); upd(ul); el.append(c); });
 }
 function renderShop(){
-  const old=document.getElementById("shoplist"); const nu=checks("shop_nov"+w, SHOP, true); nu.id="shoplist"; old.replaceWith(nu);
+  const old=document.getElementById("shoplist"); const nu=checks("shop_nov"+w, SHOP, true, shopProg); nu.id="shoplist"; old.replaceWith(nu); shopProg(nu);
   document.querySelector("#shop h2").textContent = "საყიდლები: კვირა "+(w+1);
   const nd = WEEKS[w].n, t = SHOP_TOTAL*nd/7;
   document.getElementById("shopTotal").textContent = "~"+(Math.round(t/5)*5)+" ₾";
@@ -532,7 +728,8 @@ document.getElementById("shopReset").onclick=()=>{ store.set("shop_nov"+w,{}); r
 
 /* ---------- ჩანაცვლება: ხელით ჩაწერა + AI კალორიები (/api/estimate) ---------- */
 let editing = null, editDay = ""; let swapState = {};
-function dayKey(){ const dt = dateOf(w,d); return "2026-11-"+String(dt.n).padStart(2,"0"); }
+function keyOf(wi,di){ return "2026-11-"+String(dateOf(wi,di).n).padStart(2,"0"); }
+function dayKey(){ return keyOf(w,d); }
 function saveSwap(day, i, v){ const sw = store.get("swaps")||{}; const k = day+"|"+i; if(v) sw[k]=v; else delete sw[k]; store.set("swaps", sw); }
 function saveExtras(day, fn){ const all = store.get("extras")||{}; const list = fn((all[day]||[]).slice()); if(list.length) all[day]=list; else delete all[day]; store.set("extras", all); }
 const SWAP_ERR = {no_key:"AI ჯერ არ არის ჩართული: Vercel-ში ANTHROPIC_API_KEY არ არის დამატებული.", bad_key:"Anthropic API გასაღები არასწორია. შეამოწმე Vercel-ის პარამეტრებში.",
@@ -846,22 +1043,24 @@ function renderRecipes(){
       '<span class="ph"><img src="'+IMG(r.img,480,560)+'" alt="" loading="lazy" decoding="async" onerror="imgFail(this)">'+
       '<span class="kbadge num">'+r.k+' კკალ</span></span>'+
       '<span class="rn">'+esc(r.name)+'</span>'+
-      '<span class="rm">'+fmtMin(r.min)+' · '+r.p+' გ ცილა</span>'+
+      '<span class="rm"><span>⏱ '+fmtMin(r.min)+'</span><span class="pbadge">'+r.p+' გ ცილა</span></span>'+
     '</button></li>').join("") : '<li class="rempty note">ვერაფერი ვიპოვე. სხვა სიტყვა სცადე.</li>';
 }
 function macroRow(k,p,c,f){
-  return '<div class="macros">'+
-    '<div class="mc kcal"><b class="num">'+k+'</b><span>კკალ</span></div>'+
-    '<div class="mc"><b class="num">'+p+' გ</b><span>ცილა</span></div>'+
-    (c!=null?'<div class="mc"><b class="num">'+c+' გ</b><span>ნახშირწყ.</span></div>':'')+
-    (f!=null?'<div class="mc"><b class="num">'+f+' გ</b><span>ცხიმი</span></div>':'')+
-  '</div>';
+  /* donut of where the calories come from: protein 4, carbs 4, fat 9 kcal per gram */
+  const parts = [["prot","ცილა",p,4],["carb","ნახშირწყალი",c,4],["fat","ცხიმი",f,9]].filter(x=>x[2]!=null);
+  const tot = parts.reduce((s,x)=>s+x[2]*x[3],0) || 1, r = 40, C = 2*Math.PI*r, gap = parts.length>1 ? 3 : 0;
+  let off = 0, arcs = "";
+  parts.forEach(([cl,,g,m])=>{ const len = C*g*m/tot; if(len>gap) arcs += '<circle class="'+cl+'" cx="48" cy="48" r="'+r+'" fill="none" stroke-width="12" stroke-dasharray="'+(len-gap).toFixed(1)+' '+(C-len+gap).toFixed(1)+'" stroke-dashoffset="'+(-off).toFixed(1)+'"/>'; off += len; });
+  return '<div class="macros"><div class="donut" role="img" aria-label="კალორიების განაწილება მაკროების მიხედვით"><svg viewBox="0 0 96 96" aria-hidden="true"><circle class="trk" cx="48" cy="48" r="'+r+'" fill="none" stroke-width="12"/>'+arcs+'</svg>'+
+    '<div class="ctr"><b>'+k+'</b><span>კკალ</span></div></div>'+
+    '<ul class="mlist">'+parts.map(([cl,nm,g,m])=>'<li class="'+cl+'"><i></i><span>'+nm+'</span><b>'+g+' გ</b><span class="pc">'+Math.round(g*m/tot*100)+'%</span></li>').join("")+'</ul></div>';
 }
 function openRecipe(id){
   const r = RECIPES.find(x=>x.id===id); if(!r) return;
   const dlg = document.getElementById("rsheet");
   document.getElementById("rbody").innerHTML =
-    '<div class="ph hero"><img src="'+IMG(r.img,900,640)+'" alt="'+esc(r.name)+'" onerror="imgFail(this)"></div>'+
+    '<div class="ph hero-img"><img src="'+IMG(r.img,900,640)+'" alt="'+esc(r.name)+'" onerror="imgFail(this)"></div>'+
     '<div class="rinner">'+
       '<div class="slot">'+CATS[r.cat]+' · ⏱ '+fmtMin(r.min)+' · 1 პორცია</div>'+
       '<h3 class="rtitle" id="rtitle">'+esc(r.name)+'</h3>'+
@@ -971,6 +1170,21 @@ document.getElementById("fit").addEventListener("click", e=>{
   else if(fitValid()) fitFetch(true); else fitConnect(true);
 });
 render();
+(function(){
+  const dn = now.getFullYear()===2026 && now.getMonth()===10 ? now.getDate() : now < new Date(2026,10,1) ? 0 : 30;
+  document.getElementById("heroDay").textContent = (dn||"—")+" / 30";
+  const links = [...document.querySelectorAll(".tabs a")], secs = links.map(a=>document.querySelector(a.getAttribute("href")));
+  const mark = id => links.forEach(a=>a.setAttribute("aria-current", a.getAttribute("href")==="#"+id ? "true" : "false"));
+  mark("day");
+  if("IntersectionObserver" in window){
+    const vis = new Map();
+    const io = new IntersectionObserver(es=>{ es.forEach(e=>vis.set(e.target.id, e.intersectionRatio));
+      const best = secs.map(s=>[s.id, vis.get(s.id)||0]).sort((a,b)=>b[1]-a[1])[0]; if(best && best[1]>0) mark(best[0]); },
+      {threshold:[0,.15,.3,.5,.75,1], rootMargin:"-20% 0px -45% 0px"});
+    secs.forEach(s=>io.observe(s));
+  }
+  let rt; window.addEventListener("resize", ()=>{ clearTimeout(rt); rt=setTimeout(renderWeekChart,150); });
+})();
 
 /* ---------- წონის კონტროლი ---------- */
 const START = 112.5, GOAL = 106, HEIGHT = 1.85, START_DATE = "2026-11-01", END_DATE = "2026-11-30";
@@ -1010,7 +1224,9 @@ function stat(label, value, sub, cls){ return '<div class="st'+(cls?" "+cls:"")+
 
 function renderWeights(){
   const S = document.getElementById("wstats");
+  heroRing();
   if(!entries.length){
+    document.getElementById("wmorebox").hidden = true;
     S.innerHTML = stat("საწყისი", f1(START)+" კგ", "1 ნოემბერი") + stat("მიზანი", GOAL+" კგ", "დარჩა "+f1(START-GOAL)+" კგ") + stat("BMI", f1(START/HEIGHT**2), "185 სმ");
     S.insertAdjacentHTML("beforeend",'<p class="note empty">პირველი ჩანაწერის მერე აქ გამოჩნდება დაკლებული კილოგრამები, კვირის საშუალო, ტემპი და პროგნოზი.</p>');
   } else {
@@ -1031,16 +1247,25 @@ function renderWeights(){
       stat("ახლანდელი", f1(cur)+" კგ", fmtD(last.date)) +
       stat("სულ დაკლებული", sign(-lost).replace("+","+")+" კგ", Math.round(pct)+"% მიზნამდე", lost>0?"good":"") +
       stat("დარჩა მიზნამდე", left>0?f1(left)+" კგ":"0", "მიზანი "+GOAL+" კგ") +
-      stat("7-დღიანი საშუალო", a7!=null?f1(a7)+" კგ":"—", a7!=null&&a7p!=null?sign(a7-a7p)+" წინა კვირასთან":"წინა კვირა ჯერ არ არის") +
       stat("კვირის ტემპი", rate!=null?sign(rate)+" კგ":"—", rateSub, rateCls) +
+      "|MORE|" + stat("7-დღიანი საშუალო", a7!=null?f1(a7)+" კგ":"—", a7!=null&&a7p!=null?sign(a7-a7p)+" წინა კვირასთან":"წინა კვირა ჯერ არ არის") +
       stat("პროგნოზი "+GOAL+" კგ", eta, etaSub) +
       stat("BMI", f1(cur/HEIGHT**2), "საწყისი "+f1(START/HEIGHT**2)) +
       stat("ჩანაწერები", String(entries.length), "პირველი "+fmtD(entries[0].date));
-    S.insertAdjacentHTML("beforeend",'<div class="prog" aria-hidden="true"><i style="width:'+pct+'%"></i></div>');
+    const [main, more] = S.innerHTML.split("|MORE|"); S.innerHTML = main;
+    document.getElementById("wmore").innerHTML = more; document.getElementById("wmorebox").hidden = false;
+    S.insertAdjacentHTML("beforeend",'<div class="prog"><div class="pl"><span>'+f1(START)+' კგ</span><span>'+Math.round(pct)+'% მიზნამდე</span><span>'+GOAL+' კგ</span></div><div class="pbar" aria-hidden="true"><i style="width:'+pct+'%"></i></div></div>');
   }
   renderChart(); renderTable();
 }
 
+function heroRing(){
+  const el = document.getElementById("hring"), cur = entries.length ? entries[entries.length-1].kg : null;
+  const pct = cur==null ? 0 : Math.max(0, Math.min(1, (START-cur)/(START-GOAL)));
+  el.setAttribute("aria-label", cur==null ? "წონა ჯერ არ არის ჩაწერილი" : "მიზნამდე "+Math.round(pct*100)+"%, ახლა "+f1(cur)+" კგ");
+  el.innerHTML = ringSVG(pct, 48, 9)+'<div class="ctr"><b>'+(cur==null ? f1(START) : f1(cur))+'</b><span>'+(cur==null ? "კგ · დასაწყისი" : "კგ · "+Math.round(pct*100)+"%")+'</span></div>';
+  if(cur!=null) document.getElementById("heroSub").textContent = (START-cur>0 ? "უკვე −"+f1(START-cur)+" კგ" : "დასაწყისი")+" · დარჩა "+f1(Math.max(0,cur-GOAL))+" კგ";
+}
 function renderTable(){
   const T = document.getElementById("wtable");
   if(!entries.length){ T.innerHTML='<tr><td class="note">ჩანაწერები ჯერ არ არის.</td></tr>'; return; }
@@ -1073,6 +1298,9 @@ function renderChart(){
   // 7-day rolling average
   if(entries.length>=2){
     const pts = entries.map(e=>{ const a=avgWindow(e.date,7); return x(e.date).toFixed(1)+","+y(a).toFixed(1); });
+    const fx = x(entries[0].date).toFixed(1), lx = x(entries[entries.length-1].date).toFixed(1), by = (H-m.b).toFixed(1);
+    g+='<defs><linearGradient id="wgrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="var(--accent)" stop-opacity=".22"/><stop offset="1" stop-color="var(--accent)" stop-opacity="0"/></linearGradient></defs>';
+    g+='<polygon class="area" points="'+fx+','+by+' '+pts.join(" ")+' '+lx+','+by+'"/>';
     g+='<polyline class="avgline" points="'+pts.join(" ")+'"/>';
   }
   entries.forEach((e,i)=>{ g+='<circle class="wpt" cx="'+x(e.date)+'" cy="'+y(e.kg)+'" r="4.5"/><circle class="hit" data-i="'+i+'" cx="'+x(e.date)+'" cy="'+y(e.kg)+'" r="14"/>'; });
