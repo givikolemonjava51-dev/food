@@ -119,6 +119,20 @@ details.help p+p{margin-top:6px}
 .days button[aria-pressed="true"] .d{color:var(--accent-ink);opacity:.85}
 .days button.today::after{content:"";position:absolute;top:5px;right:5px;width:7px;height:7px;border-radius:50%;background:var(--ball)}
 .days button.out{opacity:.45}
+.days button .g{font-size:10px;line-height:1;height:10px;color:var(--accent)}
+.days button[aria-pressed="true"] .g{color:var(--accent-ink)}
+.days button.gym{border-color:color-mix(in srgb,var(--accent) 45%,var(--line))}
+.gymcard{display:flex;gap:12px;align-items:flex-start;background:var(--accent-soft);border-radius:var(--r);padding:12px 14px}
+.gymcard.rest{background:var(--surface);border:1px solid var(--line)}
+.gymcard .gi{font-size:24px;line-height:1}
+.gymcard b{display:block;font-size:15px}
+.gymcard span{font-size:13px;color:var(--muted)}
+.gymweek{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.gymweek i{font-style:normal;font-family:var(--mono);font-size:12px;background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:2px 8px;color:var(--fg)}
+.gymrow{display:flex;align-items:center;gap:10px;background:var(--accent);color:var(--accent-ink);border-radius:var(--r);padding:12px 14px;font-weight:600;font-size:15px}
+.gymrow small{font-weight:400;opacity:.85;font-size:13px}
+.meal.post:not(.swapped):not(.skipped) .slot::after{content:" · ვარჯიშის შემდეგ";color:var(--good);font-weight:600}
+.xl.gymx{fill:var(--accent);font-weight:700}
 
 /* ---------- day summary: rings + week bars ---------- */
 .summary{display:grid;grid-template-columns:auto minmax(0,1fr);gap:18px;align-items:center}
@@ -409,6 +423,7 @@ dialog.sheet::backdrop{background:rgba(6,12,8,.55);-webkit-backdrop-filter:blur(
     <div class="shead"><div class="t"><span class="sico"><svg class="ico"><use href="#i-plate"/></svg></span><h2 id="dayTitle">დღის მენიუ</h2></div></div>
     <div class="weeks" id="weeks"></div>
     <div class="days" id="days"></div>
+    <div class="gymcard" id="gymcard"></div>
     <div class="card summary">
       <div class="rings">
         <div class="ring" id="ringK"></div>
@@ -499,7 +514,7 @@ const M = {
   D4:{slot:"ვახშამი",name:"ლობიო ქათმით",k:475,p:54,items:["150 გ ქათმის მკერდი, გრილზე","150 გ მოხარშული ლობიო, მინიმალური ზეთით","200 გ სალათი","150 გ მაწონი"]}
 };
 const HOW = {
-  PRE:["5 წთ",["შეჭამე გაღვიძებიდან 15–30 წუთში, დარბაზამდე დაახლოებით 30 წუთით ადრე.","1–2 ჭიქა წყალში გახსენი 3–5 გ კრეატინი და დალიე.","თუ ვარჯიში ძალიან ინტენსიურია, წყალს ელექტროლიტებიც დაამატე."],"ბანანი სწრაფ ენერგიას იძლევა და კუჭს არ ამძიმებს."],
+  PRE:["5 წთ",["შეჭამე დარბაზამდე 30–45 წუთით ადრე (ორშ/ოთხ/პარ 10:15, კვირას 13:15).","1–2 ჭიქა წყალში გახსენი 3–5 გ კრეატინი და დალიე.","თუ ვარჯიში ძალიან ინტენსიურია, წყალს ელექტროლიტებიც დაამატე."],"ბანანი სწრაფ ენერგიას იძლევა და კუჭს არ ამძიმებს."],
   SHAKE:["2 წთ",["შეიკერში ჯერ ჩაასხი 300 მლ რძე, მერე ჩაყარე 1 სკუპი პროტეინი. ასე გუნდებად არ შეიკვრება.","დახურე და 20–30 წამი შეანჯღრიე.","სამსახურში: ფხვნილი წაიღე მშრალ შეიკერში, რძე ადგილზე დაამატე."],"ეს ჭამა სადილსა და ვახშამს შორის შიმშილს გიჭერს."],
   B1:["15 წთ",["ისპანახი ან სოკო დაჭერი. ტაფა ზეთის სპრეით გააცხელე და ბოსტნეული 3–4 წუთი შეწვი, სანამ წყალი არ აორთქლდება.","თასში ათქვიფე 3 მთლიანი კვერცხი და 3 ცილა. მარილი და პილპილი მოაყარე.","კვერცხი ბოსტნეულზე ჩაასხი. საშუალო ცეცხლზე, თავდახურული, 4–5 წუთი აცხე, სანამ ზედაპირი არ გამაგრდება.","პურის 2 ნაჭერი ტოსტერში ან მშრალ ტაფაზე გამოაცხვე.","ხაჭო თეფშზე დადე. თუ გინდა, მწვანილი და ცოტა მარილი მოაყარე. გვერდით დაჭრილი პომიდორი და კიტრი."],"3 ცილის შემდეგ დარჩენილი გულები ამ გეგმაში არ ითვლება, ამიტომ ნუ შეჭამ. მოსახერხებელია მზა კვერცხის ცილის ყიდვაც."],
   B2:["5 წთ",["250 გ ხაჭო თასში ჩადე და 150 გ მაწონი გადაასხი.","კოვზით კარგად აურიე, სანამ კრემისებური არ გახდება.","ბანანი რგოლებად დაჭერი და ზემოდან დააწყვე.","15 გ ნიგოზი ხელით დაამტვრიე და მოაყარე.","ბოლოს 1 ჩაის კოვზი თაფლი ზემოდან."],"ხაჭო 9%-იანი არ აიღო: ერთი პორცია 100 კკალ-ით მეტი იქნება."],
@@ -517,6 +532,11 @@ for (const k in HOW) { M[k].time = HOW[k][0]; M[k].steps = HOW[k][1]; M[k].tip =
 const open = new Set();
 
 const WEEK = [["B1","L1","D2"],["B2","L2","D1"],["B3","L3","D4"],["B1","L4","D3"],["B2","L1","D1"],["B3","L2","D2"],["B1","L3","D4"]];
+/* gym schedule by weekday (0 = Monday): start time, ~75 min session */
+const GYM = {0:"11:00", 2:"11:00", 4:"11:00", 6:"14:00"};
+const GYM_MIN = 75;
+const addMin = (t, m) => { const [h,mm] = t.split(":").map(Number), x = h*60+mm+m; return String(Math.floor(x/60)).padStart(2,"0")+":"+String(x%60).padStart(2,"0"); };
+const gymOf = (wi, di) => GYM[wdOf(wi,di)] || null;
 const DAYN = ["ორშაბათი","სამშაბათი","ოთხშაბათი","ხუთშაბათი","პარასკევი","შაბათი","კვირა"];
 const DAYS = ["ორშ","სამ","ოთხ","ხუთ","პარ","შაბ","კვ"];
 const WEEKS = [{label:"1–8 ნოე",start:1,n:8},{label:"9–15 ნოე",start:9,n:7},{label:"16–22 ნოე",start:16,n:7},{label:"23–30 ნოე",start:23,n:8}];
@@ -547,8 +567,10 @@ function renderDays(){
   const el = document.getElementById("days"); el.innerHTML="";
   el.style.gridTemplateColumns = "repeat("+WEEKS[w].n+",1fr)";
   Array.from({length:WEEKS[w].n},(_,i)=>{ const x=DAYS[wdOf(w,i)], dt=dateOf(w,i); const b=document.createElement("button"); b.type="button"; b.id="dy"+i;
-    b.innerHTML='<span class="d">'+x+'</span><span class="n">'+dt.n+'</span>';
-    b.setAttribute("aria-pressed", i===d); b.setAttribute("aria-label", DAYN[wdOf(w,i)]+" "+dt.n+" ნოემბერი");
+    const gy = gymOf(w,i);
+    b.innerHTML='<span class="d">'+x+'</span><span class="n">'+dt.n+'</span><span class="g">'+(gy?'🏋':'')+'</span>';
+    if(gy) b.classList.add("gym");
+    b.setAttribute("aria-pressed", i===d); b.setAttribute("aria-label", DAYN[wdOf(w,i)]+" "+dt.n+" ნოემბერი"+(gy?", ვარჯიში "+gy:""));
     if(dt.out) b.classList.add("out");
     if(w===todayW && i===todayD) b.classList.add("today");
     b.onclick=()=>{d=i; render();}; el.appendChild(b); });
@@ -630,8 +652,8 @@ function renderWeekChart(){
     const cls = "bar"+(i===d?" sel":"")+(v>KCAL_MAX?" over":"");
     g += '<path class="'+cls+'" d="M'+x+','+(top+ch)+'V'+(yy+rr)+'Q'+x+','+yy+' '+(x+rr)+','+yy+'H'+(x+bw-rr)+'Q'+(x+bw)+','+yy+' '+(x+bw)+','+(yy+rr)+'V'+(top+ch)+'Z"/>';
     if(i===d) g += '<text class="vl" x="'+cx+'" y="'+(yy-5)+'" text-anchor="middle">'+v+'</text>';
-    g += '<text class="xl'+(i===d?" sel":"")+'" x="'+cx+'" y="'+(H-5)+'" text-anchor="middle">'+DAYS[wdOf(w,i)]+'</text>';
-    g += '<rect class="hit" data-d="'+i+'" x="'+(slot*i)+'" y="0" width="'+slot+'" height="'+H+'"><title>'+DAYN[wdOf(w,i)]+' '+dateOf(w,i).n+' ნოე: '+v+' კკალ</title></rect>';
+    g += '<text class="xl'+(i===d?" sel":"")+(gymOf(w,i)?" gymx":"")+'" x="'+cx+'" y="'+(H-5)+'" text-anchor="middle">'+DAYS[wdOf(w,i)]+'</text>';
+    g += '<rect class="hit" data-d="'+i+'" x="'+(slot*i)+'" y="0" width="'+slot+'" height="'+H+'"><title>'+DAYN[wdOf(w,i)]+' '+dateOf(w,i).n+' ნოე: '+v+' კკალ'+(gymOf(w,i)?' · ვარჯიში '+gymOf(w,i):'')+'</title></rect>';
   });
   svg.setAttribute("viewBox","0 0 "+W+" "+H); svg.innerHTML = g;
   const avg = Math.round(vals.reduce((s,v)=>s+v,0)/n);
@@ -642,12 +664,25 @@ function nowHM(){ const n = new Date(); return String(n.getHours()).padStart(2,"
 function daySeq(wi, di){
   const [b,l,dn] = WEEK[wdOf(wi,di)];
   const sw = store.get("swaps")||{}, dk = keyOf(wi,di), ex = (store.get("extras")||{})[dk]||[];
-  return [["10:00",M.PRE,"small"],["12:15",M[b]],["16:00",M[l]],["19:00",M.SHAKE,"small"],["22:30",M[dn]]]
+  /* fixed indices 0..4 (PRE, breakfast, lunch, shake, dinner) so saved swaps keep matching */
+  const gy = gymOf(wi,di);
+  const plan = gy==="11:00" ? [["10:15",M.PRE,"small"],["12:45",M[b],"post"],["16:00",M[l]],["19:00",M.SHAKE,"small"],["22:30",M[dn]]]
+    : gy==="14:00" ? [["13:15",M.PRE,"small"],["10:30",M[b]],["15:45",M[l],"post"],["19:00",M.SHAKE,"small"],["22:30",M[dn]]]
+    : [["10:00",M.PRE,"small rest"],["12:15",M[b]],["16:00",M[l]],["19:00",M.SHAKE,"small"],["22:30",M[dn]]];
+  return plan
     .map(([t,m,c],i)=>{ const o = sw[dk+"|"+i];
       const mm = !o ? m : o.skipped ? {slot:m.slot,name:m.name,k:0,p:0,skipped:true,plan:m} : {slot:m.slot,name:o.name,k:o.k,p:o.p,c:o.c,f:o.f,list:o.items,note:o.note,text:o.text,swapped:true,plan:m};
       return [t,mm,c,i]; })
+    .filter(x=>!(x[2]==="small rest" && !sw[dk+"|0"]))
     .concat(ex.map((o,j)=>[o.time,{slot:"დამატებული",name:o.name,k:o.k,p:o.p,c:o.c,f:o.f,list:o.items,note:o.note,text:o.text,time:o.time,extra:true},"",EX+j]))
     .sort((x,y)=>x[0]<y[0]?-1:x[0]>y[0]?1:0);
+}
+function renderGymCard(gy){
+  const wk = Object.keys(GYM).map(k=>'<i>'+DAYS[k]+' '+GYM[k]+'</i>').join("");
+  document.getElementById("gymcard").className = "gymcard"+(gy?"":" rest");
+  document.getElementById("gymcard").innerHTML = gy
+    ? '<span class="gi">🏋</span><div><b>ვარჯიშის დღე · '+gy+'</b><span>30–45 წთ ადრე ბანანი და კრეატინი, ვარჯიშის შემდეგ 1 საათში ცილიანი და ნახშირწყლიანი კერძი. დალიე 0.5–1 ლ წყალი დარბაზში.</span><div class="gymweek">'+wk+'</div></div>'
+    : '<span class="gi">🛋</span><div><b>დასვენების დღე</b><span>ბანანი ვარჯიშამდე არ გჭირდება, ამიტომ დღე ~100 კკალ-ით მსუბუქია. ცილა იგივე რჩება, კუნთი დასვენებისას აღდგება. გაისეირნე 30–40 წთ.</span><div class="gymweek">'+wk+'</div></div>';
 }
 const dayKcal = (wi,di) => daySeq(wi,di).reduce((s,x)=>s+x[1].k,0);
 function renderDay(){
@@ -655,7 +690,12 @@ function renderDay(){
   if(editDay!==dk){ editing = null; swapState = {}; editDay = dk; }
   const seq = daySeq(w,d);
   document.getElementById("dayTitle").textContent = DAYN[wdOf(w,d)]+", "+dateOf(w,d).n+" ნოემბერი";
-  document.getElementById("timeline").innerHTML = seq.map(([t,m,c,i])=>'<li><span class="time">'+t+'</span>'+mealHTML(m,c,i)+'</li>').join("")+
+  const gy = gymOf(w,d);
+  const rows = seq.map(([t,m,c,i])=>[t,'<li><span class="time">'+t+'</span>'+mealHTML(m,c,i)+'</li>']);
+  if(gy) rows.push([gy+"~",'<li><span class="time">'+gy+'</span><div class="gymrow">🏋 ვარჯიში დარბაზში <small>'+gy+'–'+addMin(gy,GYM_MIN)+'</small></div></li>']);
+  rows.sort((x,y)=>x[0]<y[0]?-1:x[0]>y[0]?1:0);
+  renderGymCard(gy);
+  document.getElementById("timeline").innerHTML = rows.map(x=>x[1]).join("")+
     '<li><span class="time"></span>'+(editing===ADD
       ? '<div class="meal open extra"><div class="mbody">'+swapForm(ADD,null)+'</div></div>'
       : '<button type="button" class="addbtn" data-add="1"><svg class="ico"><use href="#i-plus"/></svg>კერძის დამატება</button>')+'</li>';
