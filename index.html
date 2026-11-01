@@ -251,6 +251,7 @@ dialog.sheet::backdrop{background:rgba(8,12,18,.55)}
 .primary{font:inherit;font-weight:600;font-size:16px;background:var(--accent);color:#fff;border:0;border-radius:12px;padding:13px 18px;cursor:pointer}
 .primary:focus-visible{outline:2px solid var(--fg);outline-offset:2px}
 .result .macros .mc b{font-size:17px}
+.result .stats .st:last-child:nth-child(odd){grid-column:1/-1}
 .warnbox{background:color-mix(in srgb,var(--warn) 14%,var(--surface));border-left:3px solid var(--warn);border-radius:8px;padding:10px 12px;font-size:14px;display:flex;flex-direction:column;gap:6px}
 .empty-plan{color:var(--muted);font-size:14px}
 #plan{display:flex;flex-direction:column;gap:14px}
@@ -1043,7 +1044,7 @@ function mealHTML(m, i){
     '</button>'+
     '<div class="mbody" id="mb'+i+'"'+(isOpen?"":" hidden")+'>'+
       '<div class="ph mphoto"><img src="'+IMG(m.img,800,450)+'" alt="'+esc(m.name)+'" loading="lazy" decoding="async" onerror="imgFail(this)"></div>'+
-      '<div class="meta"><span>⏱ '+m.time+'</span><span>პორცია ×'+m.factor+'</span><span>ნ '+m.c+' გ</span><span>ც '+m.f+' გ</span></div>'+
+      '<div class="meta"><span>⏱ '+m.time+'</span><span>პორცია ×'+m.factor+'</span><span>ნახშ. '+m.c+' გ</span><span>ცხიმი '+m.f+' გ</span></div>'+
       '<div class="cols"><div><div class="lbl">ინგრედიენტები</div><ul>'+m.items.map(x=>'<li>'+esc(x)+'</li>').join("")+'</ul></div>'+
       '<div><div class="lbl">მომზადება</div><ol>'+m.steps.map(x=>'<li>'+esc(x)+'</li>').join("")+'</ol></div></div>'+
       (m.tip?'<p class="tip">'+esc(m.tip)+'</p>':'')+
