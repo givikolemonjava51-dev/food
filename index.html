@@ -242,6 +242,17 @@ details.help p+p{margin-top:6px}
 .meal.skipped .mn{text-decoration:line-through}
 .meal.skipped .slot::after{content:" · წაშლილი";color:var(--warn);font-weight:600}
 .addbtn{font:inherit;font-size:15px;font-weight:600;color:var(--accent);background:var(--accent-soft);border:1.5px dashed color-mix(in srgb,var(--accent) 55%,transparent);border-radius:var(--r);padding:13px 14px;cursor:pointer;width:100%;text-align:left;display:flex;align-items:center;gap:8px}
+.photopick{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.phbtn{display:inline-flex;align-items:center;gap:6px;position:relative}
+.phbtn:focus-within{outline:2px solid var(--accent);outline-offset:2px}
+.phprev{position:relative;width:96px;height:96px;border-radius:12px;overflow:hidden;border:1px solid var(--line);flex-shrink:0}
+.phprev img{width:100%;height:100%;object-fit:cover;display:block}
+.phx{position:absolute;top:4px;right:4px;width:26px;height:26px;border-radius:50%;border:0;background:rgba(0,0,0,.6);color:#fff;font-size:13px;cursor:pointer;display:grid;place-items:center}
+.addrow{display:flex;gap:8px;flex-wrap:wrap}
+.addrow .addbtn{flex:1 1 160px}
+.regram{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:14px;color:var(--muted)}
+.regram input{font:inherit;font-size:16px;width:90px;color:var(--fg);background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:6px 10px}
+.chipb{font:inherit;font-size:13px;color:var(--fg);background:var(--surface-2);border:1px solid var(--line);border-radius:999px;padding:6px 10px;cursor:pointer}
 .stime{display:flex;align-items:center;gap:8px;font-size:14px;color:var(--muted)}
 .stime input{font:inherit;font-size:16px;color:var(--fg);background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:6px 10px}
 
@@ -603,7 +614,26 @@ function skippedBody(i, m){
   return '<p class="note">ეს კერძი ამ დღეს წაშალე, ამიტომ დღის ჯამში არ ითვლება. გეგმით იყო '+m.plan.k+' კკალ.</p>'+
     '<div class="sbtns"><button type="button" class="sbtn ghost" data-revert="'+i+'">აღდგენა</button><button type="button" class="sbtn ghost" data-swap="'+i+'">სხვა რამე ვჭამე</button></div>';
 }
+function labelBody(i, L){
+  const x = L.per100, row = (n,v)=> v==null ? '' : '<li><span>'+n+'</span><span class="q">'+(+v.toFixed(1))+' გ</span></li>';
+  return '<div><div class="lbl">ეტიკეტიდან · 100 გ-ზე</div><ul class="sitems">'+
+      '<li><span>ენერგია</span><span class="q">'+Math.round(x.k)+' კკალ</span></li>'+
+      row("ცილა",x.p)+row("ნახშირწყალი",x.c)+row(" · მათ შორის შაქარი",x.sugar)+row("ცხიმი",x.f)+row(" · მათ შორის ნაჯერი",x.sat)+row("უჯრედისი",x.fiber)+row("მარილი",x.salt)+
+    '</ul></div>'+
+    '<form class="regram" data-regram="'+i+'"><label>შეჭამე <input type="number" name="g" inputmode="decimal" min="1" max="5000" step="any" value="'+L.g+'" required> გ</label>'+
+      (L.serving?'<button type="button" class="chipb" data-setg="'+L.serving+'">1 პორცია · '+L.serving+' გ</button>':'')+
+      (L.pack&&L.pack!==L.serving?'<button type="button" class="chipb" data-setg="'+L.pack+'">მთელი შეკვრა · '+L.pack+' გ</button>':'')+
+      '<button type="submit" class="sbtn ghost">გადათვლა</button></form>';
+}
 function swappedBody(i, m){
+  if(m.label) return '<p class="ate"><b>📷 ეტიკეტი:</b> '+esc(m.name)+(m.text?' <span class="muted">· '+esc(m.text)+'</span>':'')+'</p>'+
+    '<div class="meta"><span>'+m.k+' კკალ</span><span>ცილა '+m.p+' გ</span><span>ნახშირწყალი '+m.c+' გ</span><span>ცხიმი '+m.f+' გ</span></div>'+
+    labelBody(i, m.label)+
+    (m.note?'<p class="tip">'+esc(m.note)+'</p>':'')+
+    '<p class="note">'+(m.plan?'გეგმით იყო: '+esc(m.plan.name)+' ('+m.plan.k+' კკალ). ':'')+'შეამოწმე, რომ ციფრები ეტიკეტს ემთხვევა.</p>'+
+    '<div class="sbtns"><button type="button" class="sbtn ghost" data-edit="'+i+'">თავიდან</button>'+
+      (m.plan?'<button type="button" class="sbtn ghost" data-revert="'+i+'">გეგმაზე დაბრუნება</button>':'')+
+      '<button type="button" class="sbtn ghost danger" data-del="'+i+'">წაშლა</button></div>';
   return '<p class="ate"><b>შენ ჩაწერე:</b> '+esc(m.text)+'</p>'+
     '<div class="meta"><span>'+m.k+' კკალ</span><span>ცილა '+m.p+' გ</span><span>ნახშირწყალი '+m.c+' გ</span><span>ცხიმი '+m.f+' გ</span></div>'+
     (m.list&&m.list.length?'<div><div class="lbl">AI-ს შეფასება</div><ul class="sitems">'+m.list.map(x=>'<li><span>'+esc(x.food)+' <span class="muted">('+esc(x.amount)+')</span></span><span class="q">'+x.kcal+' კკალ</span></li>').join("")+'</ul></div>':'')+
@@ -615,14 +645,20 @@ function swappedBody(i, m){
 }
 function swapForm(i, m){
   const st = swapState[i]||{}, isAdd = i===ADD, withTime = isAdd || (m&&m.extra);
-  const tm = st.time || (m&&m.extra ? m.time : nowHM());
+  const tm = st.time || (m&&m.extra ? m.time : nowHM()), ph = st.photo;
+  const prev = st.text!=null ? st.text : (m&&(m.swapped||m.extra)&&!m.label ? m.text : "");
   return '<form class="swapform" data-form="'+i+'">'+
-    '<label class="lbl" for="sw'+i+'">'+(withTime?'რა ჭამე?':'რა ჭამე სინამდვილეში?')+'</label>'+
-    '<textarea id="sw'+i+'" maxlength="800" placeholder="მაგ.: 1 აჭარული ხაჭაპური, 1 ქილა კოკა-კოლა" required>'+esc(st.text!=null?st.text:(m&&(m.swapped||m.extra)?m.text:""))+'</textarea>'+
+    '<div class="photopick">'+
+      (ph ? '<div class="phprev"><img src="'+ph.url+'" alt="ეტიკეტის ფოტო"><button type="button" class="phx" data-unphoto="'+i+'" aria-label="ფოტოს მოშორება">✕</button></div>'
+          : (st.reading ? '<span class="note">ფოტოს ვამზადებ…</span>' : ''))+
+      '<label class="sbtn ghost phbtn">📷 '+(ph?'სხვა ფოტო':'ეტიკეტის ფოტო')+'<input type="file" accept="image/*" data-photo="'+i+'" id="ph'+i+'" class="visually-hidden"></label>'+
+    '</div>'+
+    '<label class="lbl" for="sw'+i+'">'+(ph?'რამდენი შეჭამე?':withTime?'რა ჭამე?':'რა ჭამე სინამდვილეში?')+'</label>'+
+    '<textarea id="sw'+i+'" maxlength="800" placeholder="'+(ph?'მაგ.: 150 გ, ნახევარი შეკვრა, 2 ნაჭერი. ცარიელი = 1 პორცია ან მთელი შეკვრა':'მაგ.: 1 აჭარული ხაჭაპური, 1 ქილა კოკა-კოლა')+'"'+(ph?'':' required')+'>'+esc(prev)+'</textarea>'+
     (withTime?'<label class="stime">დრო <input type="time" name="time" value="'+tm+'" required></label>':'')+
-    '<p class="note">რაც უფრო ზუსტად დაწერ რაოდენობას (გრამი, ცალი, ჭიქა), მით უფრო ზუსტი იქნება დათვლა.</p>'+
+    '<p class="note">'+(ph?'ეტიკეტი მთლიანად და მკაფიოდ უნდა ჩანდეს ფოტოზე (კვებითი ღირებულების ცხრილი).':'რაც უფრო ზუსტად დაწერ რაოდენობას (გრამი, ცალი, ჭიქა), მით უფრო ზუსტი იქნება დათვლა. ან გადაუღე ეტიკეტს 📷.')+'</p>'+
     (st.err?'<p class="serr" role="alert">'+esc(st.err)+'</p>':'')+
-    '<div class="sbtns"><button type="submit" class="sbtn"'+(st.busy?' disabled':'')+'>'+(st.busy?'ვითვლი…':(isAdd?'დათვლა და დამატება':'კალორიების დათვლა'))+'</button>'+
+    '<div class="sbtns"><button type="submit" class="sbtn"'+(st.busy?' disabled':'')+'>'+(st.busy?(ph?'ეტიკეტს ვკითხულობ…':'ვითვლი…'):(isAdd?'დათვლა და დამატება':'კალორიების დათვლა'))+'</button>'+
     '<button type="button" class="sbtn ghost" data-cancel="'+i+'">გაუქმება</button></div></form>';
 }
 const ADD = 99, EX = 100, KCAL_MAX = 2000, PROT_GOAL = 180;
@@ -671,10 +707,10 @@ function daySeq(wi, di){
     : [["10:00",M.PRE,"small rest"],["12:15",M[b]],["16:00",M[l]],["19:00",M.SHAKE,"small"],["22:30",M[dn]]];
   return plan
     .map(([t,m,c],i)=>{ const o = sw[dk+"|"+i];
-      const mm = !o ? m : o.skipped ? {slot:m.slot,name:m.name,k:0,p:0,skipped:true,plan:m} : {slot:m.slot,name:o.name,k:o.k,p:o.p,c:o.c,f:o.f,list:o.items,note:o.note,text:o.text,swapped:true,plan:m};
+      const mm = !o ? m : o.skipped ? {slot:m.slot,name:m.name,k:0,p:0,skipped:true,plan:m} : {slot:m.slot,name:o.name,k:o.k,p:o.p,c:o.c,f:o.f,list:o.items,note:o.note,text:o.text,label:o.label,swapped:true,plan:m};
       return [t,mm,c,i]; })
     .filter(x=>!(x[2]==="small rest" && !sw[dk+"|0"]))
-    .concat(ex.map((o,j)=>[o.time,{slot:"დამატებული",name:o.name,k:o.k,p:o.p,c:o.c,f:o.f,list:o.items,note:o.note,text:o.text,time:o.time,extra:true},"",EX+j]))
+    .concat(ex.map((o,j)=>[o.time,{slot:"დამატებული",name:o.name,k:o.k,p:o.p,c:o.c,f:o.f,list:o.items,note:o.note,text:o.text,label:o.label,time:o.time,extra:true},"",EX+j]))
     .sort((x,y)=>x[0]<y[0]?-1:x[0]>y[0]?1:0);
 }
 function renderGymCard(gy){
@@ -698,7 +734,8 @@ function renderDay(){
   document.getElementById("timeline").innerHTML = rows.map(x=>x[1]).join("")+
     '<li><span class="time"></span>'+(editing===ADD
       ? '<div class="meal open extra"><div class="mbody">'+swapForm(ADD,null)+'</div></div>'
-      : '<button type="button" class="addbtn" data-add="1"><svg class="ico"><use href="#i-plus"/></svg>კერძის დამატება</button>')+'</li>';
+      : '<div class="addrow"><button type="button" class="addbtn" data-add="1"><svg class="ico"><use href="#i-plus"/></svg>კერძის დამატება</button>'+
+        '<button type="button" class="addbtn scan" data-add="1" data-scan="1"><span aria-hidden="true">📷</span>ეტიკეტის სკანერი</button></div>')+'</li>';
   const k = seq.reduce((s,x)=>s+x[1].k,0), p = seq.reduce((s,x)=>s+x[1].p,0);
   ring("ringK", k, KCAL_MAX, "კკალ", "🔥", k>KCAL_MAX ? "+"+(k-KCAL_MAX)+" ზედმეტი" : "კალორია");
   ring("ringP", p, PROT_GOAL, "გ", "💪", "ცილა");
@@ -773,33 +810,75 @@ function dayKey(){ return keyOf(w,d); }
 function saveSwap(day, i, v){ const sw = store.get("swaps")||{}; const k = day+"|"+i; if(v) sw[k]=v; else delete sw[k]; store.set("swaps", sw); }
 function saveExtras(day, fn){ const all = store.get("extras")||{}; const list = fn((all[day]||[]).slice()); if(list.length) all[day]=list; else delete all[day]; store.set("extras", all); }
 const SWAP_ERR = {no_key:"AI ჯერ არ არის ჩართული: Vercel-ში ANTHROPIC_API_KEY არ არის დამატებული.", bad_key:"Anthropic API გასაღები არასწორია. შეამოწმე Vercel-ის პარამეტრებში.",
-  rate_limit:"ძალიან ბევრი მოთხოვნა, სცადე ერთ წუთში.", too_long:"ტექსტი ძალიან გრძელია (მაქს. 800 სიმბოლო).", refusal:"AI-მ ამ ტექსტზე პასუხი არ გასცა, სცადე სხვანაირად ჩაწერა."};
+  rate_limit:"ძალიან ბევრი მოთხოვნა, სცადე ერთ წუთში.", too_long:"ტექსტი ძალიან გრძელია (მაქს. 800 სიმბოლო).", refusal:"AI-მ ამ ტექსტზე პასუხი არ გასცა, სცადე სხვანაირად ჩაწერა.",
+  unreadable:"ეტიკეტი ვერ წავიკითხე. გადაუღე უფრო ახლოდან, კარგ შუქზე, ისე რომ ცხრილი მთლიანად ჩანდეს.", image_too_big:"ფოტო ძალიან დიდია, სცადე სხვა.", bad_image:"ეს ფაილი ფოტო არ არის."};
 async function submitSwap(i, text, time){
-  const day = dayKey(); swapState[i] = {text, time, busy:true}; renderDay();
+  const day = dayKey(), photo = swapState[i]&&swapState[i].photo; swapState[i] = {text, time, photo, busy:true}; renderDay();
   try{
-    const r = await fetch("/api/estimate", {method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({text})});
+    const req = photo ? {text, image:photo.data, mediaType:"image/jpeg"} : {text};
+    const r = await fetch("/api/estimate", {method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify(req)});
     const j = await r.json().catch(()=>({}));
-    if(!r.ok) throw new Error(SWAP_ERR[j.error] || (r.status===404?"AI სერვისი ამ მისამართზე არ მუშაობს (საჭიროა Vercel).":"დათვლა ვერ მოხერხდა, სცადე თავიდან."));
-    const v = {text, name:j.name||"ჩემი კერძი", k:j.kcal, p:j.p, c:j.c, f:j.f, items:j.items, note:j.note, at:Date.now()};
+    if(!r.ok) throw new Error((j.error==="unreadable"&&j.note ? j.note+" " : "")+(SWAP_ERR[j.error] || (r.status===404?"AI სერვისი ამ მისამართზე არ მუშაობს (საჭიროა Vercel).":r.status===413?SWAP_ERR.image_too_big:"დათვლა ვერ მოხერხდა, სცადე თავიდან.")));
+    const v = {text, name:j.name||(photo?"პროდუქტი":"ჩემი კერძი"), k:j.kcal, p:j.p, c:j.c, f:j.f, items:j.items, note:j.note, at:Date.now()};
+    if(j.label) v.label = j.label;
     let openId = i;
     if(i===ADD) saveExtras(day, l=>{ l.push(Object.assign(v,{time})); openId = EX+l.length-1; return l; });
     else if(i>=EX) saveExtras(day, l=>{ if(l[i-EX]) l[i-EX] = Object.assign(v,{time}); return l; });
     else saveSwap(day, i, v);
     if(day!==dayKey()) return;
     delete swapState[i]; editing = null; open.add(openId);
-  }catch(err){ if(day!==dayKey()) return; swapState[i] = {text, time, err: err.message||"ქსელის შეცდომა, სცადე თავიდან."}; }
+  }catch(err){ if(day!==dayKey()) return; swapState[i] = {text, time, photo, err: err.message||"ქსელის შეცდომა, სცადე თავიდან."}; }
   renderDay();
 }
+/* ფოტო → JPEG, გრძელი მხარე მაქს. 1600px (ტელეფონის 12MP ფოტო ~300–600 KB ხდება) */
+function shrinkPhoto(file){
+  return new Promise((ok, bad)=>{
+    const url = URL.createObjectURL(file), img = new Image();
+    img.onload = ()=>{
+      const sc = Math.min(1, 1600/Math.max(img.naturalWidth, img.naturalHeight));
+      const cv = document.createElement("canvas"); cv.width = Math.round(img.naturalWidth*sc); cv.height = Math.round(img.naturalHeight*sc);
+      cv.getContext("2d").drawImage(img, 0, 0, cv.width, cv.height); URL.revokeObjectURL(url);
+      const du = cv.toDataURL("image/jpeg", 0.85);
+      ok({url:du, data:du.slice(du.indexOf(",")+1)});
+    };
+    img.onerror = ()=>{ URL.revokeObjectURL(url); bad(new Error("ფოტო ვერ გაიხსნა, სცადე სხვა.")); };
+    img.src = url;
+  });
+}
+function keepForm(i){ const f = document.querySelector('[data-form="'+i+'"]'); if(!f) return {};
+  const ti = f.querySelector("input[name=time]"); return {text:f.querySelector("textarea").value, time: ti ? ti.value : undefined}; }
+document.getElementById("timeline").addEventListener("change", async e=>{
+  const inp = e.target.closest("[data-photo]"); if(!inp || !inp.files || !inp.files[0]) return;
+  const i = +inp.dataset.photo, file = inp.files[0], day = dayKey();
+  const st = Object.assign(swapState[i]||{}, keepForm(i), {reading:true, err:null}); swapState[i] = st; renderDay();
+  try{ st.photo = await shrinkPhoto(file); }catch(err){ st.err = err.message; }
+  st.reading = false; if(day===dayKey() && editing===i) renderDay();
+  const ta = document.getElementById("sw"+i); if(ta && st.photo) ta.scrollIntoView({block:"center",behavior:"smooth"});
+});
+document.getElementById("timeline").addEventListener("submit", e=>{
+  const f = e.target.closest("[data-regram]"); if(!f) return; e.preventDefault(); e.stopImmediatePropagation();
+  const i = +f.dataset.regram, g = Math.round(+f.elements.g.value); if(!(g>0)) return;
+  const day = dayKey(), upd = o=>{ if(!o||!o.label) return o; const x = o.label.per100, q = v=>Math.round(v*g/100);
+    o.label.g = g; o.k = q(x.k); o.p = q(x.p); o.c = q(x.c); o.f = q(x.f);
+    if(o.items&&o.items[0]){ o.items[0].amount = g+" გ"; o.items[0].kcal = o.k; } return o; };
+  if(i>=EX) saveExtras(day, l=>{ l[i-EX] = upd(l[i-EX]); return l; });
+  else { const sw = store.get("swaps")||{}; saveSwap(day, i, upd(sw[day+"|"+i])); }
+  open.add(i); renderDay();
+}, true);
 document.getElementById("timeline").addEventListener("submit", e=>{
   const f = e.target.closest("[data-form]"); if(!f) return; e.preventDefault();
   const i = +f.dataset.form, text = f.querySelector("textarea").value.trim(), ti = f.querySelector("input[name=time]");
-  if(text && !(swapState[i]&&swapState[i].busy)) submitSwap(i, text, ti ? (ti.value||nowHM()) : undefined);
+  const st = swapState[i]||{};
+  if((text || st.photo) && !st.busy && !st.reading) submitSwap(i, text, ti ? (ti.value||nowHM()) : undefined);
 });
 document.getElementById("timeline").addEventListener("click", e=>{
+  const sg = e.target.closest("[data-setg]"); if(sg){ const inp = sg.form.elements.g; inp.value = sg.dataset.setg; sg.form.requestSubmit ? sg.form.requestSubmit() : sg.form.dispatchEvent(new Event("submit",{cancelable:true,bubbles:true})); return; }
+  const ux = e.target.closest("[data-unphoto]"); if(ux){ const i = +ux.dataset.unphoto; swapState[i] = Object.assign(swapState[i]||{}, keepForm(i), {photo:null}); renderDay(); return; }
   const t = e.target.closest("[data-swap],[data-edit],[data-cancel],[data-revert],[data-del],[data-add]"); if(!t) return;
   const day = dayKey();
   if(t.dataset.swap!=null || t.dataset.edit!=null || t.dataset.add!=null){
     editing = t.dataset.add!=null ? ADD : +(t.dataset.swap ?? t.dataset.edit); editDay = day; delete swapState[editing]; renderDay();
+    if(t.dataset.scan!=null){ const fi = document.getElementById("ph"+editing); if(fi){ fi.click(); return; } }
     const ta=document.getElementById("sw"+editing); if(ta){ ta.focus(); ta.scrollIntoView({block:"center",behavior:"smooth"}); }
   }
   else if(t.dataset.cancel!=null){ delete swapState[editing]; editing = null; renderDay(); }
